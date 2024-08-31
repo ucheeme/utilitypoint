@@ -55,6 +55,7 @@ dependencies:
   envied: ^0.3.0+3
   path_provider:
   gap:
+  flutter_screenutil:
   modal_bottom_sheet:
     git:
       url: https://github.com/followthemoney1/modal_bottom_sheet.git
