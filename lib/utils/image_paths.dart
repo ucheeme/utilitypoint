@@ -9,3 +9,4 @@ String registrationComplete = "assets/image/images_png/registrationComplete.png"
 String success = "assets/image/images_png/success.png";
 String transactionIconUnselected = "assets/image/images_png/transaction_icon_unselected.png";
 String notification = "assets/image/images_png/Notification.png";
+String ic_eye_close = "assets/image/images_png/eye_close.png";

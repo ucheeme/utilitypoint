@@ -1,8 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_utils/get_utils.dart';
+import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
+import 'package:utilitypoint/utils/reuseable_widget.dart';
+import 'package:utilitypoint/utils/text_style.dart';
+import 'package:flutter/src/painting/text_style.dart';
+import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 
 import '../../utils/app_color_constant.dart';
 
@@ -13,61 +21,204 @@ class Splashscreen extends StatefulWidget {
   State<Splashscreen> createState() => _SplashscreenState();
 }
 
-class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMixin {
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
+  late AnimationController _moveController;
+  late AnimationController _containerController;
+
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<Offset> _moveAnimation;
+  late Animation<Size> _containerSizeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize the AnimationController
-    _controller = AnimationController(
+    // Slide Animation
+    _slideController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
     );
 
-    // Define the scaling animation
-    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(1.0, 0.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Scale Animation
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
     );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.5,
+    ).chain(CurveTween(curve: Curves.easeInOut)).animate(_scaleController);
+
+    // Move Animation for the Image
+    _moveController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+
+    _moveAnimation = Tween<Offset>(
+      begin: Offset(0.0, 0.0),
+      end: Offset(0.0, -0.1),
+    ).animate(CurvedAnimation(
+      parent: _moveController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Size Animation for the Second Container
+    _containerController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+
+    _containerSizeAnimation = Tween<Size>(
+      begin: Size(0.w, 50.h),
+      end: Size(Get.width, 383.72.h),
+    ).animate(CurvedAnimation(
+      parent: _containerController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Start the animations
+    _slideController.forward().then((_) {
+      _scaleController.forward().then((_) {
+        _scaleController.reverse().then((_) {
+          Future.delayed(Duration(seconds: 1), () {
+            _moveController.forward();
+            _containerController.forward();
+          });
+        });
+      });
+    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
+    _moveController.dispose();
+    _containerController.dispose();
     super.dispose();
-  }
-
-  void _startAnimation() {
-    if (_controller.isCompleted) {
-      _controller.reverse();
-    } else {
-      _controller.forward();
-    }
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return      ScaleTransition(
-      scale: _animation,
-      child: Container(
+    return      Scaffold(
+      body: Container(
         width: Get.width,
         height: Get.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColor.primary10,AppColor.primary100],
-            stops: [0.1, 0.4, 0.7, 1.0],
+            colors: [AppColor.primary100,AppColor.primary10],
+            stops: [0.0, 1.0,],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Center(
-          child: Image.asset(utilityPointLogo),
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+               SizedBox(height: 20.h,),
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: SlideTransition(
+                    position:  _moveAnimation,
+                    child: Container(
+                      padding: EdgeInsets.only(left: 78.w,right: 78.w,top: 170.h),
+                      child: Center(
+                        child: Image.asset(utilityPointLogo,height: 206.h,),
+                      ),
+                    ),
+                  ),
+                ),
+                height30,
+                AnimatedBuilder(
+                  animation: _containerSizeAnimation,
+                  builder: (context, child) {
+                    return Container(
+                      width: _containerSizeAnimation.value.width,
+                      height: _containerSizeAnimation.value.height,
+                      decoration: BoxDecoration(
+                        color: AppColor.black0,
+                        borderRadius: BorderRadius.circular(30.r),
+                      ),
+                      child: SingleChildScrollView(
+                        physics: NeverScrollableScrollPhysics(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            height40,
+                            SizedBox(
+                              height: 85.h,
+                              width: 314.w,
+                              child: Text(
+                                "Your Everyday Financial Hub!",
+                                textAlign: TextAlign.center,
+                                style: CustomTextStyle.kTxtBold.copyWith(
+                                  color: AppColor.black100,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 32.sp
+                                )
+                              ),
+                            ),
+                            Gap(20.h),
+                            SizedBox(
+                              height: 70.h,
+                              width: 314.w,
+                              child: Text(
+                                "Shop online, subscribe to global services, or handle international payments securely with your virtual dollar card.",
+                                textAlign: TextAlign.center,
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                  color: AppColor.black100,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14.sp
+                                ),
+                              ),
+                            ),
+                            height40,
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                              child: CustomButton(
+                                height:58.h,
+                                onTap: (){
+                                  Get.to(SignUpCreateAccountScreen());
+                                }, buttonText: "Register Now",
+                                textColor:AppColor.black0 ,
+                                buttonColor: AppColor.primary100,borderRadius: 8.r,),
+                            ),
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                              child: CustomButton(
+                                height:58.h,
+                                onTap: (){}, buttonText: "Already have an account",
+                                textColor:AppColor.secondary100 ,
+                                buttonColor: AppColor.black0,borderRadius: 8.r,),
+                            ),
+                            height40
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -29,7 +29,6 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           scaffoldBackgroundColor: AppColor.primary100,
           visualDensity: VisualDensity.adaptivePlatformDensity,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
         builder: (context, widget) {
