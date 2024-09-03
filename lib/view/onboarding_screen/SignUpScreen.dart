@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
+import 'package:utilitypoint/bloc/onboarding/onBoardingValidator.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
 
+import '../../bloc/onboarding/bloc.dart';
 import '../../utils/app_color_constant.dart';
 
 class SignUpCreateAccountScreen extends StatefulWidget {
@@ -19,69 +23,176 @@ class SignUpCreateAccountScreen extends StatefulWidget {
   State<SignUpCreateAccountScreen> createState() => _SignUpCreateAccountScreenState();
 }
 
-class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> {
-  bool isEmailSelected = false;
-  bool isPasswordSelected = false;
-  bool isConfirmPasswordSelected = false;
-  bool isPasswordVisible=false;
-  bool isConfirmPasswordVisible=false;
-  bool isEightCharacterMinimumChecked = false;
-  bool isContainsNumChecked = false;
-  bool isContainsSymbolChecked = false;
+class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> with TickerProviderStateMixin {
+  OnboardingFormValidation controller = OnboardingFormValidation();
+   isValidString(String input) {
+    final symbolPattern = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+    final numberPattern = RegExp(r'\d');
+
+    bool containsSymbol = symbolPattern.hasMatch(input);
+
+    bool containsNumber = numberPattern.hasMatch(input);
+    bool hasValidLength = input.length > 7;
+    if(containsSymbol){
+      setState(() {
+        controller.isContainsSymbolChecked=true;
+      });
+    }else{
+      setState(() {
+        controller.isContainsSymbolChecked=false;
+      });
+    }
+    if(containsNumber){
+      setState(() {
+        controller.isContainsNumChecked=true;
+      });
+    }else{
+      setState(() {
+        controller.isContainsNumChecked=false;
+      });
+    }
+    if(hasValidLength){
+      setState(() {
+        controller.isEightCharacterMinimumChecked=true;
+      });
+    }else{
+      setState(() {
+        controller.isEightCharacterMinimumChecked=false;
+      });
+    }
+  }
+  bool isAgreedPolicy=false;
+  late AnimationController _slideController;
+  late AnimationController _slideControllerTop;
+  late AnimationController _scaleController;
+  late AnimationController _moveController;
+  late AnimationController _containerController;
+
+  late Animation<Offset> _slideAnimation;
+  late Animation<Offset> _slideAnimationTop;
+  late Animation<double> _scaleAnimation;
+  late Animation<Offset> _moveAnimation;
+  late Animation<Size> _containerSizeAnimation;
+  late OnBoardingBlocBloc bloc;
+  @override
+  void initState() {
+
+    super.initState();
+
+    // Slide Animation
+    _slideController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+
+    _slideControllerTop = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+    _slideAnimationTop = Tween<Offset>(
+      begin: Offset(1.0, 0.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideControllerTop,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimationTop = Tween<Offset>(
+      begin: Offset(1.0, 0.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideControllerTop,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0.0, 1.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeInOut,
+    ));
+    _slideController.forward();
+    _slideControllerTop.forward();
+  }
+
+
+  bool isLoading = false;
+  bool isWrongOTP = false;
+  bool isCompleteOTP=false;
+
+
+  @override
+  void dispose() {
+    _slideControllerTop.dispose();
+    _slideController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
     return Scaffold(
-      body: Container(
-        width: Get.width,
-        height: Get.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColor.primary100,AppColor.primary10],
-            stops: [0.0, 1.0,],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
+      body: appBodyDesign(getBody()),
+    );
+  }
+  getBody(){
+    return SingleChildScrollView(
+      child: Column(
 
-            children: [
-              Padding(
-                padding:  EdgeInsets.only(top: 42.h,left: 20.w,bottom: 17.h),
-                child: SizedBox(
-                    height: 52.h,
-                    child: CustomAppBar(title: "Create your account")),
+        children: [
+          SlideTransition(
+            position: _slideAnimationTop,
+            child: Padding(
+              padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
+              child: SizedBox(
+                  height: 52.h,
+                  child: CustomAppBar(title: "Create your account")),
+            ),
+          ),
+          Gap(20.h),
+          SlideTransition(
+            position: _slideAnimation,
+            child: Container(
+              height: 678.72.h,
+              padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
+              decoration: BoxDecoration(
+                color: AppColor.black0,
+                borderRadius: BorderRadius.circular(30.r),
               ),
-              Gap(20.h),
-              Container(
-                height: 678.72.h,
-                padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
-                decoration: BoxDecoration(
-                  color: AppColor.black0,
-                  borderRadius: BorderRadius.circular(30.r),
-                ),
-                child: SizedBox(
-                  height: 388.h,
-                  width: 327.w,
+              child: SizedBox(
+                height: 388.h,
+                width: 327.w,
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text("Email Address", style: CustomTextStyle.kTxtMedium.copyWith(
-                        color: AppColor.black100,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp
+                          color: AppColor.black100,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp
                       ),),
                       height8,
-                      CustomizedTextField(
-                        hintTxt: "Enter email address", isTouched: isEmailSelected,
-                        onTap: (){
-                          setState(() {
-                            isPasswordSelected=false;
-                            isConfirmPasswordSelected= false;
-                            isEmailSelected=!isEmailSelected;
-                          });
-                        },
+                      StreamBuilder<Object>(
+                          stream: controller.email,
+                          builder: (context, snapshot) {
+                            return CustomizedTextField(
+                              error: snapshot.error?.toString(),
+                              keyboardType: TextInputType.emailAddress,
+                              hintTxt: "Enter email address",
+                              isTouched: controller.isEmailSelected,
+                              onTap: (){
+                                setState(() {
+                                  controller.isPasswordSelected=false;
+                                  controller.isConfirmPasswordSelected= false;
+                                  controller.isEmailSelected=! controller.isEmailSelected;
+                                });
+                              },
+                              onChanged: controller.setEmail,
+                            );
+                          }
                       ),
                       height16,
                       Text("Password", style: CustomTextStyle.kTxtMedium.copyWith(
@@ -91,18 +202,23 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> {
                       ),),
                       height8,
                       CustomizedTextField(
+                        textEditingController: controller.passwordController,
+                        onChanged: (value){isValidString(value);
+                          tempPassword = value;
+                          },
+                        hintTxt: "Enter password",
                         surffixWidget: GestureDetector(
                           onTap: (){
-                           setState(() {
-                             isConfirmPasswordSelected= false;
-                             isEmailSelected=false;
-                             isPasswordSelected=true;
-                             isPasswordVisible=!isPasswordVisible;
-                           });
+                            setState(() {
+                              controller.isConfirmPasswordSelected= false;
+                              controller.isEmailSelected=false;
+                              controller.isPasswordSelected=true;
+                              controller.isPasswordVisible=!controller.isPasswordVisible;
+                            });
                           },
                           child:Padding(
                             padding:  EdgeInsets.only(right: 16.w),
-                            child: isPasswordVisible? Icon(
+                            child:  controller.isPasswordVisible? Icon(
                               Icons.remove_red_eye_outlined,
                               size: 30,
                               color: AppColor.black100,
@@ -113,39 +229,212 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> {
                             ),
                           ),
                         ),
-                        obsec:isPasswordVisible,
+                        obsec: controller.isPasswordVisible,
                         onTap: (){
                           setState(() {
-                            isConfirmPasswordSelected= false;
-                            isEmailSelected=false;
-                            isPasswordSelected=!isPasswordSelected;
+                            controller.isConfirmPasswordSelected= false;
+                            controller.isEmailSelected=false;
+                            controller.isPasswordSelected=!controller.isPasswordSelected;
                           });
-                        }, isTouched: isPasswordSelected,
+                        }, isTouched:  controller.isPasswordSelected,
                       ),
                       height16,
                       SizedBox(
-                        height: 68.h,
+                        height: 78.h,
                         width: Get.width,
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                MSHCheckbox(value:isEightCharacterMinimumChecked,
-                                    onChanged: (value){}),
+                            SizedBox(
+                              height: 20.h,
+                              child: Row(
+                                children: [
+                                  MSHCheckbox(value:controller.isEightCharacterMinimumChecked,
+                                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                                        checkedColor: AppColor.success100,
+                                      ),
+                                      style: MSHCheckboxStyle.fillScaleColor,
+                                      onChanged: (value){}),
+                                  Gap(8.w),
+                                  Text("8 character minimum", style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                  ),)
+                                ],
+                              ),
+                            ),
+                            height8,
+                            SizedBox(
+                              height: 20.h,
+                              child: Row(
+                                children: [
+                                  MSHCheckbox(
+                                      checkedColor:AppColor.success100 ,
+                                      value:controller.isContainsNumChecked,
+                                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                                        checkedColor: AppColor.success100,
+                                      ),
+                                      style: MSHCheckboxStyle.fillScaleColor,
+                                      onChanged: (value){}),
+                                  Gap(8.w),
+                                  Text("a number", style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                  ),)
+                                ],
+                              ),
+                            ),
+                            height8,
+                            SizedBox(
+                              height: 20.h,
+                              child: Row(
+                                children: [
+                                  MSHCheckbox(value:controller.isContainsSymbolChecked,
+                                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                                        checkedColor: AppColor.success100,
+                                      ),
+                                      style: MSHCheckboxStyle.fillScaleColor,
+                                      onChanged: (value){}),
+                                  Gap(8.w),
+                                  Text("one symbol minimum", style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                  ),)
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      height16,
+                      Text("Confirm Password", style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.black100,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp
+                      ),),
+                      height8,
+                      StreamBuilder<Object>(
+                          stream: controller.confirmPassword,
+                          builder: (context, snapshot) {
+                            return SizedBox(
+                              height: 58.h,
+                              child: CustomizedTextField(
+                                onEditingComplete: (){controller.validatePasswords();
+                                  setState(() {});
+                                FocusScope.of(context).unfocus();
+                                  },
+                                hintTxt: "Re-enter password",
+                                error:(snapshot.error!=null)?snapshot.error?.toString():null,
+                                onChanged:controller.setConfirmPassword,
+                                readOnly: controller.passwordController.text.isEmpty,
+                                surffixWidget: GestureDetector(
+                                  onTap: (){
+                                    setState(() {
+                                      controller.isConfirmPasswordSelected= true;
+                                      controller.isEmailSelected=false;
+                                      controller.isPasswordSelected=false;
+                                      controller.isConfirmPasswordVisible=!controller.isConfirmPasswordVisible;
+                                    });
+                                  },
+                                  child:Padding(
+                                    padding:  EdgeInsets.only(right: 16.w),
+                                    child:  controller.isConfirmPasswordVisible? Icon(
+                                      Icons.remove_red_eye_outlined,
+                                      size: 30,
+                                      color: AppColor.black100,
+                                    ):Image.asset(
+                                      ic_eye_close,
+                                      height: 24.h,
+                                      width: 24.h,
+                                    ),
+                                  ),
+                                ),
+                                obsec: controller.isConfirmPasswordVisible,
+                                keyboardType:TextInputType.visiblePassword,
+                                onTap: (){
+                                  setState(() {
+                                    controller.isPasswordSelected= false;
+                                    controller.isEmailSelected=false;
+                                    controller.isConfirmPasswordSelected=!controller.isConfirmPasswordSelected;
+                                  });
+                                },
+                                isTouched:controller.isConfirmPasswordSelected,
+                              ),
+                            );
+                          }
+                      ),
+                      Visibility(
+                        visible: controller.isPasswordMatch,
+                        child: Text("Password matches",style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.success100,fontSize: 10.sp
+                        ),),
+                      ),
+                      height22,
+                      SizedBox(
+                        height: 66.h,
+                        width: 326.w,
+                        child: Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Checkbox(value: isAgreedPolicy, onChanged: (value){
+                                setState(() {
+                                  isAgreedPolicy=!isAgreedPolicy;
+                                });
+                              },
+                                activeColor: AppColor.primary100,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 66.h,
+                              width: 269.w,
+                              child: RichText(
+                                text: TextSpan(
+                                    text: "I certify that I am 18 years of age or older, and I agree to the ",
+                                    style: CustomTextStyle.kTxtMedium.copyWith(
+                                        color: AppColor.black100,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14.sp
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "User Agreement and Privacy Policy",
+                                        style: CustomTextStyle.kTxtMedium.copyWith(
+                                            color: AppColor.primary100,
+                                            fontSize: 14.sp
+                                        ),
+                                      )
+                                    ]
+                                ),
 
-                              ],
+                              ),
                             )
                           ],
                         ),
-                      )
+                      ),
+                      height67,
+                      StreamBuilder<Object>(
+                        stream: controller.completeRegistrationFormValidation,
+                        builder: (context, snapshot) {
+                          return CustomButton(
+                            height:58.h,
+                            onTap: (){
+                              (snapshot.hasData == true && snapshot.data != null)?
+                             controller.validateUserPassword(isAgreedPolicy, context):null;
+                            }, buttonText: "Next",
+                            textColor:AppColor.black0 ,
+                            buttonColor:  (snapshot.hasData == true && snapshot.data != null)?AppColor.primary100:
+                            AppColor.primary40,borderRadius: 8.r,);
+                        }
+                      ),
                     ],
                   ),
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
+
 }

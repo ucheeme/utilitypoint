@@ -5,7 +5,12 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:utilitypoint/utils/app_color_constant.dart';
+import 'package:utilitypoint/utils/text_style.dart';
 
 import '../model/defaultModel.dart';
 
@@ -31,6 +36,21 @@ class AppUtils{
     CherryToast.info(
         animationType: AnimationType.fromTop,
         title:   Text(msg)
+    ).show(context!);
+  }
+  static void showInfoSnackFromBottom(String msg, BuildContext? context,{double height =40}){
+    CherryToast.info(
+        toastPosition: Position.bottom,
+        width: Get.width,
+        height: height.h,
+        displayIcon: false,
+        displayCloseButton: false,
+        backgroundColor: AppColor.Error80,
+        animationType: AnimationType.fromBottom,
+        title:   Text(msg,textAlign:TextAlign.center,style:CustomTextStyle.kTxtMedium.copyWith(
+          color: AppColor.black0,
+          fontSize: 13.sp,
+        ),)
     ).show(context!);
   }
   static String currency(BuildContext context) {

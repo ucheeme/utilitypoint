@@ -1,0 +1,284 @@
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:utilitypoint/utils/pages.dart';
+
+import '../../../bloc/onboarding/bloc.dart';
+import '../../../utils/app_color_constant.dart';
+import '../../../utils/height.dart';
+import '../../../utils/reuseable_widget.dart';
+import '../../../utils/text_style.dart';
+
+class PersonalInformation extends StatefulWidget {
+  const PersonalInformation({super.key});
+
+  @override
+  State<PersonalInformation> createState() => _PersonalInformationState();
+}
+
+class _PersonalInformationState extends State<PersonalInformation>  with TickerProviderStateMixin {
+  late AnimationController _slideController;
+  late AnimationController _slideControllerTop;
+  late AnimationController _scaleController;
+  late AnimationController _moveController;
+  late AnimationController _containerController;
+
+  late Animation<Offset> _slideAnimation;
+  late Animation<Offset> _slideAnimationTop;
+  late Animation<double> _scaleAnimation;
+  late Animation<Offset> _moveAnimation;
+  late Animation<Size> _containerSizeAnimation;
+  late OnBoardingBlocBloc bloc;
+  @override
+  void initState() {
+
+    super.initState();
+
+    // Slide Animation
+    _slideController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+
+    _slideControllerTop = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 400),
+    );
+
+    _slideAnimationTop = Tween<Offset>(
+      begin: Offset(1.0, 0.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideControllerTop,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0.0, 1.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideController.forward();
+    _slideControllerTop.forward();
+  }
+
+
+  bool isLoading = false;
+  bool isWrongOTP = false;
+  bool isCompleteOTP=false;
+
+
+  @override
+  void dispose() {
+    _slideControllerTop.dispose();
+    _slideController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    return Scaffold(
+      body: appBodyDesign(getBody()),
+    );
+  }
+  getBody(){
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SlideTransition(
+            position: _slideAnimationTop,
+            child: Padding(
+              padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
+              child: SizedBox(
+                  height: 52.h,
+                  child: CustomAppBar(title: "Personal Information")),
+            ),
+          ),
+          Gap(20.h),
+          SlideTransition(
+            position: _slideAnimation,
+            child: Container(
+              height: 668.72.h,
+              padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
+              decoration: BoxDecoration(
+                color: AppColor.black0,
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("First Name", style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp
+                  ),),
+                  height8,
+                  StreamBuilder<Object>(
+                      stream: bloc.validation.firstName,
+                      builder: (context, snapshot) {
+                        return CustomizedTextField(
+                          error: snapshot.error?.toString(),
+                          keyboardType: TextInputType.name,
+                          hintTxt: "Enter first name",
+                          isTouched: bloc.validation.isFirstNameSelected,
+                          onTap: (){
+                            setState(() {
+                              bloc.validation.isLastNameSelected=false;
+                              bloc.validation.isUserNameSelected= false;
+                              bloc.validation.isPhoneNumberSelected= false;
+                              bloc.validation.isReferralCodeSelected= false;
+                              bloc.validation.isFirstNameSelected=!bloc.validation.isFirstNameSelected;
+                            });
+                          },
+                          onChanged:  bloc.validation.setFirstName,
+                        );
+                      }
+                  ),
+                  height16,
+                  Text("Last Name", style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp
+                  ),),
+                  height8,
+                  StreamBuilder<Object>(
+                      stream: bloc.validation.lastName,
+                      builder: (context, snapshot) {
+                        return CustomizedTextField(
+                          error: snapshot.error?.toString(),
+                          keyboardType: TextInputType.name,
+                          hintTxt: "Enter last name",
+                          isTouched: bloc.validation.isLastNameSelected,
+                          onTap: (){
+                            setState(() {
+                              bloc.validation.isFirstNameSelected=false;
+                              bloc.validation.isUserNameSelected= false;
+                              bloc.validation.isPhoneNumberSelected= false;
+                              bloc.validation.isReferralCodeSelected= false;
+                              bloc.validation.isLastNameSelected=!bloc.validation.isLastNameSelected;
+                            });
+                          },
+                          onChanged:  bloc.validation.setLastName,
+                        );
+                      }
+                  ),
+                  height16,
+                  Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp
+                  ),),
+                  height8,
+                  StreamBuilder<Object>(
+                      stream: bloc.validation.userName,
+                      builder: (context, snapshot) {
+                        return CustomizedTextField(
+                          error: snapshot.error?.toString(),
+                          keyboardType: TextInputType.name,
+                          hintTxt: "Enter username",
+                          isTouched: bloc.validation.isUserNameSelected,
+                          onTap: (){
+                            setState(() {
+                              bloc.validation.isFirstNameSelected=false;
+                              bloc.validation.isLastNameSelected= false;
+                              bloc.validation.isPhoneNumberSelected= false;
+                              bloc.validation.isReferralCodeSelected= false;
+                              bloc.validation.isUserNameSelected=!bloc.validation.isUserNameSelected;
+                            });
+                          },
+                          onChanged:  bloc.validation.setUserName,
+                        );
+                      }
+                  ),
+                  height16,
+                  Text("Phone Number", style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp
+                  ),),
+                  height8,
+                  StreamBuilder<Object>(
+                      stream: bloc.validation.userName,
+                      builder: (context, snapshot) {
+                        return CustomizedTextField(
+                          prefixWidget:CountryCodePicker(
+                            initialSelection: "NG",
+                            dialogSize: Size(100.w, 229.h),
+
+                          ) ,
+                          error: snapshot.error?.toString(),
+                          keyboardType: TextInputType.name,
+                          hintTxt: "+234 000 000 00",
+                          isTouched: bloc.validation.isUserNameSelected,
+                          onTap: (){
+                            setState(() {
+                              bloc.validation.isFirstNameSelected=false;
+                              bloc.validation.isLastNameSelected= false;
+                              bloc.validation.isUserNameSelected= false;
+                              bloc.validation.isReferralCodeSelected= false;
+                              bloc.validation.isPhoneNumberSelected=!bloc.validation.isPhoneNumberSelected;
+                            });
+                          },
+                          onChanged:  bloc.validation.setPhoneNumber,
+                        );
+                      }
+                  ),
+                  height16,
+                  Text("Referral Code (Optional)", style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp
+                  ),),
+                  height8,
+                  StreamBuilder<Object>(
+                      stream: bloc.validation.userName,
+                      builder: (context, snapshot) {
+                        return CustomizedTextField(
+                          error: snapshot.error?.toString(),
+                          keyboardType: TextInputType.name,
+                          hintTxt: "",
+                          isTouched: bloc.validation.isUserNameSelected,
+                          onTap: (){
+                            setState(() {
+                              bloc.validation.isFirstNameSelected=false;
+                              bloc.validation.isLastNameSelected= false;
+                              bloc.validation.isUserNameSelected= false;
+                              bloc.validation.isPhoneNumberSelected= false;
+                              bloc.validation.isReferralCodeSelected=!bloc.validation.isReferralCodeSelected;
+                            });
+                          },
+                          onChanged:  bloc.validation.setPhoneNumber,
+                        );
+                      }
+                  ),
+                  height45,
+                  StreamBuilder<Object>(
+                    stream: bloc.validation.completePersonalInformationFormValidation,
+                    builder: (context, snapshot) {
+                      return CustomButton(onTap: (){
+                        Get.toNamed(Pages.transactionPin);
+                      }, buttonText: "Next",
+                        textColor: AppColor.black0,
+                        buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
+                        AppColor.primary100:AppColor.primary40,
+                      borderRadius: 8.r, height: 58.h,textfontSize:16.sp,);
+                    }
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

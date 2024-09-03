@@ -1,15 +1,25 @@
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+import '../../bloc/onboarding/bloc.dart';
+import '../../bloc/onboarding/event.dart';
+import '../../repository/onboarding_repository.dart';
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
+class SignInPage extends StatelessWidget {
+  OnboardingRepository repository = OnboardingRepository();
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return BlocProvider(
+      create: (BuildContext context) => OnBoardingBlocBloc(repository)..add(InitEvent()),
+      child: Builder(builder: (context) => _buildPage(context)),
+    );
+  }
+
+  Widget _buildPage(BuildContext context) {
+    final bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+
+    return Container();
   }
 }
+

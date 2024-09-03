@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:provider/provider.dart';
+import 'package:utilitypoint/services/provider/providerWidget.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/utils/route.dart';
 import 'package:utilitypoint/view/splashScreen/splashScreen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers:ProviderWidget.blocProviders(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

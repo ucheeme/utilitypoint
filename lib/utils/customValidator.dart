@@ -1,6 +1,8 @@
 
 import 'package:get/get.dart';
 
+import '../bloc/onboarding/onBoardingValidator.dart';
+
 class CustomValidator {
   String? validatename(String? value) {
     RegExp pattern =  RegExp(r'^[a-zA-Z0-9]+$');
@@ -145,6 +147,22 @@ class CustomValidator {
     return null;
   }
 
+  String? validateConfirmPassword(String? value,){
+    String error ='';
+    if(value == null){
+      error = "";
+    }
+
+    if(value!=tempPassword){
+      error="Password does not match";
+    }
+    if (error == '') {
+      return null;
+    } else {
+      return error;
+    }
+  }
+
   String? validatePassword(String? value) {
     String error = '';
     if (value == null) {
@@ -230,7 +248,7 @@ class CustomValidator {
   }
 
   String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) return "Please enter your email";
+    if (value == null || value.isEmpty) return "";
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
