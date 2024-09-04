@@ -82,12 +82,12 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
     // Slide Animation
     _slideController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
 
     _slideControllerTop = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
     _slideAnimationTop = Tween<Offset>(
       begin: Offset(1.0, 0.0),
@@ -133,8 +133,13 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
     );
   }
   getBody(){
@@ -158,7 +163,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
               height: 678.72.h,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
-                color: AppColor.black0,
+                color: AppColor.primary20,
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: SizedBox(

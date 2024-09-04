@@ -46,11 +46,11 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
     // Slide Animation
     _slideController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 600),
     );
     _slideControllerTop = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
     _slideAnimationTop = Tween<Offset>(
       begin: Offset(1.0, 0.0),
@@ -105,8 +105,13 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
     );
   }
   getBody(){
@@ -129,7 +134,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
               height: 668.72.h,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
-                color: AppColor.black0,
+                color: AppColor.primary20,
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: Column(
@@ -201,12 +206,13 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
             enableActiveFill: true,
             autoFocus: true,
             length: 4,
+            showCursor: false,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly
             ],
             textStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700,color: AppColor.black100),
             obscureText: false,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
             animationType: AnimationType.fade,
             errorAnimationController: errorController,
             pinTheme: PinTheme(

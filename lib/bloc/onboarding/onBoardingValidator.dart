@@ -9,6 +9,7 @@ import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/customValidator.dart';
 
 import '../../utils/pages.dart';
+import '../../view/onboarding_screen/signUp/accountCreated.dart';
 import '../../view/onboarding_screen/signUp/verifyemail.dart';
 String tempPassword='';
 class OnboardingFormValidation{
@@ -154,6 +155,10 @@ class OnboardingFormValidation{
         }
       }
   );
+
+  setFirstNameTemp(){
+    firstNameTemp =_firstNameSubject.value;
+  }
 
   validateUserPassword(bool response, BuildContext context){
     if(response){

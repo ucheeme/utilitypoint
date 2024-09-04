@@ -43,12 +43,12 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
     // Slide Animation
     _slideController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
 
     _slideControllerTop = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
 
     _slideAnimationTop = Tween<Offset>(
@@ -113,7 +113,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
               height: 668.72.h,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
-                color: AppColor.black0,
+                color: AppColor.primary20,
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: SingleChildScrollView(
@@ -121,13 +121,13 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                   children: [
                    Gap(30.h),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 90),
+                      padding: EdgeInsets.symmetric(horizontal: 50),
                         height: 30.h,
                         child: pinCodeTextField(context: context)),
                     Gap(42.h),
                     CustomKeypad(controller: pinValueController),
                     height55,
-                    CustomButton(onTap: (){  Get.toNamed(Pages.accountCreated);}, buttonText: "Next", textfontSize: 16.sp,
+                    CustomButton(onTap: (){  Get.toNamed(Pages.accountCreated);}, buttonText: "Finish", textfontSize: 16.sp,
                       borderRadius: 8.r,
                       textColor: AppColor.black0,height:58.h,buttonColor: isCompleteOTP?AppColor.primary100:AppColor.primary40,),
                   ],
@@ -149,12 +149,14 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
             autoFocus: true,
             length: 4,
             obscuringCharacter: '●',
+            obscuringWidget: Container(height: 20.h,width: 40.w,
+                decoration:BoxDecoration(
+                    color: AppColor.primary100,shape: BoxShape.circle)),
             animationType: AnimationType.slide,
             controller: pinValueController,
             keyboardType: TextInputType.none,
             textStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700,color: AppColor.primary100),
             obscureText: true,
-            cursorColor: AppColor.black100,
             animationDuration: const Duration(microseconds: 300),
             errorAnimationController: errorController,
             pinTheme: PinTheme(
@@ -163,8 +165,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                 selectedFillColor: AppColor.primary20,
                 fieldOuterPadding: EdgeInsets.zero,
                 shape: PinCodeFieldShape.circle,
-                borderRadius: BorderRadius.circular(6.r),
-                fieldHeight: 30.h,
+                fieldHeight: 20.h,
                 fieldWidth: 40.w,
                 inactiveColor: AppColor.black100,
                 activeColor:isWrongOTP?AppColor.Error100:AppColor.primary80,

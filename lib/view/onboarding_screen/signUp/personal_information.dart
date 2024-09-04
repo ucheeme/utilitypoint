@@ -110,7 +110,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
               height: 668.72.h,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
-                color: AppColor.black0,
+                color: AppColor.primary20,
                 borderRadius: BorderRadius.circular(30.r),
               ),
               child: Column(
@@ -265,6 +265,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
                     stream: bloc.validation.completePersonalInformationFormValidation,
                     builder: (context, snapshot) {
                       return CustomButton(onTap: (){
+                        bloc.validation.setFirstNameTemp();
                         Get.toNamed(Pages.transactionPin);
                       }, buttonText: "Next",
                         textColor: AppColor.black0,

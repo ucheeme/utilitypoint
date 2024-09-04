@@ -83,7 +83,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
 
     _containerSizeAnimation = Tween<Size>(
       begin: Size(0.w, 50.h),
-      end: Size(Get.width, 383.72.h),
+      end: Size(Get.width, 388.72.h),
     ).animate(CurvedAnimation(
       parent: _containerController,
       curve: Curves.easeInOut,
@@ -154,8 +154,8 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                       width: _containerSizeAnimation.value.width,
                       height: _containerSizeAnimation.value.height,
                       decoration: BoxDecoration(
-                        color: AppColor.black0,
-                        borderRadius: BorderRadius.circular(30.r),
+                        color: AppColor.primary20,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
                       ),
                       child: SingleChildScrollView(
                         physics: NeverScrollableScrollPhysics(),
@@ -164,7 +164,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                           children: [
                             height40,
                             SizedBox(
-                              height: 85.h,
+                              height: 89.h,
                               width: 314.w,
                               child: Text(
                                 "Your Everyday Financial Hub!",

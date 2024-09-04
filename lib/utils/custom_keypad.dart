@@ -58,7 +58,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -80,7 +80,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -102,7 +102,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -132,7 +132,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -154,7 +154,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -176,7 +176,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -206,7 +206,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -228,7 +228,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -250,7 +250,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -280,7 +280,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
@@ -302,7 +302,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
                         width: 60.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColor.black20,
+                          color: AppColor.black0,
                         
                           // border: Border.all(color: kBlack)
                         ),
