@@ -5,14 +5,27 @@ import '../bloc/onboarding/onBoardingValidator.dart';
 
 class CustomValidator {
   String? validatename(String? value) {
-    RegExp pattern =  RegExp(r'^[a-zA-Z0-9]+$');
+    RegExp pattern = RegExp(r'\d');
 
     if (value == null || value.isEmpty) return "";
     if (value.length < 3) {
       return "At least 3 characters!";
     }
-    if(value.contains(pattern)){
+    if(pattern.hasMatch(value)){
       return "Name cannot have a digit";
+    }
+    if (value.length >= 20) {
+      return "The name must not be greater than 20 characters";
+    }
+    return null;
+  }
+
+  String? validateusername(String? value) {
+    RegExp pattern = RegExp(r'\d');
+
+    if (value == null || value.isEmpty) return "";
+    if (value.length < 3) {
+      return "At least 3 characters!";
     }
     if (value.length >= 20) {
       return "The name must not be greater than 20 characters";

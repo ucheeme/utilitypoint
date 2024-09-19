@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/text_style.dart';
@@ -39,15 +41,17 @@ class _CustomKeypadState extends State<CustomKeypad> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 314.w,
-      height: 380.h,
+     width: Get.width,
+      height: 390.h,
       child: SingleChildScrollView(
+        padding: EdgeInsets.zero,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 90.h,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: (){
@@ -121,7 +125,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
             Container(
               height: 80.h,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: (){
@@ -195,7 +199,7 @@ class _CustomKeypadState extends State<CustomKeypad> {
             Container(
               height: 80.h,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: (){
@@ -267,10 +271,12 @@ class _CustomKeypadState extends State<CustomKeypad> {
             ),
             height20,
             Container(
-              height: 70.h,
+              height: 80.h,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Container(width: 80.w,),
+                  Gap(28.w),
                   GestureDetector(
                     onTap: (){
                       _input("0");
@@ -298,8 +304,8 @@ class _CustomKeypadState extends State<CustomKeypad> {
                       _backspace();
                     },
                     child: Container(
-                        height: 60.h,
-                        width: 60.w,
+                        height: 80.h,
+                        width: 80.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColor.black0,

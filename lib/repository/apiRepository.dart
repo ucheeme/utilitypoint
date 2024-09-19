@@ -12,10 +12,9 @@ class DefaultRepository{
   DefaultApiResponse? get errorResponse => _errorResponse;
   setErrorResponse(DefaultApiResponse? value) {
     _errorResponse = value;
-    if (value?.error  != null){
-      DefaultErrorApiResponse res = defaultErrorApiResponseFromJson(
-          json.encode(value?.error));
-      if (res.id.isNotEmpty) {
+    if (value?.errors  != null){
+      var res = jsonDecode(value?.errors);
+      if (res['errors'].isNotEmpty) {
         _errorResponse?.message =
         "${res.publicMessage} ";
       }

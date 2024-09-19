@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 
 import '../../../bloc/onboarding/bloc.dart';
@@ -42,12 +43,12 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
     // Slide Animation
     _slideController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
 
     _slideControllerTop = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 600),
     );
 
     _slideAnimationTop = Tween<Offset>(
@@ -111,170 +112,176 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
-                borderRadius: BorderRadius.circular(30.r),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("First Name", style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp
-                  ),),
-                  height8,
-                  StreamBuilder<Object>(
-                      stream: bloc.validation.firstName,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("First Name", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.firstName,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "Enter first name",
+                            isTouched: bloc.validation.isFirstNameSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isLastNameSelected=false;
+                                bloc.validation.isUserNameSelected= false;
+                                bloc.validation.isPhoneNumberSelected= false;
+                                bloc.validation.isReferralCodeSelected= false;
+                                bloc.validation.isFirstNameSelected=!bloc.validation.isFirstNameSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setFirstName,
+                          );
+                        }
+                    ),
+                    height16,
+                    Text("Last Name", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.lastName,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "Enter last name",
+                            isTouched: bloc.validation.isLastNameSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isFirstNameSelected=false;
+                                bloc.validation.isUserNameSelected= false;
+                                bloc.validation.isPhoneNumberSelected= false;
+                                bloc.validation.isReferralCodeSelected= false;
+                                bloc.validation.isLastNameSelected=!bloc.validation.isLastNameSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setLastName,
+                          );
+                        }
+                    ),
+                    height16,
+                    Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.userName,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "Enter username",
+                            isTouched: bloc.validation.isUserNameSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isFirstNameSelected=false;
+                                bloc.validation.isLastNameSelected= false;
+                                bloc.validation.isPhoneNumberSelected= false;
+                                bloc.validation.isReferralCodeSelected= false;
+                                bloc.validation.isUserNameSelected=!bloc.validation.isUserNameSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setUserName,
+                          );
+                        }
+                    ),
+                    height16,
+                    Text("Phone Number", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.phoneNumber,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            prefixWidget:CountryCodePicker(
+                              initialSelection: "NG",
+                              dialogSize: Size(100.w, 229.h),
+                
+                            ) ,
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.phone,
+                            hintTxt: "+234 000 000 00",
+                            isTouched: bloc.validation.isPhoneNumberSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isFirstNameSelected=false;
+                                bloc.validation.isLastNameSelected= false;
+                                bloc.validation.isUserNameSelected= false;
+                                bloc.validation.isReferralCodeSelected= false;
+                                bloc.validation.isPhoneNumberSelected=!bloc.validation.isPhoneNumberSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setPhoneNumber,
+                          );
+                        }
+                    ),
+                    height16,
+                    Text("Referral Code (Optional)", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.referralCode,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "",
+                            isTouched: bloc.validation.isReferralCodeSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isFirstNameSelected=false;
+                                bloc.validation.isLastNameSelected= false;
+                                bloc.validation.isUserNameSelected= false;
+                                bloc.validation.isPhoneNumberSelected= false;
+                                bloc.validation.isReferralCodeSelected=!bloc.validation.isReferralCodeSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setReferralValue,
+                          );
+                        }
+                    ),
+                    height45,
+                    StreamBuilder<Object>(
+                      stream: bloc.validation.completePersonalInformationFormValidation,
                       builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "Enter first name",
-                          isTouched: bloc.validation.isFirstNameSelected,
-                          onTap: (){
-                            setState(() {
-                              bloc.validation.isLastNameSelected=false;
-                              bloc.validation.isUserNameSelected= false;
-                              bloc.validation.isPhoneNumberSelected= false;
-                              bloc.validation.isReferralCodeSelected= false;
-                              bloc.validation.isFirstNameSelected=!bloc.validation.isFirstNameSelected;
-                            });
-                          },
-                          onChanged:  bloc.validation.setFirstName,
-                        );
+                        return CustomButton(onTap: (){
+                         if (snapshot.hasData==true && snapshot.data!=null) {
+                           bloc.validation.setFirstNameTemp();
+                           Get.toNamed(Pages.transactionPin);
+                         }else{
+                          AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
+                         }
+                        }, buttonText: "Next",
+                          textColor: AppColor.black0,
+                          buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
+                          AppColor.primary100:AppColor.primary40,
+                        borderRadius: 8.r, height: 58.h,textfontSize:16.sp,);
                       }
-                  ),
-                  height16,
-                  Text("Last Name", style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp
-                  ),),
-                  height8,
-                  StreamBuilder<Object>(
-                      stream: bloc.validation.lastName,
-                      builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "Enter last name",
-                          isTouched: bloc.validation.isLastNameSelected,
-                          onTap: (){
-                            setState(() {
-                              bloc.validation.isFirstNameSelected=false;
-                              bloc.validation.isUserNameSelected= false;
-                              bloc.validation.isPhoneNumberSelected= false;
-                              bloc.validation.isReferralCodeSelected= false;
-                              bloc.validation.isLastNameSelected=!bloc.validation.isLastNameSelected;
-                            });
-                          },
-                          onChanged:  bloc.validation.setLastName,
-                        );
-                      }
-                  ),
-                  height16,
-                  Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp
-                  ),),
-                  height8,
-                  StreamBuilder<Object>(
-                      stream: bloc.validation.userName,
-                      builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "Enter username",
-                          isTouched: bloc.validation.isUserNameSelected,
-                          onTap: (){
-                            setState(() {
-                              bloc.validation.isFirstNameSelected=false;
-                              bloc.validation.isLastNameSelected= false;
-                              bloc.validation.isPhoneNumberSelected= false;
-                              bloc.validation.isReferralCodeSelected= false;
-                              bloc.validation.isUserNameSelected=!bloc.validation.isUserNameSelected;
-                            });
-                          },
-                          onChanged:  bloc.validation.setUserName,
-                        );
-                      }
-                  ),
-                  height16,
-                  Text("Phone Number", style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp
-                  ),),
-                  height8,
-                  StreamBuilder<Object>(
-                      stream: bloc.validation.userName,
-                      builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          prefixWidget:CountryCodePicker(
-                            initialSelection: "NG",
-                            dialogSize: Size(100.w, 229.h),
-
-                          ) ,
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "+234 000 000 00",
-                          isTouched: bloc.validation.isUserNameSelected,
-                          onTap: (){
-                            setState(() {
-                              bloc.validation.isFirstNameSelected=false;
-                              bloc.validation.isLastNameSelected= false;
-                              bloc.validation.isUserNameSelected= false;
-                              bloc.validation.isReferralCodeSelected= false;
-                              bloc.validation.isPhoneNumberSelected=!bloc.validation.isPhoneNumberSelected;
-                            });
-                          },
-                          onChanged:  bloc.validation.setPhoneNumber,
-                        );
-                      }
-                  ),
-                  height16,
-                  Text("Referral Code (Optional)", style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp
-                  ),),
-                  height8,
-                  StreamBuilder<Object>(
-                      stream: bloc.validation.userName,
-                      builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "",
-                          isTouched: bloc.validation.isUserNameSelected,
-                          onTap: (){
-                            setState(() {
-                              bloc.validation.isFirstNameSelected=false;
-                              bloc.validation.isLastNameSelected= false;
-                              bloc.validation.isUserNameSelected= false;
-                              bloc.validation.isPhoneNumberSelected= false;
-                              bloc.validation.isReferralCodeSelected=!bloc.validation.isReferralCodeSelected;
-                            });
-                          },
-                          onChanged:  bloc.validation.setPhoneNumber,
-                        );
-                      }
-                  ),
-                  height45,
-                  StreamBuilder<Object>(
-                    stream: bloc.validation.completePersonalInformationFormValidation,
-                    builder: (context, snapshot) {
-                      return CustomButton(onTap: (){
-                        bloc.validation.setFirstNameTemp();
-                        Get.toNamed(Pages.transactionPin);
-                      }, buttonText: "Next",
-                        textColor: AppColor.black0,
-                        buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
-                        AppColor.primary100:AppColor.primary40,
-                      borderRadius: 8.r, height: 58.h,textfontSize:16.sp,);
-                    }
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           )

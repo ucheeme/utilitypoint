@@ -9,30 +9,30 @@ DefaultApiResponse defaultApiResponseFromJson(String str) => DefaultApiResponse.
 String defaultApiResponseToJson(DefaultApiResponse data) => json.encode(data.toJson());
 
 class DefaultApiResponse {
-  int code;
-  dynamic data;
+  bool? status;
   String message;
-  DefaultErrorApiResponse? error;
+  dynamic data;
+  dynamic errors;
 
   DefaultApiResponse({
-    required this.code,
-    this.data,
+     this.status,
     required this.message,
-    this.error,
+     this.data,
+    this.errors
   });
 
   factory DefaultApiResponse.fromJson(Map<String, dynamic> json) => DefaultApiResponse(
-      code: json["code"],
-      data: json["data"],
-      message: json["message"],
-      error: json["error"]==null?null:DefaultErrorApiResponse.fromJson(json["error"])
+    status: json["status"],
+    message: json["message"],
+    data: json["data"],
+    errors: json["errors"]
   );
 
   Map<String, dynamic> toJson() => {
-    "code": code,
-    "data": data,
+    "status": status,
     "message": message,
-    "error": error,
+    "data": data,
+    "errors":errors
   };
 }
 
@@ -41,29 +41,18 @@ DefaultErrorApiResponse defaultErrorApiResponseFromJson(String str) => DefaultEr
 String defaultErrorApiResponseToJson(DefaultErrorApiResponse data) => json.encode(data.toJson());
 
 class DefaultErrorApiResponse {
-  String id;
-  String service;
-  String details;
-  String publicMessage;
+  List<String> email;
 
   DefaultErrorApiResponse({
-    required this.id,
-    required this.service,
-    required this.details,
-    required this.publicMessage,
+    required this.email,
   });
 
   factory DefaultErrorApiResponse.fromJson(Map<String, dynamic> json) => DefaultErrorApiResponse(
-    id: json["id"],
-    service: json["service"],
-    details: json["details"],
-    publicMessage: json["publicMessage"],
+    email: List<String>.from(json["email"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "service": service,
-    "details": details,
-    "publicMessage": publicMessage,
+    "email": List<dynamic>.from(email.map((x) => x)),
   };
 }
+

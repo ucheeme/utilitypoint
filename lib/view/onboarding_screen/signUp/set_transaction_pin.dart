@@ -114,7 +114,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
-                borderRadius: BorderRadius.circular(30.r),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -127,9 +127,15 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                     Gap(42.h),
                     CustomKeypad(controller: pinValueController),
                     height55,
-                    CustomButton(onTap: (){  Get.toNamed(Pages.accountCreated);}, buttonText: "Finish", textfontSize: 16.sp,
-                      borderRadius: 8.r,
-                      textColor: AppColor.black0,height:58.h,buttonColor: isCompleteOTP?AppColor.primary100:AppColor.primary40,),
+                    StreamBuilder<Object>(
+                      stream: bloc.validation.otpValue,
+                      builder: (context, snapshot) {
+                        return CustomButton(onTap: (){  Get.toNamed(Pages.accountCreated);}, buttonText: "Finish", textfontSize: 16.sp,
+                          borderRadius: 8.r,
+                          textColor: AppColor.black0,height:58.h,
+                          buttonColor: (snapshot.hasData==true && snapshot.data!=null)?AppColor.primary100:AppColor.primary40,);
+                      }
+                    ),
                   ],
                 ),
               ),
@@ -172,11 +178,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                 selectedColor:isWrongOTP?AppColor.Error100:AppColor.primary100,
                 errorBorderColor: AppColor.Error100
             ),
-            onChanged: (value) {
-              if(requiredNumber.length==4){
-
-              }
-            },
+            onChanged: bloc.validation.setOtpValue
           );
         }
     );

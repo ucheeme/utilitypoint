@@ -94,7 +94,7 @@ class CustomAppBar extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Get.back();
+            Get.back(canPop: false);
           },
           child: Container(
             height: 40.h,

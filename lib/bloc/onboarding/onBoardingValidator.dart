@@ -18,6 +18,8 @@ class OnboardingFormValidation{
   bool isFirstNameSelected = false;
   bool isLastNameSelected = false;
   bool isUserNameSelected = false;
+  bool isLoginUserNameSelected = false;
+  bool isLoginPasswordSelected = false;
   bool isPhoneNumberSelected = false;
   bool isReferralCodeSelected = false;
   bool isPasswordSelected = false;
@@ -49,6 +51,11 @@ class OnboardingFormValidation{
   final _lastNameSubject = BehaviorSubject<String>();
   final _userNameSubject = BehaviorSubject<String>();
   final _otpValueSubject = BehaviorSubject<String>();
+  final _referralCodeSubject = BehaviorSubject<String>();
+  final _loginUserNameSubject = BehaviorSubject<String>();
+  final _loginPasswordSubject = BehaviorSubject<String>();
+  final _forgotPasswordSubject = BehaviorSubject<String>();
+  final _forgotConfirmPasswordSubject = BehaviorSubject<String>();
 
   Function(String) get setEmail=> _emailSubject.sink.add;
   Function(String) get setConfirmPassword =>_confirmPasswordSubject.sink.add;
@@ -58,19 +65,31 @@ class OnboardingFormValidation{
   Function(String) get setLastName=> _lastNameSubject.sink.add;
   Function(String) get setUserName=> _userNameSubject.sink.add;
   Function(String) get setOtpValue => _otpValueSubject.sink.add;
+  Function(String) get setReferralValue => _referralCodeSubject.sink.add;
+  Function(String) get setLoginUserName => _loginUserNameSubject.sink.add;
+  Function(String) get setLoginPassword => _loginPasswordSubject.sink.add;
+  Function(String) get setForgetPassword => _forgotPasswordSubject.sink.add;
+  Function(String) get setForgetConfirmPassword => _forgotConfirmPasswordSubject.sink.add;
 
   Stream<String> get email => _emailSubject.stream.transform(validateEmail);
   Stream<String> get lastName => _lastNameSubject.stream.transform(validateFullName);
-  Stream<String> get userName => _userNameSubject.stream.transform(validateFullName);
+  Stream<String> get userName => _userNameSubject.stream.transform(validateUserName);
+  Stream<String> get loginUserName => _loginUserNameSubject.stream.transform(validateUserName);
   Stream<String> get phoneNumber => _phoneSubject.stream.transform(validatePhoneNumber);
   Stream<String> get firstName => _firstNameSubject.stream.transform(validateFullName);
   Stream<String> get password => _passwordSubject.stream.transform(validatePassword);
+  Stream<String> get loginPassword => _loginPasswordSubject.stream.transform(validatePassword);
+  Stream<String> get forgotPassword => _forgotPasswordSubject.stream.transform(validatePassword);
+  Stream<String> get referralCode => _referralCodeSubject.stream.transform(validateUserName);
   Stream<String> get confirmPassword => _confirmPasswordSubject.stream.transform(validateConfirmPassword);
+
   Stream<bool> get completeRegistrationFormValidation => Rx.combineLatest2(email, confirmPassword, (email, confirmPassword,) => true);
+  Stream<bool> get loginCompleteRegistrationFormValidation => Rx.combineLatest2(loginUserName, loginPassword,(loginUserName, loginPassword,) => true);
   Stream<bool> get completePersonalInformationFormValidation => Rx.combineLatest4(
       firstName, lastName,userName,phoneNumber, ( firstName, lastName,userName,phoneNumber,) => true);
   Stream<String> get otpValue =>
       _otpValueSubject.stream.transform(validateOtpValue);
+
   setEmailError(String? value) {
     _emailError = value;
   }
@@ -85,6 +104,7 @@ class OnboardingFormValidation{
   setTempPassword(String? value) {
     tempPassword= value!;
   }
+
   final validateFullName = StreamTransformer<String, String>.fromHandlers(
       handleData: (firstName, sink) {
         CustomValidator customValidator = CustomValidator();
@@ -98,15 +118,27 @@ class OnboardingFormValidation{
       }
   );
 
+
+  final validateUserName = StreamTransformer<String, String>.fromHandlers(
+      handleData: (firstName, sink) {
+        CustomValidator customValidator = CustomValidator();
+        if (customValidator.validateusername(firstName)!=null) {
+          customValidator.validateusername(firstName);
+          sink.addError(customValidator.validatename(firstName)!);
+        } else {
+
+          sink.add(firstName);
+        }
+      }
+  );
+
   final validatePassword = StreamTransformer<String, String>.fromHandlers(
       handleData: (value, sink) {
-        String password="";
         CustomValidator customValidator = CustomValidator();
         if (customValidator.validatePassword(value)!=null) {
           sink.addError(customValidator.validatePassword(value)!);
         } else {
           print("this is pasd");
-          password = value;
           sink.add(value);
         }
       }

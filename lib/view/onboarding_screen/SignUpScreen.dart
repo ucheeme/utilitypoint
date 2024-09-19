@@ -164,7 +164,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
-                borderRadius: BorderRadius.circular(30.r),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
               ),
               child: SizedBox(
                 height: 388.h,
@@ -223,10 +223,10 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                           },
                           child:Padding(
                             padding:  EdgeInsets.only(right: 16.w),
-                            child:  controller.isPasswordVisible? Icon(
-                              Icons.remove_red_eye_outlined,
-                              size: 30,
-                              color: AppColor.black100,
+                            child:  controller.isPasswordVisible? Image.asset(
+                              ic_eye_open,
+                              height: 24.h,
+                              width: 24.h,
                             ):Image.asset(
                               ic_eye_close,
                               height: 24.h,
@@ -342,10 +342,10 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                                   },
                                   child:Padding(
                                     padding:  EdgeInsets.only(right: 16.w),
-                                    child:  controller.isConfirmPasswordVisible? Icon(
-                                      Icons.remove_red_eye_outlined,
-                                      size: 30,
-                                      color: AppColor.black100,
+                                    child:  controller.isConfirmPasswordVisible? Image.asset(
+                                      ic_eye_open,
+                                      height: 24.h,
+                                      width: 24.h,
                                     ):Image.asset(
                                       ic_eye_close,
                                       height: 24.h,
@@ -354,7 +354,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                                   ),
                                 ),
                                 obsec: controller.isConfirmPasswordVisible,
-                                keyboardType:TextInputType.visiblePassword,
+                                keyboardType:TextInputType.text,
                                 onTap: (){
                                   setState(() {
                                     controller.isPasswordSelected= false;

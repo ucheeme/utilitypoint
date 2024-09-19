@@ -10,9 +10,11 @@ import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:flutter/src/painting/text_style.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 
 import '../../utils/app_color_constant.dart';
+import '../../utils/pages.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -118,7 +120,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
       body: Container(
         width: Get.width,
         height: Get.height,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColor.primary100,AppColor.primary10],
             stops: [0.0, 1.0,],
@@ -190,24 +192,28 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                                 ),
                               ),
                             ),
-                            height40,
+                            height35,
                             Padding(
                               padding:  EdgeInsets.symmetric(horizontal: 24.w),
                               child: CustomButton(
                                 height:58.h,
                                 onTap: (){
-                                  Get.to(SignUpCreateAccountScreen());
+                                  Get.toNamed(Pages.signup,);
                                 }, buttonText: "Register Now",
                                 textColor:AppColor.black0 ,
                                 buttonColor: AppColor.primary100,borderRadius: 8.r,),
                             ),
+                            height10,
                             Padding(
                               padding:  EdgeInsets.symmetric(horizontal: 24.w),
                               child: CustomButton(
                                 height:58.h,
-                                onTap: (){}, buttonText: "Already have an account",
+                                onTap: (){
+                                 Get.toNamed(Pages.login);
+                                 //Get.to(HomeScreen());
+                                }, buttonText: "Already have an account",
                                 textColor:AppColor.secondary100 ,
-                                buttonColor: AppColor.black0,borderRadius: 8.r,),
+                                buttonColor: Colors.transparent,borderRadius: 8.r,),
                             ),
                             height40
                           ],
