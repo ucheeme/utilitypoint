@@ -6,15 +6,20 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
-import 'package:utilitypoint/bloc/onboarding/onBoardingValidator.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
 
-import '../../bloc/onboarding/bloc.dart';
+
+import '../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../model/request/accountCreation.dart';
 import '../../utils/app_color_constant.dart';
+import '../../utils/app_util.dart';
+import '../../utils/pages.dart';
 
 class SignUpCreateAccountScreen extends StatefulWidget {
   const SignUpCreateAccountScreen({super.key});
@@ -73,7 +78,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   @override
   void initState() {
 
@@ -120,7 +125,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
   bool isLoading = false;
   bool isWrongOTP = false;
   bool isCompleteOTP=false;
-
+  CreateAccountRequest? request;
 
   @override
   void dispose() {
@@ -132,15 +137,40 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
 
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is AccountCreated){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.toNamed(Pages.otpVerification,);
+      });
+      bloc.initial();
+    }
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        body: appBodyDesign(getBody()),
+      child: OverlayLoaderWithAppIcon(
+        isLoading:state is OnboardingIsLoading,
+       overlayBackgroundColor: AppColor.black100,
+        circularProgressColor: AppColor.primary100,
+        appIconSize: 60.h,
+        appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+        child: Scaffold(
+          body: appBodyDesign(getBody()),
+        ),
       ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -424,7 +454,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                             height:58.h,
                             onTap: (){
                               (snapshot.hasData == true && snapshot.data != null)?
-                             controller.validateUserPassword(isAgreedPolicy, context):null;
+                              validateUserPassword(isAgreedPolicy, context):null;
                             }, buttonText: "Next",
                             textColor:AppColor.black0 ,
                             buttonColor:  (snapshot.hasData == true && snapshot.data != null)?AppColor.primary100:
@@ -441,5 +471,18 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
       ),
     );
   }
-
+  validateUserPassword(bool response, BuildContext context){
+    if(response){
+      _registerUser();
+    }else{
+      AppUtils.showInfoSnackFromBottom("Please accept privacy policy to proceed", context);
+    }
+  }
+  _registerUser(){
+    request =  controller.createAccountRequest();
+    print(request!.email);
+    print(request!.password);
+    print(request!.passwordConfirmation);
+    bloc.add(CreateUserAccountEvent(request!));
+  }
 }

@@ -1,26 +1,26 @@
 // To parse this JSON data, do
 //
-//     final accountCreated = accountCreatedFromJson(jsonString);
+//     final userInfoUpdated = userInfoUpdatedFromJson(jsonString);
 
 import 'dart:convert';
 
-AccountCreatedResponse accountCreatedFromJson(String str) => AccountCreatedResponse.fromJson(json.decode(str));
+UserInfoUpdated userInfoUpdatedFromJson(String str) => UserInfoUpdated.fromJson(json.decode(str));
 
-String accountCreatedToJson(AccountCreatedResponse data) => json.encode(data.toJson());
+String userInfoUpdatedToJson(UserInfoUpdated data) => json.encode(data.toJson());
 
-class AccountCreatedResponse {
+class UserInfoUpdated {
   String id;
-  dynamic firstName;
-  dynamic lastName;
-  dynamic userName;
+  String firstName;
+  String lastName;
+  String userName;
   String email;
-  dynamic dollarWallet;
-  dynamic nairaWallet;
+  String dollarWallet;
+  String nairaWallet;
   DateTime createdAt;
   DateTime updatedAt;
   String token;
 
-  AccountCreatedResponse({
+  UserInfoUpdated({
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -33,7 +33,7 @@ class AccountCreatedResponse {
     required this.token,
   });
 
-  factory AccountCreatedResponse.fromJson(Map<String, dynamic> json) => AccountCreatedResponse(
+  factory UserInfoUpdated.fromJson(Map<String, dynamic> json) => UserInfoUpdated(
     id: json["id"],
     firstName: json["first_name"],
     lastName: json["last_name"],

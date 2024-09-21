@@ -11,7 +11,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
 
-import '../../../bloc/onboarding/bloc.dart';
+import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/height.dart';
@@ -27,7 +27,7 @@ class Twofactorauthentication extends StatefulWidget {
 
 class _TwofactorauthenticationState extends State<Twofactorauthentication> with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   FocusNode _pinCodeFocusNode = FocusNode();
   bool activateKeyboard = false;
   String requiredNumber="";
@@ -64,7 +64,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
   }
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();

@@ -9,11 +9,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:utilitypoint/bloc/onboarding/bloc.dart';
+
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
+import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/reuseable_widget.dart';
 
@@ -36,7 +37,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   FocusNode _pinCodeFocusNode = FocusNode();
   bool activateKeyboard = false;
   @override
@@ -107,7 +108,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   }
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();

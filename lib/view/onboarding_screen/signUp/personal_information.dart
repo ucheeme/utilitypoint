@@ -9,7 +9,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 
-import '../../../bloc/onboarding/bloc.dart';
+import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/height.dart';
 import '../../../utils/reuseable_widget.dart';
@@ -34,7 +34,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   @override
   void initState() {
 
@@ -86,7 +86,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
 
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
     return Scaffold(
       body: appBodyDesign(getBody()),
     );

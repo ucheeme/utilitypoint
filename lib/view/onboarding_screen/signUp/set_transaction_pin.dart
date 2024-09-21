@@ -12,7 +12,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:utilitypoint/utils/height.dart';
 
-import '../../../bloc/onboarding/bloc.dart';
+import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/custom_keypad.dart';
 import '../../../utils/pages.dart';
@@ -34,7 +34,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
   late Animation<Offset> _slideAnimation;
   late Animation<Offset> _slideAnimationTop;
 
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
@@ -88,7 +88,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
     return Scaffold(
       body: appBodyDesign(getBody()),
     );

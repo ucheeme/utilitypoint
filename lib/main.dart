@@ -38,11 +38,14 @@ void mainCommon(AppFlavorConfig config) async{
   runApp(MultiProvider(providers:ProviderWidget.blocProviders(),
       child: const MyApp()));
 }
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+var sessionExpired = false;
+var requireUpdate = false;
+const isProduction = true;
+String userToken="";
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

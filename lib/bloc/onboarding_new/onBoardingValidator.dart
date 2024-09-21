@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/customValidator.dart';
 
+import '../../model/request/accountCreation.dart';
 import '../../utils/pages.dart';
 import '../../view/onboarding_screen/signUp/accountCreated.dart';
 import '../../view/onboarding_screen/signUp/verifyemail.dart';
@@ -192,13 +193,7 @@ class OnboardingFormValidation{
     firstNameTemp =_firstNameSubject.value;
   }
 
-  validateUserPassword(bool response, BuildContext context){
-    if(response){
-      gett.Get.toNamed(Pages.otpVerification,);
-    }else{
-      AppUtils.showInfoSnackFromBottom("Please accept privacy policy to proceed", context);
-    }
-  }
+
 
   bool validatePasswords(){
     if(passwordController.text==_confirmPasswordSubject.value ){
@@ -221,4 +216,13 @@ class OnboardingFormValidation{
 
     return containsSymbol && containsNumber && hasValidLength;
   }
+
+  CreateAccountRequest createAccountRequest(){
+    print("I am here");
+    return CreateAccountRequest(
+        email: _emailSubject.value,
+        password: passwordController.text,
+        passwordConfirmation: _confirmPasswordSubject.value.trim());
+  }
+
 }

@@ -192,9 +192,9 @@ class CustomizedTextField extends StatelessWidget {
           prefixText: prefix,
           prefixIcon: prefixWidget ?? const SizedBox.shrink(),
           prefixIconConstraints: suffixIconConstraints ??
-              const BoxConstraints(minWidth: 19, minHeight: 19,),
+               BoxConstraints(minWidth: 19.w, minHeight: 19.h,),
           suffixIconConstraints: suffixIconConstraints ??
-              const BoxConstraints(minWidth: 19, minHeight: 19,),
+               BoxConstraints(minWidth: 19.w, minHeight: 19.h),
           suffixIcon: surffixWidget ?? const SizedBox.shrink(),
           fillColor: isTouched ? AppColor.primary20 : AppColor.black0,
           filled: true,

@@ -3,14 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-import '../../bloc/onboarding/bloc.dart';
+
+import '../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../repository/onboarding_repository.dart';
 
 class ProviderWidget{
   static List<SingleChildWidget>blocProviders(){
     return [
        ChangeNotifierProvider<NavItemProvider>(create: (_) => NavItemProvider()),
-      BlocProvider(create: (BuildContext context)=>OnBoardingBlocBloc(OnboardingRepository())),
+      BlocProvider(
+          create: (BuildContext context)=>
+              OnboardNewBloc(onboardingRepository: OnboardingRepository(),)
+      ),
     ];
   }
 }

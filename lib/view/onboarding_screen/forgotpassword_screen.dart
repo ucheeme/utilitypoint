@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
-import '../../bloc/onboarding/bloc.dart';
+import '../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
@@ -21,7 +21,7 @@ class ForgotpasswordScreen extends StatefulWidget {
 
 class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
-  late OnBoardingBlocBloc bloc;
+  late OnboardNewBloc bloc;
   @override
   void initState() {
     super.initState();
@@ -38,7 +38,7 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
   bool passwordVisible = false;
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBlocBloc>(context);
+    bloc = BlocProvider.of<OnboardNewBloc>(context);
     return Scaffold(
       body: appBodyDesign(getBody()),
     );

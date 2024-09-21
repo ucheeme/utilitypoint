@@ -1,7 +1,7 @@
 
 import 'package:get/get.dart';
 
-import '../bloc/onboarding/onBoardingValidator.dart';
+import '../bloc/onboarding_new/onBoardingValidator.dart';
 
 class CustomValidator {
   String? validatename(String? value) {
