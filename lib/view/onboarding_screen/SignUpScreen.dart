@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
+import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
@@ -17,8 +18,10 @@ import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../model/request/accountCreation.dart';
+import '../../services/api_service.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
+import '../../utils/globalData.dart';
 import '../../utils/pages.dart';
 
 class SignUpCreateAccountScreen extends StatefulWidget {
@@ -141,7 +144,10 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
     return BlocBuilder<OnboardNewBloc, OnboardNewState>(
   builder: (context, state) {
     if (state is AccountCreated){
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await GlobalData().setUserId(state.response.id);
+        accessToken= state.response.token;
+        userId=state.response.id;
         Get.toNamed(Pages.otpVerification,);
       });
       bloc.initial();
@@ -160,7 +166,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
       },
       child: OverlayLoaderWithAppIcon(
         isLoading:state is OnboardingIsLoading,
-       overlayBackgroundColor: AppColor.black100,
+       overlayBackgroundColor: AppColor.black40,
         circularProgressColor: AppColor.primary100,
         appIconSize: 60.h,
         appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),

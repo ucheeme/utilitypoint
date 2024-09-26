@@ -49,6 +49,13 @@ class TransactionPinSet extends OnboardNewState{
   List<Object?> get props =>[response];
 }
 
+class PinChanged extends OnboardNewState{
+  DefaultApiResponse response;
+  PinChanged(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
 class ForgotPasswordSuccess extends OnboardNewState{
   DefaultApiResponse response;
   ForgotPasswordSuccess(this.response);
@@ -66,6 +73,13 @@ class UserInfoUpdatedState extends OnboardNewState{
 class LoggedinUser extends OnboardNewState{
   UserInfoUpdated response;
   LoggedinUser(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class TwoFactorAuthenticated extends OnboardNewState{
+  UserInfoUpdated response;
+  TwoFactorAuthenticated(this.response);
   @override
   List<Object?> get props =>[response];
 }

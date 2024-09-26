@@ -6,7 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
+import 'package:utilitypoint/services/api_service.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../model/response/userInfoUpdated.dart';
 import '../../../repository/onboarding_repository.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
@@ -16,7 +20,7 @@ import '../../../utils/image_paths.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
-
+UserInfoUpdated? loginResponse;
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -44,9 +48,43 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
      bloc = BlocProvider.of<OnboardNewBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          //Get.toNamed(Pages.twoFactorAuthentication);
+          if(state.errorResponse.message.toLowerCase().contains("email not verified")){
+           // Get.toNamed(Pages.otpVerification);
+          }
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
+    if (state is LoggedinUser){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        userId = state.response.id;
+        accessToken = state.response.token;
+        loginResponse = state.response;
+        Get.toNamed(Pages.twoFactorAuthentication);
+      });
+      bloc.initial();
+    }
+
+
+    return OverlayLoaderWithAppIcon(
+      isLoading:state is OnboardingIsLoading,
+      overlayBackgroundColor: AppColor.black40,
+      circularProgressColor: AppColor.primary100,
+      appIconSize: 60.h,
+      appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -144,9 +182,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                           return CustomButton(
                             onTap: (){
                             if (snapshot.hasData==true && snapshot.data!=null) {
-                              Get.toNamed(Pages.twoFactorAuthentication);
-                            }else{
-                              Get.toNamed(Pages.twoFactorAuthentication);
+                              bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
                               //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
                             }
                           },

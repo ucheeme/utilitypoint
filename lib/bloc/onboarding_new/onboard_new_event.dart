@@ -32,6 +32,13 @@ class SetTransactionEvent extends OnboardNewEvent{
   List<Object?> get props => [];
 }
 
+class ChangePinEvent extends OnboardNewEvent{
+  final ChangePinRequest request;
+  const ChangePinEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
 class SetUserInfoEvent extends OnboardNewEvent{
   final UpdateUser request;
   const SetUserInfoEvent(this.request);

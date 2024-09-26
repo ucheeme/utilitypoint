@@ -120,3 +120,16 @@ class NavCustomClipper extends CustomClipper<Rect> {
     return oldClipper.deviceHeight != deviceHeight;
   }
 }
+
+class CurvedClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    return Path()
+      ..quadraticBezierTo(size.width * 0.5, kToolbarHeight, size.width, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height);
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+}

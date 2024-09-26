@@ -11,6 +11,7 @@ import '../../../utils/custom_keypad.dart';
 import '../../../utils/height.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
+import '../../bottomNav.dart';
 
 String firstNameTemp ="";
 class WelcomeScreen extends StatefulWidget {
@@ -134,7 +135,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>with TickerProviderStateMi
                       child: CustomButton(
                         buttonColor:AppColor.primary100,
                         textColor: AppColor.black0,
-                        onTap: () {  },
+                        onTap: () { Get.offAll(MyBottomNav(), predicate: (route) => false); },
                         buttonText: "Continue to Home",
                         height: 58.h,
                         borderRadius: 8.r,

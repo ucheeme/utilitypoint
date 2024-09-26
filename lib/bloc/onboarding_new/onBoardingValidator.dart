@@ -5,20 +5,35 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'as gett;
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:utilitypoint/model/request/loginRequest.dart';
+import 'package:utilitypoint/model/request/setTransactionPin.dart';
+import 'package:utilitypoint/model/request/verifyEmailRequest.dart';
 import 'package:utilitypoint/utils/app_util.dart';
+import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/customValidator.dart';
+import 'package:utilitypoint/utils/globalData.dart';
 
 import '../../model/request/accountCreation.dart';
+import '../../model/request/changePin.dart';
+import '../../model/request/twoFactorAuthenticationRequest.dart';
+import '../../model/request/updateUserInfo.dart';
+import '../../utils/device_util.dart';
 import '../../utils/pages.dart';
 import '../../view/onboarding_screen/signUp/accountCreated.dart';
 import '../../view/onboarding_screen/signUp/verifyemail.dart';
 String tempPassword='';
+String? userId="";
 class OnboardingFormValidation{
   TextEditingController passwordController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
+  TextEditingController transactionPinController = TextEditingController();
+  TextEditingController twoFactorController = TextEditingController();
   bool isEmailSelected = false;
   bool isFirstNameSelected = false;
   bool isLastNameSelected = false;
   bool isUserNameSelected = false;
+  bool isWrongOTP = false;
+  bool isCompleteOTP=false;
   bool isLoginUserNameSelected = false;
   bool isLoginPasswordSelected = false;
   bool isPhoneNumberSelected = false;
@@ -172,7 +187,7 @@ class OnboardingFormValidation{
       handleData: (value, sink) {
         if (!value.isNumericOnly) {
           sink.addError('Enter only number');
-        } else {
+        } else if(value.isNumericOnly&&value.length==4){
           sink.add(value);
         }
       }
@@ -218,11 +233,61 @@ class OnboardingFormValidation{
   }
 
   CreateAccountRequest createAccountRequest(){
-    print("I am here");
     return CreateAccountRequest(
-        email: _emailSubject.value,
-        password: passwordController.text,
+        email: _emailSubject.value.toLowerCase(),
+        password: passwordController.text.trim(),
         passwordConfirmation: _confirmPasswordSubject.value.trim());
+  }
+
+
+
+  VerifiedEmailRequest verifiedEmailRequest() {
+    return VerifiedEmailRequest(
+      userId:userId,
+      otp: otpController.text
+    );
+  }
+
+  VerifiedEmailRequest resendVerifiedEmailRequest() {
+    return VerifiedEmailRequest(
+        userId:userId,
+    );
+  }
+
+  UpdateUser userInfo(){
+    return UpdateUser(
+        userId: userId!,
+        firstName: _firstNameSubject.value.trim(),
+        lastName: _lastNameSubject.value.trim(),
+        otherNames: "",
+        userName: _userNameSubject.value.trim(),
+        phoneNumber: _phoneSubject.value.trim());
+  }
+
+  SetTransactionPinRequest setTransactionPinRequest(){
+    return SetTransactionPinRequest(
+        userId: userId!,
+        pin: transactionPinController.text,
+        confirmPin: transactionPinController.text);
+  }
+
+  LoginUserRequest loginUserRequest(){
+    return LoginUserRequest(
+        userName: _loginUserNameSubject.value,
+        password: _loginPasswordSubject.value,
+        deviceName:deviceName);
+  }
+  TwoFactorAuthenticationRequest twoFactorAuthenticationRequest() {
+   return TwoFactorAuthenticationRequest(userId: userId!,
+        twoFactorCode: twoFactorController.text);
+  }
+  ChangePinRequest changePinRequest(){
+    return ChangePinRequest(
+      userId: userId!,
+      currentPin: '1234',
+      newPin: transactionPinController.text,
+      confirmNewPin: transactionPinController.text,
+    );
   }
 
 }

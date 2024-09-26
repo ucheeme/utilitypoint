@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import 'package:utilitypoint/utils/height.dart';
@@ -15,7 +16,9 @@ import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../model/defaultModel.dart';
 import '../../../utils/app_color_constant.dart';
+import '../../../utils/app_util.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -109,14 +112,47 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnboardNewBloc>(context);
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is EmailVerified){
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        Get.toNamed(Pages.personalInformation);
+      });
+      bloc.initial();
+    }
+    if (state is ReSentEmailVerification){
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        AppUtils.showInfoSnack(state.response.message, context);
+      });
+      bloc.initial();
+    }
+
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          //Get.toNamed(Pages.personalInformation);
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        body: appBodyDesign(getBody()),
+      child: OverlayLoaderWithAppIcon(
+        isLoading:state is OnboardingIsLoading,
+        overlayBackgroundColor: AppColor.black40,
+        circularProgressColor: AppColor.primary100,
+        appIconSize: 60.h,
+        appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+        child: Scaffold(
+          body: appBodyDesign(getBody()),
+        ),
       ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -164,9 +200,14 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
                     ),),
                   ),
                   height63,
-                  CustomButton(onTap: (){  Get.toNamed(Pages.personalInformation);}, buttonText: "Next", textfontSize: 16.sp,
+                  CustomButton(
+                    onTap: (){_verifyEmail();},
+                    buttonText: "Next",
+                    textfontSize: 16.sp,
                     borderRadius: 8.r,
-                  textColor: AppColor.black0,height:58.h,buttonColor: isCompleteOTP?AppColor.primary100:AppColor.primary40,),
+                    textColor: AppColor.black0,
+                    height:58.h,
+                    buttonColor: isCompleteOTP?AppColor.primary100:AppColor.primary40,),
                   height16,
                   Text("Didn't get code?", style: CustomTextStyle.kTxtBold.copyWith(
                     color: AppColor.black100,fontSize: 14.sp,
@@ -182,12 +223,15 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
                           if(_start ==0){
                             setState(() {_start=60;});
                             startTimer();
-                          //  bloc.add(ResendOtp(bloc.validation.resendOtp()));
+                            _resendVerificationCodeEmail();
                           }
 
                         },
                         child: Text("Resend",
-                          style: CustomTextStyle.kTxtMedium.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: _start !=0? AppColor.primary100: AppColor.primary40 ),textAlign: TextAlign.center,),
+                          style: CustomTextStyle.kTxtMedium.copyWith(
+                              fontWeight: _start ==0?FontWeight.bold:FontWeight.w400,
+                              fontSize: 14.sp,
+                              color: _start ==0? AppColor.primary100: AppColor.primary40 ),textAlign: TextAlign.center,),
                       ),
                     ],
                   ),
@@ -206,6 +250,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
+            controller: bloc.validation.otpController,
             focusNode: _pinCodeFocusNode,
             onTap: (){
               setState(() {
@@ -241,27 +286,27 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
               errorBorderColor: AppColor.Error100
             ),
             animationDuration: const Duration(milliseconds: 300),
-            onChanged: (value) {
+            onChanged:(value){
               setState(() {
                 requiredNumber = value;
               });
               if(requiredNumber.length==4){
-                if(value=="5555"){
-                  setState(() {
-                    isWrongOTP=true;
-                  });
-                }else{
-                  setState(() {
-                    isWrongOTP=false;
-                  });
-
-                }
+                // if(value=="5555"){
+                //   setState(() {
+                //     isWrongOTP=true;
+                //   });
+                // }else{
+                //   setState(() {
+                //     isWrongOTP=false;
+                //   });
+                //
+                // }
                 setState(() {
                   isCompleteOTP=true;
                 });
 
               }
-            },
+            }
           );
         }
     );
@@ -285,5 +330,13 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
         }
       },
     );
+  }
+
+  _verifyEmail(){
+
+    bloc.add(VerifyUserEmailEvent(bloc.validation.verifiedEmailRequest()));
+  }
+  _resendVerificationCodeEmail(){
+    bloc.add(ResendEmailVerificationCodeEvent(bloc.validation.resendVerifiedEmailRequest()));
   }
 }

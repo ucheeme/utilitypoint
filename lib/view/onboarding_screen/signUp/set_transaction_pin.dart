@@ -9,11 +9,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:utilitypoint/utils/height.dart';
 
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
+import '../../../utils/app_util.dart';
 import '../../../utils/custom_keypad.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
@@ -29,8 +31,8 @@ class SetTransactionPin extends StatefulWidget {
 class _SetTransactionPinState extends State<SetTransactionPin> with TickerProviderStateMixin {
   late AnimationController _slideController;
   late AnimationController _slideControllerTop;
-  TextEditingController pinValueController=TextEditingController();
-  TextEditingController ttController=TextEditingController();
+ // TextEditingController pinValueController=TextEditingController();
+ // TextEditingController ttController=TextEditingController();
   late Animation<Offset> _slideAnimation;
   late Animation<Offset> _slideAnimationTop;
 
@@ -89,9 +91,53 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnboardNewBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is UserInfoUpdatedState){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          // Get.toNamed(Pages.personalInformation);
+          Get.toNamed(Pages.accountCreated);
+        });
+      });
+      bloc.initial();
+    }
+
+    if (state is PinChanged){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          // Get.toNamed(Pages.personalInformation);
+          Get.toNamed(Pages.accountCreated);
+        });
+      });
+      bloc.initial();
+    }
+
+    if (state is OnBoardingError){
+      //Get.toNamed(Pages.accountCreated);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          // Get.toNamed(Pages.personalInformation);
+          if(state.errorResponse.message.toLowerCase().contains("sorry you have already set a pin for your account")){
+            bloc.add(ChangePinEvent(bloc.validation.changePinRequest()));
+          }
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
+    return OverlayLoaderWithAppIcon(
+        isLoading:state is OnboardingIsLoading,
+        overlayBackgroundColor: AppColor.black40,
+        circularProgressColor: AppColor.primary100,
+        appIconSize: 60.h,
+        appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -125,12 +171,14 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                         height: 30.h,
                         child: pinCodeTextField(context: context)),
                     Gap(42.h),
-                    CustomKeypad(controller: pinValueController),
+                    CustomKeypad(controller: bloc.validation.transactionPinController),
                     height55,
                     StreamBuilder<Object>(
                       stream: bloc.validation.otpValue,
                       builder: (context, snapshot) {
-                        return CustomButton(onTap: (){  Get.toNamed(Pages.accountCreated);}, buttonText: "Finish", textfontSize: 16.sp,
+                        return CustomButton(onTap: () {
+                          _setTransactionPin();
+                        }, buttonText: "Finish", textfontSize: 16.sp,
                           borderRadius: 8.r,
                           textColor: AppColor.black0,height:58.h,
                           buttonColor: (snapshot.hasData==true && snapshot.data!=null)?AppColor.primary100:AppColor.primary40,);
@@ -159,7 +207,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
                 decoration:BoxDecoration(
                     color: AppColor.primary100,shape: BoxShape.circle)),
             animationType: AnimationType.slide,
-            controller: pinValueController,
+            controller: bloc.validation.transactionPinController,
             keyboardType: TextInputType.none,
             textStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700,color: AppColor.primary100),
             obscureText: true,
@@ -183,5 +231,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
         }
     );
   }
-
+_setTransactionPin(){
+    bloc.add(SetTransactionEvent(bloc.validation.setTransactionPinRequest()));
+}
 }

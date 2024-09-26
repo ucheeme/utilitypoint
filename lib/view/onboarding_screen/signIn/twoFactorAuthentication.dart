@@ -8,15 +8,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:utilitypoint/model/request/twoFactorAuthenticationRequest.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
 
+import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/app_color_constant.dart';
+import '../../../utils/app_util.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/height.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
+import 'login_screen.dart';
 
 class Twofactorauthentication extends StatefulWidget {
   const Twofactorauthentication({super.key});
@@ -65,14 +71,42 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnboardNewBloc>(context);
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
+    if (state is TwoFactorAuthenticated){
+        userId = state.response.id;
+        accessToken = state.response.token;
+        loginResponse = state.response;
+      //  Get.offAll(()=>MyBottomNav());
+
+      bloc.initial();
+    }
+
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        body: appBodyDesign(getBody()),
+      child: OverlayLoaderWithAppIcon(
+        isLoading:state is OnboardingIsLoading,
+        overlayBackgroundColor: AppColor.black40,
+        circularProgressColor: AppColor.primary100,
+        appIconSize: 60.h,
+        appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+        child: Scaffold(
+          body: appBodyDesign(getBody()),
+        ),
       ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -121,7 +155,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
                   ),
                   Gap(44.h),
                   CustomButton(onTap: (){
-
+                    _logIn();
                   }, buttonText: "Log In", textfontSize: 16.sp,
                     borderRadius: 8.r,
                     textColor: AppColor.black0,height:58.h,buttonColor: isCompleteOTP?AppColor.primary100:AppColor.primary40,),
@@ -164,6 +198,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
+            controller: bloc.validation.twoFactorController,
             focusNode: _pinCodeFocusNode,
             onTap: (){
               setState(() {
@@ -204,27 +239,29 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
                 requiredNumber = value;
               });
               if(requiredNumber.length==4){
-                if(value=="5555"){
-                  setState(() {
-                    isWrongOTP=true;
-                  });
-                }
-                else{
-                  setState(() {
-                    isWrongOTP=false;
-                  });
+
+                  // setState(() {
+                  //   isWrongOTP=false;
+                  // });
                   setState(() {
                     isCompleteOTP=true;
                   });
-                  Get.offAll(MyBottomNav(), predicate: (route) => false);
-                }
+
               }
+
             },
           );
         }
     );
   }
 
+  _logIn(){
+
+    bloc.add(LoginUserTwoFactorAuthenticationEvent(
+      bloc.validation.twoFactorAuthenticationRequest()
+      )
+    );
+  }
 
   void startTimer() {
     const oneSec = Duration(seconds: 1);

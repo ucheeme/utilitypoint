@@ -32,6 +32,7 @@ class ApiService {
   }
 
   static Map<String, String> header(bool requireAccess) {
+
     return requireAccess
         ? {
       HttpHeaders.userAgentHeader: 'dio',

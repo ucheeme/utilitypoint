@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 
@@ -87,9 +88,40 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnboardNewBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+
+    if (state is UserInfoUpdatedState){
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        Get.toNamed(Pages.transactionPin);
+      });
+      bloc.initial();
+    }
+
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+        // Get.toNamed(Pages.personalInformation);
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
+    return GestureDetector(
+      onTap: ()=> FocusScope.of(context).unfocus(),
+      child: OverlayLoaderWithAppIcon(
+        isLoading:state is OnboardingIsLoading,
+        overlayBackgroundColor: AppColor.black40,
+        circularProgressColor: AppColor.primary100,
+        appIconSize: 60.h,
+        appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+        child: Scaffold(
+          body: appBodyDesign(getBody()),
+        ),
+      ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -269,7 +301,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
                         return CustomButton(onTap: (){
                          if (snapshot.hasData==true && snapshot.data!=null) {
                            bloc.validation.setFirstNameTemp();
-                           Get.toNamed(Pages.transactionPin);
+                           _createUserInfo();
                          }else{
                           AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
                          }
@@ -288,5 +320,8 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
         ],
       ),
     );
+  }
+  _createUserInfo(){
+    bloc.add(SetUserInfoEvent(bloc.validation.userInfo()));
   }
 }

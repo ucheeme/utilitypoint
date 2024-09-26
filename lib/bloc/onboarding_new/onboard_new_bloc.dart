@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:utilitypoint/model/request/changePin.dart';
 
 import '../../model/defaultModel.dart';
 import '../../model/request/accountCreation.dart';
@@ -33,7 +34,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     on<ForgotPasswordEvent>((event, emit)async{handleForgotPassword(event.request);});
     on<LoginUserTwoFactorAuthenticationEvent>((event, emit)async{handleTwoFactorAuthentication(event.request);});
     on<ResendTwoFactorAuthenticatorEvent>((event, emit)async{handleResendTwoFactorAuthentication(event.request);});
-
+    on<ChangePinEvent>((event, emit)async{handleChangePin(event.request);});
   }
   void handleAccountCreateEvent(event)async{
     emit(OnboardingIsLoading());
@@ -78,7 +79,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       final   response = await onboardingRepository.resendVerificationCode(event);
       if (response is DefaultApiResponse) {
         if(response.status==true){
-          emit(EmailVerified(response));
+          emit(ReSentEmailVerification(response));
           AppUtils.debug("success");
         }else{
           emit(OnBoardingError(response as DefaultApiResponse));
@@ -171,14 +172,10 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     emit(OnboardingIsLoading());
     try {
       final   response = await onboardingRepository.twoFactorAuthentication(event);
-      if (response is DefaultApiResponse) {
-        if(response.status== true){
-          emit(ForgotPasswordSuccess(response));
+      if (response is UserInfoUpdated) {
+          emit(TwoFactorAuthenticated(response));
           AppUtils.debug("success");
-        }else{
-          emit(OnBoardingError(response as DefaultApiResponse));
-          AppUtils.debug("error");
-        }
+
       }else{
         emit(OnBoardingError(response as DefaultApiResponse));
         AppUtils.debug("error");
@@ -210,6 +207,27 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     }
   }
 
+  void handleChangePin(ChangePinRequest event)async{
+    emit(OnboardingIsLoading());
+    try {
+      final   response = await onboardingRepository.changeTransactionPin(event);
+      if (response is DefaultApiResponse) {
+        if(response.status== true){
+          emit(PinChanged(response));
+          AppUtils.debug("success");
+        }else{
+          emit(OnBoardingError(response as DefaultApiResponse));
+          AppUtils.debug("error");
+        }
+      }else{
+        emit(OnBoardingError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
 
 
   initial(){

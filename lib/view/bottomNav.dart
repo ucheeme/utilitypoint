@@ -1,8 +1,10 @@
+import 'package:camera/camera.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/fundWallet/fund_wallet.dart';
@@ -12,6 +14,7 @@ import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import '../utils/app_color_constant.dart';
 import '../utils/customClipPath.dart';
+import '../utils/myCustomCamera/myCameraScreen.dart';
 
 class MyBottomNav extends StatefulWidget {
   @override
@@ -19,103 +22,240 @@ class MyBottomNav extends StatefulWidget {
 }
 
 class _MyBottomNavState extends State<MyBottomNav> {
-  int _selectedIndex = 0;
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    Container(color: const Color(0xFFF5F8FE),),
+    Container(color: Colors.red,),
+    Container(color: Colors.greenAccent,), // Screen displayed when the Floating Action Button is tapped
+    Container(color: Colors.purpleAccent,),
+    Container(color: Colors.yellow,),
+  ];
+  late List<CameraDescription> cameras;
+  @override
+  void initState() {
+    // Get the list of available cameras
+
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_currentIndex],
+      extendBody: true,
+      floatingActionButton: GestureDetector(
+        onTap: () async {
+          cameras = await availableCameras();
+          setState(() {
+            _currentIndex = 2; // Set index to display the Center screen
+          });
+        },
+        child: customerRoundItemBtn(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
+        height: 83.h,
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 12.r,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            itemWidget(onTap: () {
+              setState(() {
+                _currentIndex = 0; // Navigate to Screen 1
+              });},
+                image: _currentIndex == 0?"assets/home_active.png":"assets/home_inactive.png",
+                title: "Home", active: _currentIndex == 0
+            ),
+
+            itemWidget(onTap: () {
+              setState(() {
+                _currentIndex = 1; // Navigate to Screen 2
+              });},
+                image:_currentIndex == 1?"assets/home_active.png":"assets/transaction_inactive.png",
+                title: "Transactions",
+                active: _currentIndex == 1
+            ),
+            SizedBox(width: 30.w), // Space for the Floating Action Button
+            itemWidget(onTap: () {
+              setState(() {
+                _currentIndex = 3; // Navigate to Screen 4
+              });},
+                image: "assets/home_active.png",
+                title: "Fund Wallet",
+                active: _currentIndex == 3
+            ),
+            itemWidget(onTap: () {
+              setState(() {
+                _currentIndex = 4; // Navigate to Screen 5
+              });},
+                image: "assets/home_active.png", title: "Profile",
+                active: _currentIndex == 4
+            ),
+          ],
+        ),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //   padding: const EdgeInsets.symmetric(horizontal: 10),
+      //   height: 60,
+      //   color: Colors.cyan.shade400,
+      //   shape: const CircularNotchedRectangle(),
+      //   notchMargin: 5,
+      //   child: Row(
+      //     mainAxisSize: MainAxisSize.max,
+      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //     children: <Widget>[
+      //       IconButton(
+      //         icon: const Icon(
+      //           Icons.menu,
+      //           color: Colors.black,
+      //         ),
+      //         onPressed: () {},
+      //       ),
+      //       IconButton(
+      //         icon: const Icon(
+      //           Icons.search,
+      //           color: Colors.black,
+      //         ),
+      //         onPressed: () {},
+      //       ),
+      //       IconButton(
+      //         icon: const Icon(
+      //           Icons.print,
+      //           color: Colors.black,
+      //         ),
+      //         onPressed: () {},
+      //       ),
+      //       IconButton(
+      //         icon: const Icon(
+      //           Icons.people,
+      //           color: Colors.black,
+      //         ),
+      //         onPressed: () {},
+      //       ),
+      //     ],
+      //   ),
+      // ),
+    );
+  }
+
+  Container customerRoundItemBtn() {
+    return Container(
+      width: 76.h,height: 76.h,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF134DB0),
+            Color(0xFF08204A),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        boxShadow: [
+          BoxShadow(color: Color(0xFF08204A).withOpacity(0.30),
+              offset: Offset(0, 15),
+              blurRadius: 30, spreadRadius: 1)],
+      ),
+      child: Center(child:
+      Image.asset("assets/float_icon.png",
+        width: 24.w,height: 24.h,fit: BoxFit.contain,)),
+    );
+  }
+
+  GestureDetector itemWidget({required Function() onTap, required String title, required String image, required bool active}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(image,
+              width: 20.h,height: 20.h,fit: BoxFit.contain,),
+            SizedBox(height: 8.h,),
+            Text(title,style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color:
+                active ?
+                const Color(0xFF134DB0):const Color(0xFF89B5FF)
+            ),)
+          ],
+
+        ));
+  }
+}
+class CurvedBottomNave extends StatefulWidget {
+  const CurvedBottomNave({super.key});
+
+  @override
+  State<CurvedBottomNave> createState() => _CurvedBottomNaveState();
+}
+
+class _CurvedBottomNaveState extends State<CurvedBottomNave> {
   int _page = 0;
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-  List<Widget> bottomNavScreens=[
-    HomeScreen(),
-    TransactionScreen(),
-    FundWalletScreen(),
-    ProfileScreen()
-  ];
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   final size= MediaQuery.of(context).size;
-    @override
-    Widget build(BuildContext context) {
-      final size= MediaQuery.of(context).size;
+  @override
+  Widget build(BuildContext context) {
+    final size= MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColor.black100,
-      body: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
+        bottomNavigationBar: CurvedNavigationBar(
+          key: _bottomNavigationKey,
+          index: 0,
+          items: <Widget>[
+            Icon(Icons.add, size: 30),
+            // Icon(Icons.list, size: 30),
+            // Icon(Icons.compare_arrows, size: 30),
+            // Icon(Icons.call_split, size: 30),
+            // Icon(Icons.perm_identity, size: 30),
+          ],
+          color: Colors.white,
+          buttonBackgroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          animationCurve: Curves.easeInOut,
+          height: 83.h,
+          animationDuration: Duration(milliseconds: 600),
+          onTap: (index) {
+            setState(() {
+              _page = index;
+            });
+          },
+          letIndexChange: (index) {
+            if(index==2){
+              return true;
+            }else{
+              return true;
+            }
+          },
+        ),
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
               left: 0,
               child:
-          Container(
-            height: 83.h,
-            width: size.width,
-            //color: AppColor.black100,
-            child: Stack(
-              children: [
-                CustomPaint(
-                  size: Size(size.width, 83.h),
-                 // painter: BNBCustomPainter(),
-                  painter: CustomShapeClipper(),
-                )
-              ],
-            ),
-          ),
+              Container(
+                height: 83.h,
+                width: size.width,
+                //color: AppColor.black100,
+                child: Stack(
+                  children: [
+                    CustomPaint(
+                      size: Size(size.width, 83.h),
+                      // painter: BNBCustomPainter(),
+                      painter: CustomShapeClipper(),
+                    )
+                  ],
+                ),
+              ),
 
-          )
-        ],
-      ),
-      // floatingActionButton: Container(
-      //     height: 56.h,
-      //     width: 56.h,
-      //     padding: EdgeInsets.all(16.h),
-      //     decoration: const BoxDecoration(
-      //       shape: BoxShape.circle,
-      //       gradient: LinearGradient(
-      //         colors: [AppColor.primary100,AppColor.primary10],
-      //         stops: [0.0, 1.0,],
-      //         begin: Alignment.topCenter,
-      //         end: Alignment.bottomCenter,
-      //       ),
-      //    ),
-      //     child: Image.asset(uLogo,)),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      //
-    // bottomNavigationBar: ClipPath(
-    //   // clipBehavior: Clip.antiAliasWithSaveLayer,
-    //   clipper: CustomShapeClipper(),
-    //   child: Container(
-    //     height: 83.h,
-    //     color: AppColor.black0,
-    //     child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //             children: [
-    //               bottomNavItem(home_active,"Home", true),
-    //               bottomNavItem(transaction_inactive,"Transaction", false),
-    //               bottomNavItem(wallet_inactive,"Fund Wallet", false),
-    //               bottomNavItem(profile_inactive,"Profile", false),
-    //             ],
-    //           ),
-    //   ),
-    // ),
-    );
-  }
-  Widget bottomNavItem(String icon, String title, bool isActive){
-    return SizedBox(
-      height: 46.h,
-      width: 70.w,
-      child: Column(
-        children: [
-          SvgPicture.asset(icon,color: isActive?AppColor.primary100:AppColor.primary60,),
-          Text(title, style: CustomTextStyle.kTxtMedium.copyWith(
-            color: isActive?AppColor.primary100:AppColor.primary60,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w400
-          ),)
-        ],
-      ),
+            )
+          ],
+        ),
     );
   }
 }
+

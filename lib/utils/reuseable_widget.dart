@@ -245,3 +245,19 @@ Container appBodyDesign(Widget bodyDesign) {
     child: bodyDesign,
   );
 }
+Future<dynamic> openBottomSheet(BuildContext context,Widget bottomScreen,{background=AppColor.black0}) {
+  return showModalBottomSheet(
+      isDismissible: true,
+      isScrollControlled: true,
+      context: context,
+      backgroundColor:background,
+      shape:RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
+        child:  bottomScreen,
+      )
+  );
+}
