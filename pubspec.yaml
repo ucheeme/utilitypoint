@@ -108,6 +108,7 @@ flutter:
   assets:
      - assets/image/images_png/
      - assets/image/icons/
+     - assets/image/icons/sideBar.png
      - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see

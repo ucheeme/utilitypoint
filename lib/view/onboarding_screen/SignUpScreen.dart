@@ -155,7 +155,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
     if (state is OnBoardingError){
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration.zero, (){
-          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+          AppUtils.showSnack("${state.errorResponse.message} ${state.errorResponse.data}", context);
         });
       });
       bloc.initial();

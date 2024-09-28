@@ -188,10 +188,10 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
   void handleResendTwoFactorAuthentication(VerifiedEmailRequest event)async{
     emit(OnboardingIsLoading());
     try {
-      final   response = await onboardingRepository.resendVerificationCode(event);
+      final   response = await onboardingRepository.resendTwoFactorAuthentication(event);
       if (response is DefaultApiResponse) {
         if(response.status== true){
-          emit(ForgotPasswordSuccess(response));
+          emit(TwoFactorAuthenticationCodeResent(response));
           AppUtils.debug("success");
         }else{
           emit(OnBoardingError(response as DefaultApiResponse));

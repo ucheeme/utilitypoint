@@ -129,10 +129,14 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
 
     if (state is OnBoardingError){
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(Duration.zero, (){
-          //Get.toNamed(Pages.personalInformation);
-          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
-        });
+          if(state.errorResponse.message=="Sorry you entered the wrong code"){
+            setState(() {
+                  isWrongOTP=true;});
+          }else{
+            AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+          }
+
+
       });
       bloc.initial();
     }
@@ -291,20 +295,13 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
                 requiredNumber = value;
               });
               if(requiredNumber.length==4){
-                // if(value=="5555"){
-                //   setState(() {
-                //     isWrongOTP=true;
-                //   });
-                // }else{
-                //   setState(() {
-                //     isWrongOTP=false;
-                //   });
-                //
-                // }
                 setState(() {
                   isCompleteOTP=true;
                 });
-
+              }else{
+                setState(() {
+                  isWrongOTP=false;
+                });
               }
             }
           );

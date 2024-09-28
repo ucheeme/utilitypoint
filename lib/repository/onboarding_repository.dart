@@ -54,7 +54,26 @@ class OnboardingRepository extends DefaultRepository{
 
   Future<Object> resendVerificationCode(VerifiedEmailRequest request) async {
     var response = await postRequest(null,
-        "${AppUrls.resendEmailVerification}?user_id=${request.userId}&${request.otp}",
+        "${AppUrls.resendEmailVerification}?user_id=${request.userId}",
+        true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        DefaultApiResponse res = defaultApiResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    }
+    else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> resendTwoFactorAuthentication(VerifiedEmailRequest request) async {
+    var response = await postRequest(null,
+        "${AppUrls.resendCompleteTwoFactorAuthentication}?user_id=${request.userId}",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {

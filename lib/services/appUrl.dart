@@ -11,6 +11,7 @@ class AppUrls{
   static const login="${baseUrl}auth/login";
   static const forgotPassword="${baseUrl}auth/forgot_password";
   static const completeTwoFactorAuthentication="${baseUrl}auth/complete_two_factor_authentication";
+  static const resendCompleteTwoFactorAuthentication="${baseUrl}auth/resend_2fa_code";
  // static const completeTwoFactorAuthentication=
  // "${baseUrl}auth/complete_two_factor_authentication";
 }

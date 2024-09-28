@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/text_style.dart';
@@ -25,7 +26,8 @@ class _MyBottomNavState extends State<MyBottomNav> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Container(color: const Color(0xFFF5F8FE),),
+    HomeScreen(),
+   // Container(color: const Color(0xFFF5F8FE),),
     Container(color: Colors.red,),
     Container(color: Colors.greenAccent,), // Screen displayed when the Floating Action Button is tapped
     Container(color: Colors.purpleAccent,),
@@ -67,7 +69,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
               setState(() {
                 _currentIndex = 0; // Navigate to Screen 1
               });},
-                image: _currentIndex == 0?"assets/home_active.png":"assets/home_inactive.png",
+                image: "active_home",
                 title: "Home", active: _currentIndex == 0
             ),
 
@@ -75,7 +77,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
               setState(() {
                 _currentIndex = 1; // Navigate to Screen 2
               });},
-                image:_currentIndex == 1?"assets/home_active.png":"assets/transaction_inactive.png",
+                image:"inactive_transaction",
                 title: "Transactions",
                 active: _currentIndex == 1
             ),
@@ -84,7 +86,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
               setState(() {
                 _currentIndex = 3; // Navigate to Screen 4
               });},
-                image: "assets/home_active.png",
+                image: "inactive_wallet",
                 title: "Fund Wallet",
                 active: _currentIndex == 3
             ),
@@ -92,7 +94,8 @@ class _MyBottomNavState extends State<MyBottomNav> {
               setState(() {
                 _currentIndex = 4; // Navigate to Screen 5
               });},
-                image: "assets/home_active.png", title: "Profile",
+                image: "inactive_profile",
+                title: "Profile",
                 active: _currentIndex == 4
             ),
           ],
@@ -172,7 +175,9 @@ class _MyBottomNavState extends State<MyBottomNav> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(image,
+            SvgPicture.asset("assets/image/icons/$image.svg",
+              color: active ?
+              const Color(0xFF134DB0):const Color(0xFF89B5FF),
               width: 20.h,height: 20.h,fit: BoxFit.contain,),
             SizedBox(height: 8.h,),
             Text(title,style: TextStyle(

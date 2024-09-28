@@ -113,6 +113,16 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
       bloc.initial();
     }
 
+
+    if (state is TransactionPinSet){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          Get.toNamed(Pages.accountCreated);
+        });
+      });
+      bloc.initial();
+    }
+
     if (state is OnBoardingError){
       //Get.toNamed(Pages.accountCreated);
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -5,6 +5,7 @@ import 'package:proste_bezier_curve/proste_bezier_curve.dart';
 
 import '../../utils/app_color_constant.dart';
 import '../../utils/customClipPath.dart';
+import '../../utils/reuseable_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,33 +19,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: AppColor.black100,
+      backgroundColor: AppColor.primary20,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start ,
         children: [
-          // ClipPath(
-          //   clipper: ProsteBezierCurve(
-          //     position: ClipPosition.top,
-          //     list: [
-          //
-          //       BezierCurveSection(
-          //         start: Offset(screenWidth/2, 0),
-          //         top: Offset(screenWidth /4*3, 0),
-          //         end: Offset(screenWidth / 2, 40),
-          //       ),
-          //       BezierCurveSection(
-          //         start: Offset(screenWidth / 2, 30),
-          //         top: Offset(screenWidth / 4, 60),
-          //         end: Offset(0, 0),
-          //       ),
-          //     ],
-          //   ),
-          //   child: Container(
-          //     height: 150.h,
-          //     color: AppColor.black100,
-          //     width: 375.w,
-          //   ),
-          // )
+          dashboardHeader()
        ],
       ),
     );

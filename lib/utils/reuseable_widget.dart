@@ -261,3 +261,41 @@ Future<dynamic> openBottomSheet(BuildContext context,Widget bottomScreen,{backgr
       )
   );
 }
+
+
+Widget dashboardHeader(){
+  return Container(
+    height: 266.h,
+    width: Get.width,
+    padding: EdgeInsets.symmetric(horizontal: 20.h),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.only(bottomRight:Radius.circular(40.r),bottomLeft: Radius.circular(40.r)),
+      gradient: LinearGradient(
+        colors: [AppColor.primary100,AppColor.primary10],
+        stops: [0.5, 1.0,],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    ),
+    child: Column(
+      children: [
+        Gap(72.h),
+        SizedBox(
+          height:40.h,
+          width: Get.width,
+          child: Row(
+            children: [
+              Text("Account balance",
+                style:CustomTextStyle.kTxtMedium.copyWith(
+                  color: AppColor.black0,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400
+                ) ,),
+              Image.asset("assets/image/icons/sideBar.png"),
+            ],
+          ),
+        )
+      ],
+    ),
+  );
+}

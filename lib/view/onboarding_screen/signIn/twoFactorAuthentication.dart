@@ -11,6 +11,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:utilitypoint/model/request/twoFactorAuthenticationRequest.dart';
+import 'package:utilitypoint/model/request/verifyEmailRequest.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
 
 import '../../../bloc/onboarding_new/onBoardingValidator.dart';
@@ -82,11 +83,21 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
       bloc.initial();
     }
     if (state is TwoFactorAuthenticated){
-        userId = state.response.id;
-        accessToken = state.response.token;
-        loginResponse = state.response;
-      //  Get.offAll(()=>MyBottomNav());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          userId = state.response.id;
+          accessToken = state.response.token;
+          loginResponse = state.response;
+          Get.offAll(MyBottomNav(), predicate: (route) => false);
+        });
+      });
+      bloc.initial();
+    }
 
+    if (state is TwoFactorAuthenticationCodeResent){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppUtils.showInfoSnack(state.response.message, context);
+      });
       bloc.initial();
     }
 
@@ -174,7 +185,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
                           if(_start ==0){
                             setState(() {_start=60;});
                             startTimer();
-                            //  bloc.add(ResendOtp(bloc.validation.resendOtp()));
+                             bloc.add(ResendTwoFactorAuthenticatorEvent(VerifiedEmailRequest(userId: userId)));
                           }
 
                         },

@@ -83,3 +83,10 @@ class TwoFactorAuthenticated extends OnboardNewState{
   @override
   List<Object?> get props =>[response];
 }
+
+class TwoFactorAuthenticationCodeResent extends OnboardNewState{
+  DefaultApiResponse response;
+  TwoFactorAuthenticationCodeResent(this.response);
+  @override
+  List<Object?> get props =>[response];
+}

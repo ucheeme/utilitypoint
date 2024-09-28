@@ -157,7 +157,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                       height: _containerSizeAnimation.value.height,
                       decoration: BoxDecoration(
                         color: AppColor.primary20,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
+                       borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
                       ),
                       child: SingleChildScrollView(
                         physics: NeverScrollableScrollPhysics(),
