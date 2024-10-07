@@ -3,6 +3,7 @@ import 'dart:ui';
 class AppColor{
   //PrimaryColor
   static const Color primary100 =Color(0xff134DB0);
+  static const Color primary90 =Color(0xff001C4B);
   static const Color primary80 =Color(0xff2565D2);
   static const Color primary60 =Color(0xff5997FF);
   static const Color primary40 =Color(0xff89B5FF);
@@ -22,6 +23,7 @@ class AppColor{
   static const Color black60 =Color(0xffA9A9A9);
   static const Color black40 =Color(0xffCACACA);
   static const Color black20 =Color(0xffE9E9E9);
+  static const Color black10 =Color(0xff6D86B2);
   static const Color black0 =Color(0xffFFFFFF);
 
   //AccentColor
@@ -42,6 +44,7 @@ class AppColor{
   static const Color Error60 =Color(0xffEE9D9D);
   static const Color Error40 =Color(0xffF3BEBE);
   static const Color Error20 =Color(0xffF9DEDE);
+  static const Color visaCard =Color(0xff761260);
 
   static const Color info100 =Color(0xff2685CA);
   static const Color info80 =Color(0xff519DD5);

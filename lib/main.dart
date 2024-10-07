@@ -11,6 +11,10 @@ import 'package:utilitypoint/utils/mySharedPreference.dart';
 import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/utils/route.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
+import 'package:utilitypoint/view/menuOption/cards/cardScreen.dart';
+import 'package:utilitypoint/view/menuOption/contactUs.dart';
+import 'package:utilitypoint/view/menuOption/profile.dart';
+import 'package:utilitypoint/view/menuOption/settings.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 import 'package:utilitypoint/view/onboarding_screen/forgotpassword_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
@@ -20,6 +24,7 @@ import 'package:utilitypoint/view/onboarding_screen/signUp/personal_information.
 import 'package:utilitypoint/view/onboarding_screen/signUp/set_transaction_pin.dart';
 import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
 import 'package:utilitypoint/view/splashScreen/splashScreen.dart';
+import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import 'flavour/flavour.dart';
 import 'flavour/locator.dart';
@@ -67,6 +72,11 @@ class MyApp extends StatelessWidget {
          GetPage(name: Pages.twoFactorAuthentication, page:()=> Twofactorauthentication(),curve: Curves.easeIn),
         // GetPage(name: Pages.bottomNav, page:()=> MyBottomNav(),curve: Curves.easeIn),
          GetPage(name: Pages.bottomNav, page:()=> CurvedBottomNave(),curve: Curves.easeIn),
+          GetPage(name: Pages.myCards, page: ()=>Cardscreen(),curve: Curves.easeIn),
+          GetPage(name: Pages.myProfile, page: ()=>ProfileScreen(),curve: Curves.easeIn),
+          GetPage(name: Pages.transactionHistory, page: ()=>TransactionScreen(),curve: Curves.easeIn),
+          GetPage(name: Pages.settings, page: ()=>SettingsScreens(),curve: Curves.easeIn),
+          GetPage(name: Pages.contactUs, page: ()=>ContactusScreen(),curve: Curves.easeIn),
         ],
         initialRoute: Pages.initial,
         // onGenerateRoute: onGenerateRoute,

@@ -253,7 +253,7 @@ class CustomValidator {
         value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       error = '';
     }
-    if (error == '') {
+    if (error == ''|| value == "password") {
       return null;
     } else {
       return error;

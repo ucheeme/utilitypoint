@@ -60,6 +60,9 @@ dependencies:
   overlay_loader_with_app_icon:
   camera: ^0.10.0+4
   image: ^3.0.1
+  google_fonts: ^6.2.1
+  local_session_timeout:
+  syncfusion_flutter_datepicker: ^27.1.51
 
 
   envied: ^0.3.0+3
@@ -108,7 +111,6 @@ flutter:
   assets:
      - assets/image/images_png/
      - assets/image/icons/
-     - assets/image/icons/sideBar.png
      - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see

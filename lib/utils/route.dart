@@ -21,3 +21,32 @@ import '../view/splashScreen/splashScreen.dart';
 //       return MaterialPageRoute(builder: (context)=> const PageNotFound());
 //   }
 // }
+Route createFlipRoute(Widget nextPage) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => nextPage,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Define a rotation effect based on the animation value
+      const begin = 1.0;
+      const end = 0.0;
+      const curve = Curves.easeInOut;
+
+    //  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      var tween = Tween(begin: begin, end: end);
+      var rotationAnimation = animation.drive(tween);
+
+      return AnimatedBuilder(
+        animation: rotationAnimation,
+        child: child,
+        builder: (context, child) {
+          // Apply a 3D rotation along the Y-axis
+          final angle = rotationAnimation.value * -3.14;
+          return Transform(
+            transform: Matrix4.rotationY(angle),
+            alignment: Alignment.center,
+            child: child,
+          );
+        },
+      );
+    },
+  );
+}

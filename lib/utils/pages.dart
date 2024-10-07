@@ -13,5 +13,9 @@ class Pages{
   static const sideMenu='/sideMenu';
   static const myAccount='/myAccount';
   static const myProfile='/profile';
-
+  static const myCards='/cards';
+  static const transactionHistory='/transactionHistory';
+  static const notification='/notification';
+  static const contactUs='/contactus';
+  static const settings='/settings';
 }

@@ -1,0 +1,128 @@
+import 'dart:convert';
+
+import 'package:utilitypoint/model/request/createCard.dart';
+import 'package:utilitypoint/model/request/getUserRequest.dart';
+import 'package:utilitypoint/model/request/topUpCard.dart';
+import 'package:utilitypoint/model/request/unfreezeCard.dart';
+
+import '../bloc/card/virtualcard_bloc.dart';
+import '../model/defaultModel.dart';
+import '../model/request/getProduct.dart';
+import '../model/response/cardTransactions.dart';
+import '../model/response/freezeUnFreezeResponse.dart';
+import '../model/response/listofVirtualCard.dart';
+import '../model/response/top_up_card.dart';
+import '../model/response/virtualCardSuccessful.dart';
+import '../services/api_service.dart';
+import '../services/appUrl.dart';
+import 'apiRepository.dart';
+
+class CardRepository extends DefaultRepository{
+  Future<Object> getUserCards(GetUserIdRequest request) async {
+    var response = await postRequest(
+        null, "${AppUrls.getUserCards}?user_id=${request.userId}", true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        List<UserVirtualCards> res =
+        userVirtualCardsFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getCardTransactions(GetProductRequest request) async {
+    var response = await postRequest(
+        null, "${AppUrls.getCardTransaction}?user_id=${request.userId}&"
+        "card_id=${request.cardId}&start_date=${request.startDate}&end_date=${request.endDate}",
+        true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        CardTransaction res =
+        cardTransactionFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> createCard(CreateCardRequest request) async {
+    var response = await postRequest(
+        request, AppUrls.createUserCard,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        VirtualCardSuccesful res =
+        virtualCardSuccesfulFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> fundCard(TopUpCardRequest request) async {
+    var response = await postRequest(
+        request, AppUrls.topUpCard,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        TopUpCardSuccessful res =
+        topUpCardSuccessfulFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> freezeCard(FreezeUnfreezeCard request) async {
+    var response = await postRequest(request, AppUrls.freezeUserCard,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        FreezeCardSuccess res =
+        freezeCardSuccessFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> unfreezeCard(FreezeUnfreezeCard request) async {
+    var response = await postRequest(request, AppUrls.unFreezeUserCard,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        FreezeCardSuccess res =
+        freezeCardSuccessFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+}
