@@ -97,24 +97,27 @@ class CardTransactionWidgetDesign extends StatelessWidget {
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          imageContainer(transactionList.description.toLowerCase()),
+          imageContainer(transactionList.description?.toLowerCase()??""),
           Gap(12.w),
           SizedBox(
             height: 44.h,
             width: 178.w,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description,
-                  style: CustomTextStyle.kTxtMedium.copyWith(
+                Text(transactionList.description??"",
+                  style: CustomTextStyle.kTxtBold.copyWith(
                       color: AppColor.black100,
-                      fontSize: 14.sp,
+                      fontSize: 9.sp,
                       fontWeight: FontWeight.w400
                   ),),
+                Gap(4.h),
                 Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
-                      fontSize: 12.sp,
+                      fontSize: 10.sp,
                       color: AppColor.black80
                   ),
                 )
@@ -122,14 +125,15 @@ class CardTransactionWidgetDesign extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 90.w,
             child: Text(
+              textAlign: TextAlign.end,
               NumberFormat.currency(
                   symbol: transactionList.currency!="USD"?'\₦' : '\$',
                   decimalDigits: 0)
-                  .format(double.parse(transactionList.amount)),
+                  .format(double.parse(transactionList.amount??"0")),
               style: GoogleFonts.inter(
-                  color:transactionList.description.toLowerCase().contains("topup")?AppColor.success100:
+                fontSize: 14.sp,
+                  color:(transactionList.description!=null && transactionList.description!.toLowerCase().contains("topup"))?AppColor.success100:
                   AppColor.Error100
               ),
             ),

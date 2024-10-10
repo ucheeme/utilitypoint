@@ -1,22 +1,29 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/reviewOrder.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
 import '../../../utils/app_color_constant.dart';
+import '../../../utils/app_util.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/reuseableFunctions.dart';
 import '../../../utils/text_style.dart';
 import '../../bottomsheet/currencyOptions.dart';
 
 class ConvertScreen extends StatefulWidget {
-  const ConvertScreen({super.key});
+  String? amountToConvert;
+  bool? isCreateCard;
+   ConvertScreen({super.key, this.amountToConvert, this.isCreateCard});
 
   @override
   State<ConvertScreen> createState() => _ConvertScreenState();
@@ -32,17 +39,23 @@ class _ConvertScreenState extends State<ConvertScreen>
   String currencyConvertingTo = "";
   bool isSelected = false;
   bool isSelectedTo = false;
+  String exchangeRate ="";
   late VirtualcardBloc bloc;
 
   @override
   void initState() {
     currencyConvertingFrom = "NGN";
     currencyConvertingTo = "USD";
-    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.add(GetExchangeRateEvent());
+      print("${widget.isCreateCard}");
+      amountToConvertController.text = widget.amountToConvert!;
+      valueToConvert = widget.amountToConvert!;
       amountToConvertController.addListener(onTextChanged);
-      amountConvertedController.addListener(onTextChanged2);
+      //8 amountConvertedController.addListener(onTextChanged2);
+
     });
+    super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
   }
@@ -53,9 +66,9 @@ class _ConvertScreenState extends State<ConvertScreen>
     if (newText != text) {
       amountToConvertController.value =
           amountToConvertController.value.copyWith(
-        text: newText,
-        selection: TextSelection.collapsed(offset: newText.length),
-      );
+            text: newText,
+            selection: TextSelection.collapsed(offset: newText.length),
+          );
     }
   }
 
@@ -65,9 +78,9 @@ class _ConvertScreenState extends State<ConvertScreen>
     if (newText != text) {
       amountConvertedController.value =
           amountConvertedController.value.copyWith(
-        text: newText,
-        selection: TextSelection.collapsed(offset: newText.length),
-      );
+            text: newText,
+            selection: TextSelection.collapsed(offset: newText.length),
+          );
     }
   }
 
@@ -80,8 +93,38 @@ class _ConvertScreenState extends State<ConvertScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    bloc = BlocProvider.of<VirtualcardBloc>(context);
+    return BlocBuilder<VirtualcardBloc, VirtualcardState>(
+      builder: (context, state) {
+        if (state is VirtualcardError){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration.zero, (){
+              AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+            });
+          });
+         bloc.initial();
+        }
+
+        if (state is ExchangeRate){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+           exchangeRate = state.response.nairaRate;
+           amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
+          });
+          bloc.initial();
+        }
+
+
+        return OverlayLoaderWithAppIcon(
+          isLoading: state is VirtualcardIsLoading,
+          overlayBackgroundColor: AppColor.black40,
+          circularProgressColor: AppColor.primary100,
+          appIconSize: 60.h,
+          appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+          child: Scaffold(
+            body: appBodyDesign(getBody()),
+          ),
+        );
+      },
     );
   }
 
@@ -94,7 +137,7 @@ class _ConvertScreenState extends State<ConvertScreen>
             child: Padding(
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child:
-                  SizedBox(height: 52.h, child: CustomAppBar(title: "Convert")),
+              SizedBox(height: 52.h, child: CustomAppBar(title: "Convert")),
             ),
           ),
           Gap(20.h),
@@ -138,7 +181,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                                       builder: (context) {
                                         return CurrencyOptions(
                                           currentCurrency:
-                                              currencyConvertingFrom,
+                                          currencyConvertingFrom,
                                         );
                                       });
                                   if (response is String) {
@@ -147,30 +190,35 @@ class _ConvertScreenState extends State<ConvertScreen>
                                     });
                                   }
                                 },
+                                accountBalance: checkCurrencyFrom(currencyConvertingFrom)?
+                                double.parse(loginResponse!.nairaWallet):
+                                double.parse(loginResponse!.dollarWallet),
                                 isNaira:
-                                    checkCurrencyFrom(currencyConvertingFrom),
+                                checkCurrencyFrom(currencyConvertingFrom),
                                 isSelected: isSelected,
                                 context: context,
                                 amountController: amountToConvertController,
                                 onChanged: (value) {
                                   String cost = value.replaceAll(",", "");
                                   if (value != null) {
-                                    if(currencyConvertingFrom=="USD"){
+                                    if (currencyConvertingFrom == "USD") {
                                       setState(() {
                                         valueToConvert = value;
                                         amountConvertedController.text =
-                                            (double.parse(cost) * 1500)
-                                                .toStringAsFixed(0);
+                                            (double.parse(cost) * double.parse(exchangeRate)).toString();
                                       });
-                                    }else{
+                                    } else {
                                       setState(() {
                                         valueToConvert = value;
                                         amountConvertedController.text =
-                                            (double.parse(cost) / 1500).toString();
-                                        print(amountConvertedController.text);
+                                            (double.parse(cost) / double.parse(exchangeRate))
+                                                .toString();
+                                        print(double.parse(cost));
+                                        print(double.parse(exchangeRate));
+                                        print((double.parse(cost) / double.parse(exchangeRate)));
+                                       // print(amountConvertedController.text);
                                       });
                                     }
-
                                   } else {
                                     setState(() {
                                       valueToConvert = "";
@@ -198,18 +246,18 @@ class _ConvertScreenState extends State<ConvertScreen>
                                   currency: currencyConvertingTo,
                                   changeCurrency: () async {
                                     dynamic response =
-                                        await showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            enableDrag: true,
-                                            isDismissible: true,
-                                            isScrollControlled: true,
-                                            context: context,
-                                            builder: (context) {
-                                              return CurrencyOptions(
-                                                currentCurrency:
-                                                    currencyConvertingTo,
-                                              );
-                                            });
+                                    await showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        enableDrag: true,
+                                        isDismissible: true,
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return CurrencyOptions(
+                                            currentCurrency:
+                                            currencyConvertingTo,
+                                          );
+                                        });
                                     if (response is String) {
                                       setState(() {
                                         currencyConvertingTo = response;
@@ -219,7 +267,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                                   isSelected: isSelectedTo,
                                   context: context,
                                   isNaira:
-                                      checkCurrencyFrom(currencyConvertingTo),
+                                  checkCurrencyFrom(currencyConvertingTo),
                                   isFrom: false,
                                   textFieldTouch: () {
                                     setState(() {
@@ -268,7 +316,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
-                                  "1 USD ~ 1500 NGN",
+                                  "1 USD ~ $exchangeRate NGN",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
                                       color: AppColor.black100,
                                       fontSize: 14.sp,
@@ -315,7 +363,12 @@ class _ConvertScreenState extends State<ConvertScreen>
                             currency: currencyConvertingTo,
                             amount: amountConvertedController.text
                                 .replaceAll(",", ""));
-                        Get.to(ReviewOrder());
+                        Get.to(
+                            ReviewOrder(
+                              exchangeRate: exchangeRate,
+                              isCreateCard: widget.isCreateCard,
+                            ),
+                        );
                       },
                       buttonText: "Review Order",
                       height: 58.h,

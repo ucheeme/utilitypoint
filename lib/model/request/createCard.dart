@@ -14,6 +14,7 @@ class CreateCardRequest {
   String brand;
   String amount;
   String cardType;
+  String pin;
 
   CreateCardRequest({
     required this.userId,
@@ -21,6 +22,7 @@ class CreateCardRequest {
     required this.brand,
     required this.amount,
     required this.cardType,
+    required this.pin
   });
 
   factory CreateCardRequest.fromJson(Map<String, dynamic> json) => CreateCardRequest(
@@ -29,6 +31,7 @@ class CreateCardRequest {
     brand: json["brand"],
     amount: json["amount"],
     cardType: json["card_type"],
+    pin: json["pin"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +40,6 @@ class CreateCardRequest {
     "brand": brand,
     "amount": amount,
     "card_type": cardType,
+    "pin":pin
   };
 }

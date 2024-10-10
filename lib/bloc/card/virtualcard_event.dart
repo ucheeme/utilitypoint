@@ -18,6 +18,13 @@ class GetUserCardEvent extends VirtualcardEvent {
   List<Object?> get props => [];
 }
 
+class GetExchangeRateEvent extends VirtualcardEvent {
+
+  const GetExchangeRateEvent();
+  @override
+  List<Object?> get props => [];
+}
+
 class CreateCardEvent extends VirtualcardEvent {
   final CreateCardRequest request;
   const CreateCardEvent(this.request);
@@ -42,6 +49,13 @@ class FreezeCardEvent extends VirtualcardEvent {
 class UnFreezeCardEvent extends VirtualcardEvent {
   final FreezeUnfreezeCard request;
   const UnFreezeCardEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class BuyDollarEvent extends VirtualcardEvent {
+  final ConvertNairaToDollarRequest request;
+  const BuyDollarEvent(this.request);
   @override
   List<Object?> get props => [];
 }

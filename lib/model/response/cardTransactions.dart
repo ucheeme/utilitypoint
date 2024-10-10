@@ -53,74 +53,74 @@ class Details {
 }
 
 class CardTransactionList {
-  String id;
-  String customerId;
-  String uid;
-  String cid;
-  String cardUuid;
-  String bid;
-  String currency;
-  String balance;
-  String cardType;
-  String brand;
-  String cardId;
-  String provider;
-  String name;
-  String number;
-  String firstsix;
-  String lastfour;
-  String masked;
-  String expiry;
-  String ccv;
-  String address;
-  String meta;
-  DateTime dateCreated;
-  DateTime lastModified;
-  String status;
-  String terminate;
+  String? id;
+  String? customerId;
+  String? uid;
+  String? cid;
+  String? cardUuid;
+  String? bid;
+  String? currency;
+  String? balance;
+  String? cardType;
+  String? brand;
+  String? cardId;
+  String? provider;
+  String? name;
+  String? number;
+  String? firstsix;
+  String? lastfour;
+  String? masked;
+  String? expiry;
+  String? ccv;
+  String? address;
+  String? meta;
+  DateTime? dateCreated;
+  DateTime? lastModified;
+  String? status;
+  String? terminate;
   dynamic reason;
   dynamic terminateDate;
-  String refId;
-  String refType;
-  String amount;
+  String? refId;
+  String? refType;
+  String? amount;
   DateTime createdAt;
-  String transId;
-  String description;
+  String? transId;
+  String? description;
 
   CardTransactionList({
-    required this.id,
-    required this.customerId,
-    required this.uid,
-    required this.cid,
-    required this.cardUuid,
-    required this.bid,
-    required this.currency,
-    required this.balance,
-    required this.cardType,
-    required this.brand,
-    required this.cardId,
-    required this.provider,
-    required this.name,
-    required this.number,
-    required this.firstsix,
-    required this.lastfour,
-    required this.masked,
-    required this.expiry,
-    required this.ccv,
-    required this.address,
-    required this.meta,
-    required this.dateCreated,
-    required this.lastModified,
-    required this.status,
-    required this.terminate,
-    required this.reason,
-    required this.terminateDate,
-    required this.refId,
-    required this.refType,
-    required this.amount,
-    required this.createdAt,
-    required this.transId,
-    required this.description,
+     this.id,
+     this.customerId,
+     this.uid,
+     this.cid,
+     this.cardUuid,
+     this.bid,
+     this.currency,
+     this.balance,
+     this.cardType,
+     this.brand,
+     this.cardId,
+     this.provider,
+     this.name,
+     this.number,
+     this.firstsix,
+     this.lastfour,
+     this.masked,
+     this.expiry,
+     this.ccv,
+     this.address,
+     this.meta,
+      this.dateCreated,
+     this.lastModified,
+     this.status,
+     this.terminate,
+     this.reason,
+     this.terminateDate,
+     this.refId,
+     this.refType,
+     this.amount,
+     required this.createdAt,
+     this.transId,
+     this.description,
   });
 
   factory CardTransactionList.fromJson(Map<String, dynamic> json) => CardTransactionList(
@@ -145,8 +145,8 @@ class CardTransactionList {
     ccv: json["ccv"],
     address: json["address"],
     meta: json["meta"],
-    dateCreated: DateTime.parse(json["date_created"]),
-    lastModified: DateTime.parse(json["last_modified"]),
+    dateCreated: json["date_created"]==null?null:DateTime.parse(json["date_created"]),
+    lastModified:  json["last_modified"]==null?null:DateTime.parse(json["last_modified"]),
     status: json["status"],
     terminate: json["terminate"],
     reason: json["reason"],
@@ -181,8 +181,8 @@ class CardTransactionList {
     "ccv": ccv,
     "address": address,
     "meta": meta,
-    "date_created": dateCreated.toIso8601String(),
-    "last_modified": lastModified.toIso8601String(),
+    "date_created": dateCreated?.toIso8601String(),
+    "last_modified": lastModified?.toIso8601String(),
     "status": status,
     "terminate": terminate,
     "reason": reason,

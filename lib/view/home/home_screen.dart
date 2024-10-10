@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       dashboardIcons(horizontal: 0,title:"Buy Airtime",icon:"buyAirtime",onTap: (){}),
                       dashboardIcons(title: "Cable TV",icon: "cableTv",onTap: (){}),
                       dashboardIcons(title: "Electricity",icon: "electricity",onTap: (){}),
-                      dashboardIcons(title: "More",icon:"more_icon",onTap: (){}),
+                      dashboardIcons(title: "More",icon:"more_icon",onTap: (){ Navigator.of(context).push(createFlipRoute(Moreoptions()));}),
                     ],
                   ),
                 ),

@@ -410,17 +410,12 @@ class BorderlessTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       autofocus: false,
-      obscureText: obsec ?? false,
-      textCapitalization: TextCapitalization.sentences,
       controller: textEditingController,
       keyboardType: keyboardType,
       textAlign: TextAlign.end,
       textAlignVertical: TextAlignVertical.center,
       readOnly: readOnly ?? false,
       onTap: onTap,
-      textInputAction: textInputAction,
-      inputFormatters: inputFormat ?? [],
-      onEditingComplete: onEditingComplete,
       onChanged: onChanged,
       maxLength: maxLength,
       maxLines: maxLines ?? 1,
@@ -443,13 +438,6 @@ class BorderlessTextField extends StatelessWidget {
           isDense: true,
           fillColor: isTouched ? AppColor.primary20 : AppColor.black0,
           filled: true,
-          errorText: error,
-          errorStyle: CustomTextStyle.kTxtMedium.copyWith(
-              color: (isConfirmPasswordMatch != null &&
-                      isConfirmPasswordMatch == false)
-                  ? AppColor.success100
-                  : AppColor.Error100,
-              fontSize: 10.sp),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColor.black0, width: 0.5.w),
             // borderRadius: BorderRadius.circular(4.r),
@@ -903,7 +891,7 @@ Widget convertContainer(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: 35.h,
+                  height: 40.h,
                   width: 125.w,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -921,7 +909,7 @@ Widget convertContainer(
                             ),
                       Gap(6.w),
                       SizedBox(
-                        height: 35.h,
+                        height: 40.h,
                         width: 75.w,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -966,7 +954,7 @@ Widget convertContainer(
                     isTouched: false,
                     onTap: textFieldTouch,
                     hintTxt: "0",
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     onChanged: onChanged,
                     readOnly: isReadOnly,
                     textEditingController: amountController,

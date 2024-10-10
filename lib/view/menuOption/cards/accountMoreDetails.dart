@@ -140,9 +140,9 @@ class _MyAccountMoreDetailsState extends State<MyAccountMoreDetails> with Ticker
   }
   navigations(int index){
     switch(index){
-      case 0: Get.to(()=>CardTransactionHistory());
-      case 1: Get.to(()=>VirtualCards());
-      case 2: Get.to(()=>VirtualCards());
+      case 0: Get.to(()=>AllCards());
+      case 1: Get.to(()=>VirtualCards(isNaira: widget.isNaira,));
+     // case 2: Get.to(()=>VirtualCards());
     }
   }
 }

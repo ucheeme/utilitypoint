@@ -1,21 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/model/request/convertNairaRequest.dart';
+import 'package:utilitypoint/model/request/createCard.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class ReviewOrder extends StatefulWidget {
-  ReviewOrder({super.key});
+  String? exchangeRate;
+  bool? isCreateCard;
+  ReviewOrder({super.key, this.exchangeRate, this.isCreateCard});
 
   @override
   State<ReviewOrder> createState() => _ReviewOrderState();
@@ -24,11 +31,12 @@ class ReviewOrder extends StatefulWidget {
 class _ReviewOrderState extends State<ReviewOrder>
     with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
-
+  bool isCreateCard = false;
   late VirtualcardBloc bloc;
 
   @override
   void initState() {
+    isCreateCard =widget.isCreateCard??false;
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
@@ -40,11 +48,53 @@ class _ReviewOrderState extends State<ReviewOrder>
     _animationManager.dispose();
     super.dispose();
   }
-
+  String userPin ="";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    bloc = BlocProvider.of<VirtualcardBloc>(context);
+    return BlocBuilder<VirtualcardBloc, VirtualcardState>(
+      builder: (context, state) {
+        if (state is VirtualcardError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration.zero, () {
+              AppUtils.showSnack(
+                  state.errorResponse.message ?? "Error occurred", context);
+            });
+          });
+          bloc.initial();
+        }
+        if (state is CardCreationSuccessful) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pop(context, );
+            Navigator.pop(context,true);
+           // Navigator.pop(context,true);
+          });
+         bloc.initial();
+        }
+        if (state is SuccessfullyBoughtDollar) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+
+            if(isCreateCard){
+              bloc.add(CreateCardEvent(bloc.validation.createCardRequest()));
+            }else{
+              showSuccessSlidingModal(context,
+                  successMessage:state.response.message);
+            }
+          });
+          bloc.initial();
+        }
+
+        return OverlayLoaderWithAppIcon(
+          isLoading: state is VirtualcardIsLoading,
+          overlayBackgroundColor: AppColor.black40,
+          circularProgressColor: AppColor.primary100,
+          appIconSize: 60.h,
+          appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+          child: Scaffold(
+            body: appBodyDesign(getBody()),
+          ),
+        );
+      },
     );
   }
 
@@ -113,7 +163,7 @@ class _ReviewOrderState extends State<ReviewOrder>
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: const Divider(
                           color: AppColor.black60,
                         ),
@@ -135,7 +185,8 @@ class _ReviewOrderState extends State<ReviewOrder>
                               ),
                               Text(
                                 NumberFormat.currency(
-                                        name: receiving!.currency, decimalDigits: 2)
+                                        name: receiving!.currency,
+                                        decimalDigits: 2)
                                     .format(double.parse(receiving!.amount)),
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
@@ -147,7 +198,7 @@ class _ReviewOrderState extends State<ReviewOrder>
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: const Divider(
                           color: AppColor.black60,
                         ),
@@ -168,7 +219,7 @@ class _ReviewOrderState extends State<ReviewOrder>
                                     fontWeight: FontWeight.w400),
                               ),
                               Text(
-                                "1 USD ~ 1,590",
+                                "1 USD ~ ${widget.exchangeRate}",
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,
@@ -179,7 +230,7 @@ class _ReviewOrderState extends State<ReviewOrder>
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: const Divider(
                           color: AppColor.black60,
                         ),
@@ -201,7 +252,8 @@ class _ReviewOrderState extends State<ReviewOrder>
                               ),
                               Text(
                                 NumberFormat.currency(
-                                        name: receiving!.currency, decimalDigits: 2)
+                                        name: receiving!.currency,
+                                        decimalDigits: 2)
                                     .format(10),
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
@@ -213,27 +265,33 @@ class _ReviewOrderState extends State<ReviewOrder>
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: const Divider(
                           color: AppColor.black60,
                         ),
                       ),
                       Gap(42.h),
                       Padding(
-                        padding:EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: CustomButton(
                           onTap: () async {
-                            bool response = await Get.to(()=>TransactionPin());
-                            if(response){
-                              showSuccessSlidingModal(context,
-                                  successMessage: "Your currency conversion from ${converting!.currency} to ${receiving!.currency} has been successfully completed.");
+                            List<dynamic> response =
+                                await Get.to(() => TransactionPin());
+                            if (response[0]) {
+                              bloc.validation.setPin(response[1]);
+                              bloc.add(BuyDollarEvent(
+                                  ConvertNairaToDollarRequest(
+                                    userId: loginResponse!.id,
+                                    amountInDollar:receiving!.amount,
+                                    pin: response[1],
+                                  )));
                             }
                           },
                           buttonText: "Convert",
                           height: 58.h,
                           textColor: AppColor.black0,
                           borderRadius: 8.r,
-                          buttonColor:  AppColor.primary100,
+                          buttonColor: AppColor.primary100,
                         ),
                       )
                     ],

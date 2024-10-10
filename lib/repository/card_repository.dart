@@ -7,8 +7,10 @@ import 'package:utilitypoint/model/request/unfreezeCard.dart';
 
 import '../bloc/card/virtualcard_bloc.dart';
 import '../model/defaultModel.dart';
+import '../model/request/convertNairaRequest.dart';
 import '../model/request/getProduct.dart';
 import '../model/response/cardTransactions.dart';
+import '../model/response/exchangeRate.dart';
 import '../model/response/freezeUnFreezeResponse.dart';
 import '../model/response/listofVirtualCard.dart';
 import '../model/response/top_up_card.dart';
@@ -35,10 +37,30 @@ class CardRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
+  Future<Object> getExchangeRate() async {
+    var response = await postRequest(
+        null, AppUrls.getExchangeRate, true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        FetchCurrencyConversionRate res =
+        fetchCurrenctConversionRateFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
   Future<Object> getCardTransactions(GetProductRequest request) async {
     var response = await postRequest(
         null, "${AppUrls.getCardTransaction}?user_id=${request.userId}&"
-        "card_id=${request.cardId}&start_date=${request.startDate}&end_date=${request.endDate}",
+        "card_id=${request.cardId}&start_date=${request.startDate}&end_date=${request.endDate}"
+        "&page_size=${request.pageSize}&page=${request.page}",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -125,4 +147,21 @@ class CardRepository extends DefaultRepository{
     }
   }
 
+  Future<Object> buyDollar(ConvertNairaToDollarRequest request) async {
+    var response = await postRequest(request, AppUrls.buyDollar,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        DefaultApiResponse res =
+        defaultApiResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
 }

@@ -14,7 +14,7 @@ import '../../view/onboarding_screen/signIn/login_screen.dart';
 class Cardvalidator {
   bool isAmountSelected = false;
   List<String> currencies = ["USD"];
-  List<String> cardType = ["MASTERCARD", "VISACARD"];
+  List<String> cardType = ["MASTERCARD", "VISA"];
   List<String> accountInfo = [
     // "Account Information",
     "Transaction History", "Virtual Card"
@@ -30,6 +30,7 @@ class Cardvalidator {
   String? get amountError => _amountError;
 
   final _amountSubject = BehaviorSubject<String>();
+  final _pinSubject = BehaviorSubject<String>();
   final _currenciesSubject = BehaviorSubject<String>();
   final _cardTypeSubject = BehaviorSubject<String>();
 
@@ -37,6 +38,10 @@ class Cardvalidator {
 
   setCurrency(value) {
     _currenciesSubject.sink.add(value);
+  }
+
+  setPin(value){
+    _pinSubject.sink.add(value);
   }
 
   setCardType(value) {
@@ -78,6 +83,7 @@ class Cardvalidator {
         currency: _currenciesSubject.value.trim(),
         brand: _cardTypeSubject.value.trim(),
         amount: _amountSubject.value.trim(),
+        pin: _pinSubject.value.trim(),
         cardType: "virtual");
   }
 

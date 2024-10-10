@@ -2,8 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:utilitypoint/bloc/card/cardValidator.dart';
+import 'package:utilitypoint/model/request/convertNairaRequest.dart';
 import 'package:utilitypoint/model/request/getUserRequest.dart';
 import 'package:utilitypoint/repository/card_repository.dart';
+import 'package:utilitypoint/view/menuOption/convertFunds/reviewOrder.dart';
 
 import '../../model/defaultModel.dart';
 import '../../model/request/createCard.dart';
@@ -11,6 +13,7 @@ import '../../model/request/getProduct.dart';
 import '../../model/request/topUpCard.dart';
 import '../../model/request/unfreezeCard.dart';
 import '../../model/response/cardTransactions.dart';
+import '../../model/response/exchangeRate.dart';
 import '../../model/response/freezeUnFreezeResponse.dart';
 import '../../model/response/listofVirtualCard.dart';
 import '../../model/response/top_up_card.dart';
@@ -34,13 +37,48 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
     on<FundCardEvent>((event,emit){handleFundCardEvent(event.request);});
     on<FreezeCardEvent>((event,emit){handleFreezeCardEvent(event.request);});
     on<UnFreezeCardEvent>((event,emit){handleUnFreezeCardEvent(event.request);});
+    on<GetExchangeRateEvent>((event,emit){handleGetExchangeRateEvent();});
+    on<BuyDollarEvent>((event,emit){handleBuyDollarEvent(event.request);});
   }
+
   void handleGetCardTransactionHistoryEvent(GetProductRequest event)async{
     emit(VirtualcardIsLoading());
     try {
       final   response = await cardRepository.getCardTransactions(event);
       if (response is CardTransaction) {
         emit(AllCardTransactions(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleBuyDollarEvent(ConvertNairaToDollarRequest event)async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.buyDollar(event);
+      if (response is DefaultApiResponse) {
+        emit(SuccessfullyBoughtDollar(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetExchangeRateEvent()async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.getExchangeRate();
+      if (response is FetchCurrencyConversionRate) {
+        emit(ExchangeRate(response));
         AppUtils.debug("success");
       }else{
         emit(VirtualcardError(response as DefaultApiResponse));

@@ -20,9 +20,11 @@ import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 import '../../bottomsheet/createNewCard.dart';
 import '../../onboarding_screen/signIn/login_screen.dart';
+import 'cardTransactionHistory.dart';
 
 class VirtualCards extends StatefulWidget {
-  const VirtualCards({super.key});
+  bool isNaira = true;
+   VirtualCards({super.key, required this.isNaira});
 
   @override
   State<VirtualCards> createState() => _VirtualCardsState();
@@ -130,7 +132,7 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
                                     Container(
                                         height: 500.h,
                                         color: AppColor.primary20,
-                                        child:  CreateNewCardScreen(bloc: bloc,)
+                                        child:  CreateNewCardScreen(bloc: bloc,isNaira:widget.isNaira)
                                     );
                                 });
                     if(response){
@@ -156,3 +158,112 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
     );
   }
 }
+
+
+class AllCards extends StatefulWidget {
+  const AllCards({super.key});
+
+  @override
+  State<AllCards> createState() => _AllCardsState();
+}
+
+class _AllCardsState extends State<AllCards> with TickerProviderStateMixin {
+  late SlideAnimationManager _animationManager;
+  List<UserVirtualCards>userCards =[];
+  late VirtualcardBloc bloc;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      bloc.add(GetUserCardEvent(GetUserIdRequest(userId: loginResponse!.id)));
+    });
+    super.initState();
+    // Initialize the SlideAnimationManager
+    _animationManager = SlideAnimationManager(this);
+  }
+
+  @override
+  void dispose() {
+    // Dispose the animation manager to avoid memory leaks
+    _animationManager.dispose();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    bloc = BlocProvider.of<VirtualcardBloc>(context);
+    return BlocBuilder<VirtualcardBloc, VirtualcardState>(
+      builder: (context, state) {
+        if (state is VirtualcardError){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration.zero, (){
+              AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+            });
+          });
+          bloc.initial();
+        }
+        if (state is AllUserVirtualCards){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            userCards = state.response;
+          });
+          bloc.initial();
+        }
+
+
+        return OverlayLoaderWithAppIcon(
+          isLoading: state is VirtualcardIsLoading,
+          overlayBackgroundColor: AppColor.black40,
+          circularProgressColor: AppColor.primary100,
+          appIconSize: 60.h,
+          appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+          child: Scaffold(
+            body: appBodyDesign(getBody()),
+          ),
+        );
+      },
+    );
+  }
+  Widget getBody(){
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SlideTransition(
+            position: _animationManager.slideAnimationTop,
+            child: Padding(
+              padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
+              child: SizedBox(
+                  height: 52.h,
+                  child: CustomAppBar(title: "Select card")),
+            ),
+          ),
+          Gap(20.h),
+          SlideTransition(
+            position: _animationManager.slideAnimation,
+            child: Container(
+              height: 668.72.h,
+              width: Get.width,
+              padding: EdgeInsets.symmetric(vertical: 26.h,horizontal: 24.w),
+              decoration: BoxDecoration(
+                color: AppColor.primary20,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
+              ),
+              child: SizedBox(
+                  height: 500.h,
+                  child:ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount:userCards.length,
+                      itemBuilder: (context,index){
+                        return GestureDetector(
+                            onTap: (){
+                              Get.to(()=>CardTransactionHistory(cardId: userCards[index].cardId,));
+                            },
+                            child: CardDesign(cardDetail:userCards[index],isVirtualCardScreen: true,));
+                      }) ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+

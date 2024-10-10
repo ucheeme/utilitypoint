@@ -46,6 +46,7 @@ class _MoreoptionsState extends State<Moreoptions>with TickerProviderStateMixin 
        height: Get.height,
        child:Stack(
          children: [
+
            Positioned(
              top: 1.h,
              child: SlideTransition(
@@ -64,19 +65,51 @@ class _MoreoptionsState extends State<Moreoptions>with TickerProviderStateMixin 
                    child: Column(
                      children: [
                        Gap(60.h),
-                       GestureDetector(
-                         onTap: (){
-                           Get.back();
-                         },
-                         child: Container(
-                           height: 70.h,
-                           width: 70.w,
-                           decoration: BoxDecoration(
-                             shape: BoxShape.circle,
-                             border: Border.all(color: AppColor.black0,width: 1.5.w)
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                           GestureDetector(
+                             onTap: () {
+                               Get.back(canPop: false);
+                             },
+                             child: Container(
+                               margin: EdgeInsets.symmetric(horizontal: 14.w),
+                               height: 40.h,
+                               width: 40.w,
+                               padding: EdgeInsets.only(
+                                 left: 4.w,
+                               ),
+                               decoration: BoxDecoration(
+                                   color: Colors.transparent,
+                                   borderRadius: BorderRadius.circular(8.r),
+                                   border: Border.all(
+                                     color: AppColor.black0,
+                                   )),
+                               child: Icon(
+                                 Icons.arrow_back_ios,
+                                 color: AppColor.black0,
+                                 size: 21,
+                               ),
+                             ),
                            ),
-                           child: Image.asset("assets/image/images_png/tempImage.png")
-                         ),
+                           GestureDetector(
+                             onTap: (){
+                               Get.back();
+                             },
+                             child: Container(
+                               height: 70.h,
+                               width: 70.w,
+                               decoration: BoxDecoration(
+                                 shape: BoxShape.circle,
+                                 border: Border.all(color: AppColor.black0,width: 1.5.w)
+                               ),
+                               child: Image.asset("assets/image/images_png/tempImage.png")
+                             ),
+                           ),
+                           SizedBox(
+                             width: 50.w,
+                           )
+                         ],
                        ),
                        Gap(9.h),
                        Text("${loginResponse?.firstName} ${loginResponse?.lastName}",

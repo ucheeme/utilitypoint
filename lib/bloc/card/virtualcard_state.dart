@@ -62,3 +62,16 @@ class CardUnFreezeSuccessful extends VirtualcardState{
   @override
   List<Object?> get props => [response];
 }
+class ExchangeRate extends VirtualcardState{
+  final FetchCurrencyConversionRate response;
+  const ExchangeRate(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class SuccessfullyBoughtDollar extends VirtualcardState{
+  final DefaultApiResponse response;
+  const SuccessfullyBoughtDollar(this.response);
+  @override
+  List<Object?> get props => [response];
+}

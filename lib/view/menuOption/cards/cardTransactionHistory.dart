@@ -6,7 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
 import '../../../model/response/cardTransactions.dart';
@@ -19,7 +21,8 @@ import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 List<CardTransactionList>tempTransactionList =[];
 class CardTransactionHistory extends StatefulWidget {
-   CardTransactionHistory({super.key});
+  String cardId="";
+   CardTransactionHistory({super.key, required this.cardId});
 
   @override
   State<CardTransactionHistory> createState() => _CardTransactionHistoryState();
@@ -28,19 +31,36 @@ class CardTransactionHistory extends StatefulWidget {
 class _CardTransactionHistoryState extends State<CardTransactionHistory>with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
   List<CardTransactionList>cardTransactionList =[];
-  // bool isAll =true;
-  // bool isDataAirtime= false;
-  // bool isNairaTransactions= false;
-  // bool isDollarTransactions= false;
   late VirtualcardBloc bloc;
+  DateTime currentDateTime = DateTime.now();
+
+
   @override
   void initState() {
-    cardTransactionList = tempTransactionList;
+  //  cardTransactionList = tempTransactionList;
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      bloc.add(GetCardTransactionHistoryEvent(GetProductRequest(
+          userId: loginResponse!.id,
+          cardId:widget.cardId,
+          startDate: "${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.day}",
+          endDate: "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+          pageSize: 40.toString(),
+          page: 1.toString()
+        )));
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
   }
+int _getLastDayOfTheMonth(){
+  DateTime firstDayOfNextMonth = (currentDateTime.month < 12)
+      ? DateTime(currentDateTime.year, currentDateTime.month + 1, 1)
+      : DateTime(currentDateTime.year + 1, 1, 1);
 
+  // Subtract one day to get the last day of the current month
+  DateTime lastDayOfCurrentMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+  return lastDayOfCurrentMonth.day;
+}
   @override
   void dispose() {
     // Dispose the animation manager to avoid memory leaks
@@ -49,6 +69,7 @@ class _CardTransactionHistoryState extends State<CardTransactionHistory>with Tic
   }
   @override
   Widget build(BuildContext context) {
+    bloc = BlocProvider.of<VirtualcardBloc>(context);
     return BlocBuilder<VirtualcardBloc, VirtualcardState>(
       builder: (context, state) {
         if (state is VirtualcardError) {
@@ -127,16 +148,39 @@ class _CardTransactionHistoryState extends State<CardTransactionHistory>with Tic
                                         padding: EdgeInsets.all(8.h),
                                         child: Image.asset(search_Image,height: 14.h,width: 14.w,)),
                                   )),
-                              Container(
-                                height: 41.h,
-                                width:41.w,
-                                padding: EdgeInsets.all(12.h),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
-                                        bottomRight: Radius.circular(8.r)),
-                                    color: AppColor.primary100
+                              GestureDetector(
+                                onTap: () async {
+                                  // StartDateEndDate? result =await showModalBottomSheet(
+                                  //     isDismissible: true,
+                                  //     isScrollControlled: true,
+                                  //     context: context,
+                                  //     backgroundColor:AppColor.black10,
+                                  //     shape:RoundedRectangleBorder(
+                                  //       borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                  //     ),
+                                  //     builder: (context) => Padding(
+                                  //       padding: EdgeInsets.only(
+                                  //           bottom: MediaQuery.of(context).viewInsets.bottom),
+                                  //       child:  CustomDateRangePicker(),
+                                  //     )
+                                  // );
+                                  // if (result != null){
+                                  //  // completionHandler(result);
+                                  //   AppUtils.debug("start Date ${result.startDate}");
+                                  //   AppUtils.debug("End Date ${result.endDate}");
+                                  // }
+                                },
+                                child: Container(
+                                  height: 41.h,
+                                  width:41.w,
+                                  padding: EdgeInsets.all(12.h),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
+                                          bottomRight: Radius.circular(8.r)),
+                                      color: AppColor.primary100
+                                  ),
+                                  child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                                 ),
-                                child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                               )
                             ],
                           ),
@@ -147,16 +191,19 @@ class _CardTransactionHistoryState extends State<CardTransactionHistory>with Tic
                     ),
                     Gap(24.h),
                     ...cardTransactionList.mapIndexed((_element,index)=>
-                       CardTransactionWidgetDesign(transactionList: _element,)),
-                    Visibility(
-                        visible: state is VirtualcardIsLoading,
-                        child: SizedBox(
-                      height: 100.h,
-                      child: Center(
-                        child: CircularProgressIndicator(color: AppColor.primary100,
-                        backgroundColor: AppColor.primary40,),
-                      ),
-                    ))
+                       Padding(
+                         padding:  EdgeInsets.only(bottom: 15.h),
+                         child: CardTransactionWidgetDesign(transactionList: _element,),
+                       )),
+                    // Visibility(
+                    //     visible: state is VirtualcardIsLoading,
+                    //     child: SizedBox(
+                    //   height: 100.h,
+                    //   child: Center(
+                    //     child: CircularProgressIndicator(color: AppColor.primary100,
+                    //     backgroundColor: AppColor.primary40,),
+                    //   ),
+                    // ))
                   ],
                 ),
               ),

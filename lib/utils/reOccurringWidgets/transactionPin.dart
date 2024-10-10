@@ -141,7 +141,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                         stream: bloc.validation.otpValue,
                         builder: (context, snapshot) {
                           return CustomButton(onTap: () {
-                            _setTransactionPin();
+                            Get.back(result: [true, bloc.validation.transactionPinController.text]);
                           }, buttonText: "Submit", textfontSize: 16.sp,
                             borderRadius: 8.r,
                             textColor: AppColor.black0,height:58.h,
@@ -190,11 +190,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                   selectedColor:isWrongOTP?AppColor.Error100:AppColor.primary100,
                   errorBorderColor: AppColor.Error100
               ),
-              onChanged: (value){
-                if(value.length==4){
-                  Get.back(result: true);
-                }
-              }
+              onChanged:bloc.validation.setOtpValue
           );
         }
     );

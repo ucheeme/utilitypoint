@@ -32,8 +32,8 @@ String formatWithCommas(String text) {
   text = text.replaceAll(RegExp(r'\D'), '');
 
   // Add commas in thousands place
-  final formatter = NumberFormat('#,###');
-  int value = int.parse(text);
+  final formatter = NumberFormat('#,###.####');
+  double value = double.parse(text);
   return formatter.format(value);
 }
 
