@@ -20,6 +20,8 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
 import '../model/defaultModel.dart';
+import '../view/onboarding_screen/signIn/login_screen.dart';
+import '../view/onboarding_screen/signIn/reset_password.dart';
 import 'image_paths.dart';
 
 class AppUtils{
@@ -37,7 +39,7 @@ class AppUtils{
   static void showSuccessSnack(String msg, BuildContext? context){
     CherryToast.success(
         animationType: AnimationType.fromTop,
-        title:   Text(msg)
+        title:   Text(msg,)
     ).show(context!);
   }
   static void showInfoSnack(String msg, BuildContext? context){
@@ -296,10 +298,11 @@ void showSlidingModal(BuildContext context) {
                height10,
                 TextButton(
                   onPressed: () {
-                    // Handle resend email action
+                    Get.back();
+                   Get.to(ResetPasswordSignIn());
                   },
                   child: Text(
-                    'Resend email',
+                    'Done',
                     style: CustomTextStyle.kTxtBold.copyWith(color: AppColor.secondary100,
                     fontSize: 12.sp,fontWeight: FontWeight.w400),
                   ),
@@ -417,6 +420,88 @@ void showSuccessSlidingModal(BuildContext context,{String successMessage="",Stri
                     style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.secondary100,
                         fontSize: 12.sp, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+void showNewPasswordSuccessfulSlidingModal(BuildContext context,{String successMessage="",String headerText ="Successful!"}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent, // Makes the background transparent
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.7, // This is 60% of the screen height
+        minChildSize: 0.4, // Minimum height when you drag down
+        maxChildSize: 0.7, // Maximum height
+        builder: (_, controller) {
+          return Container(
+            padding: EdgeInsets.all(16.w),
+            margin: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 42.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30.r),
+            ),
+            child: ListView(
+
+              controller: controller, // For scrollable content
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: SizedBox(
+                        height: 24.h,
+                        width: 24.w,
+                        child: Image.asset(closeImage)),
+                  ),
+                ),
+                height50,
+                SizedBox(
+                  height: 98.h,
+                  width: 98.w,
+                  child: Image.asset(success),
+                ),
+                Gap(28.h),
+                Text(
+                  headerText,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 24.sp, fontWeight: FontWeight.w400),
+                ),
+                height12,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40.w),
+                  child: Text(
+                    successMessage,
+                    textAlign: TextAlign.center,
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        color: AppColor.black100,
+                        fontSize: 14.sp, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                Gap(56.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 34.w),
+                  child: CustomButton(
+                    onTap: () async {
+                   Get.to(SignInPage());
+                    },
+                    buttonText: 'Back to Log In',
+                    buttonColor: AppColor.primary100,
+                    textColor: AppColor.black0,
+                    borderRadius: 8.r,
+                    height: 46.h,
+                    width: 222.w,
                   ),
                 ),
               ],

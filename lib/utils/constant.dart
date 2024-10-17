@@ -33,3 +33,37 @@ extension IndexedIterable<E> on Iterable<E> {
     return map((e) => f(e, i++));
   }
 }
+final Map<String, String> networkPrefixes = {
+  // MTN Nigeria
+  '803': 'MTN',
+  '806': 'MTN',
+  '703': 'MTN',
+  '706': 'MTN',
+  '813': 'MTN',
+  '816': 'MTN',
+  '810': 'MTN',
+  '814': 'MTN',
+  '903': 'MTN',
+  '906': 'MTN',
+  // Airtel Nigeria
+  '802': 'Airtel',
+  '808': 'Airtel',
+  '701': 'Airtel',
+  '708': 'Airtel',
+  '812': 'Airtel',
+  '701': 'Airtel',
+  '901': 'Airtel',
+  '907': 'Airtel',
+  // Glo Nigeria
+  '805': 'Glo',
+  '807': 'Glo',
+  '811': 'Glo',
+  '815': 'Glo',
+  '905': 'Glo',
+  // 9mobile (formerly Etisalat Nigeria)
+  '809': '9mobile',
+  '817': '9mobile',
+  '818': '9mobile',
+  '908': '9mobile',
+  '909': '9mobile',
+};

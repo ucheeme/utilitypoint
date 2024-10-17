@@ -1,14 +1,22 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:utilitypoint/model/request/buyCableSubscriptionRequest.dart';
+import 'package:utilitypoint/model/request/confirmElectricityMeterOrCableName.dart';
+import 'package:utilitypoint/model/response/userDetails.dart';
 
 import '../../model/defaultModel.dart';
+import '../../model/request/buyAirtimeData.dart';
+import '../../model/request/buyElectricity.dart';
 import '../../model/request/getProduct.dart';
+import '../../model/response/buyAirtimeDataResponse.dart';
+import '../../model/response/buy_electricity_response.dart';
+import '../../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../../model/response/dataPlanCategory.dart';
 import '../../model/response/dataPlanResponse.dart';
 import '../../model/response/networksList.dart';
 import '../../model/response/products.dart';
-import '../../model/response/transactionHistory.dart';
+import '../../model/response/airtimeDatatransactionHistory.dart';
 import '../../repository/productsRepository.dart';
 import '../../utils/app_util.dart';
 
@@ -20,13 +28,21 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   var errorObs = PublishSubject<String>();
   ProductBloc(this.productRepository) : super(ProductInitial()) {
     on<ProductEvent>((event, emit) {});
-    on<GetTransactionHistoryEvent>((event,emit){
-      handleGetTransactionHistory(event.request);
-    });
+    // on<GetProductTransactionHistoryEvent>((event,emit){
+    //   handleGetTransactionHistory(event.request);
+    // });
     on<GetAllNetworkEvent>((event,emit){handleGetAllNetwork();});
     on<GetAllProductEvent>((event,emit){handleGetAllProducts();});
-    on<GetAllDataProductPlanCategoryEvent>((event,emit){handleGetAllDataProductPlanCategoryEvent(event.request);});
-    on<GetAllDataProductPlanEvent>((event,emit){handleGetAllDataProductPlanEvent(event.request);});
+    on<GetAllProductPlanCategoryEvent>((event,emit){handleGetAllDataProductPlanCategoryEvent(event.request);});
+    on<GetAllProductPlanEvent>((event,emit){handleGetAllDataProductPlanEvent(event.request);});
+    on<GetProductTransactionHistoryEvent>((event,emit){handleGetProductTransactionHistoryEvent(event.request);});
+    on<GetUserDetails>((event,emit){handleGetUserDetails(event.request);});
+    on<BuyAirtimeEvent>((event,emit){handleBuyAirtimeEvent(event.request);});
+    on<BuyDataEvent>((event,emit){handleBuyDataEvent(event.request);});
+    on<BuyCableSubscriptionEvent>((event,emit){handleBuyCableSubscriptionEvent(event.request);});
+    on<BuyElectricityEvent>((event,emit){handleElectricityEvent(event.request);});
+    on<ConfirmMeterNameEvent>((event,emit){handleConfirmMeterNameEvent(event.request);});
+    on<ConfirmCableNameEvent>((event,emit){handleConfirmCableNameEvent(event.request);});
   }
   void handleGetTransactionHistory(GetProductRequest event)async{
     emit(ProductIsLoading());
@@ -64,8 +80,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductIsLoading());
     try {
       final   response = await productRepository.getProduct();
-      if (response is List<NetworkList>) {
-        emit(ProductAllNetworks(response));
+      if (response is  List<Products>) {
+        emit(AllProduct(response));
         AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -79,9 +95,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   void handleGetAllDataProductPlanCategoryEvent(GetProductRequest event)async{
     emit(ProductIsLoading());
     try {
-      final   response = await productRepository.getProductDataPlanCategory(event);
-      if (response is List<DataPlanCategory>) {
-        emit(AllDataProductPlanCategories(response));
+      final   response = await productRepository.getProductPlanCategory(event);
+      if (response is List<ProductPlanCategoryItem>) {
+        emit(AllProductPlanCategories(response));
         AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -96,7 +112,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductIsLoading());
     try {
       final   response = await productRepository.getProductPlans(event);
-      if (response is  List<DataPlanResponse>) {
+      if (response is  List<ProductPlanItemResponse>) {
         emit(AllProductPlanSuccess(response));
        AppUtils.debug("success");
       }else{
@@ -108,7 +124,136 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+  void handleGetProductTransactionHistoryEvent(GetProductRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.getTransactionHistory(event);
+      if (response is  List<ProductTransactionList>) {
+        emit(AirtimeDataTransactionHistorySuccess(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetUserDetails(GetProductRequest event)async{
+    //emit(ProductIsLoading());
+    print("Year");
+    try {
+      final   response = await productRepository.getUserDetails(event);
+      if (response is UserDetails) {
+        emit(AllUserDetails(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleBuyAirtimeEvent(BuyAirtimeDataRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.buyAirtime(event);
+      if (response is BuyAirtimeDataResponse) {
+        emit(AirtimeBought(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleBuyDataEvent(BuyAirtimeDataRequest event)async{
+    emit(ProductIsLoading());
 
+    try {
+      final   response = await productRepository.buyData(event);
+      if (response is BuyAirtimeDataResponse) {
+        emit(DataBought(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleElectricityEvent(BuyElectricityRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.buyElectric(event);
+      if (response is BuyAirtimeDataResponse) {
+        emit(ElectricityBought(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleBuyCableSubscriptionEvent(BuyCableSubscriptionRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.buyCableSub(event);
+      if (response is BuyAirtimeDataResponse) {
+        emit(ElectricityBought(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleConfirmCableNameEvent(ConfirmMeterOrCableNameRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.confirmCableName(event);
+      if (response is ConfirmSmartCardMeterNameResponse) {
+        emit(CableNameConfirm(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleConfirmMeterNameEvent(ConfirmMeterOrCableNameRequest event)async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.confirmMeterName(event);
+      if (response is ConfirmSmartCardMeterNameResponse) {
+        emit(MeterNameConfirm(response));
+       AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
   initial(){
     emit(ProductInitial());
   }

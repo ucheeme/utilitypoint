@@ -4,20 +4,20 @@
 
 import 'dart:convert';
 
-List<DataPlanResponse> dataPlanResponseFromJson(String str) => List<DataPlanResponse>.from(json.decode(str).map((x) => DataPlanResponse.fromJson(x)));
+List<ProductPlanItemResponse> dataPlanResponseFromJson(String str) => List<ProductPlanItemResponse>.from(json.decode(str).map((x) => ProductPlanItemResponse.fromJson(x)));
 
-String dataPlanResponseToJson(List<DataPlanResponse> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String dataPlanResponseToJson(List<ProductPlanItemResponse> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class DataPlanResponse {
+class ProductPlanItemResponse {
   String productPlanId;
   String amount;
-  String sellingPrice;
+  int sellingPrice;
   String productPlanName;
   String dataSizeInMb;
   String validityInDays;
   String automationId;
 
-  DataPlanResponse({
+  ProductPlanItemResponse({
     required this.productPlanId,
     required this.amount,
     required this.sellingPrice,
@@ -27,7 +27,7 @@ class DataPlanResponse {
     required this.automationId,
   });
 
-  factory DataPlanResponse.fromJson(Map<String, dynamic> json) => DataPlanResponse(
+  factory ProductPlanItemResponse.fromJson(Map<String, dynamic> json) => ProductPlanItemResponse(
     productPlanId: json["product_plan_id"],
     amount: json["amount"],
     sellingPrice: json["selling_price"],

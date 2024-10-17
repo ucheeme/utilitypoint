@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio_logging_interceptor/dio_logging_interceptor.dart';
+// import 'package:dio_logging_interceptor/dio_logging_interceptor.dart';
 
 import '../model/defaultModel.dart';
 import '../utils/app_util.dart';
@@ -24,15 +24,14 @@ class ApiService {
       }
       ..headers = header(requireAccess);
     dio.interceptors.add(
-      DioLoggingInterceptor(
-        level: Level.body,
-        compact: false,
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true
       ),
     );
   }
 
   static Map<String, String> header(bool requireAccess) {
-
     return requireAccess
         ? {
       HttpHeaders.userAgentHeader: 'dio',
@@ -43,7 +42,9 @@ class ApiService {
         : {
       HttpHeaders.userAgentHeader: 'dio',
       'Content-Type': 'application/json',
+      'Accept-Language': 'en-US,en;q=0.5',
       'Accept': 'application/json',
+      'Connection':"keep-alive"
     };
   }
 
@@ -68,7 +69,7 @@ class ApiService {
           break;
         case HttpMethods.post:
           response = await dio.post(url, data: body);
-          AppUtils.debug("this is a POST request");
+          AppUtils.debug("this is a POST request: $response");
           break;
         case HttpMethods.put:
           response = await dio.put(url, data: body);
@@ -88,9 +89,15 @@ class ApiService {
             response.statusCode==ApiResponseCodes.create_success) {
           return Success(response.statusCode!, response.data as String);
         }
+        if (response.statusCode == 409) {
+          // Handle conflict
+          print('Conflict error: ${response.data}');
+          // Consider retrying or showing an error message to the user
+        }
         if (399 <= (response.statusCode ?? 400) &&
             (response.statusCode ?? 400) <= 500) {
           if (response.data is String) {
+            print("I am the issue: ${response.data}");
             try {
               var apiRes = defaultApiResponseFromJson(response.data as String);
               return Failure(response.statusCode ?? 400, (apiRes));
@@ -103,7 +110,8 @@ class ApiService {
         }
         if (ApiResponseCodes.authorizationError == response.statusCode) {
           return ForbiddenAccess();
-        } else {
+        }
+        else {
           return Failure(response.statusCode!, "Error Occurred");
         }
       } else {

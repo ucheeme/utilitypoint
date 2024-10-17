@@ -13,6 +13,7 @@ import 'package:utilitypoint/utils/route.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
 import 'package:utilitypoint/view/menuOption/cards/cardScreen.dart';
 import 'package:utilitypoint/view/menuOption/contactUs.dart';
+import 'package:utilitypoint/view/menuOption/notifications.dart';
 import 'package:utilitypoint/view/menuOption/profile.dart';
 import 'package:utilitypoint/view/menuOption/settings.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
@@ -28,7 +29,7 @@ import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import 'flavour/flavour.dart';
 import 'flavour/locator.dart';
-
+ThemeMode themeMode = ThemeMode.system;
 void mainCommon(AppFlavorConfig config) async{
   WidgetsFlutterBinding.ensureInitialized();
   statusBarTheme();
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
          GetPage(name: Pages.login, page:()=> SignInPage(),curve: Curves.easeIn),
          GetPage(name: Pages.forgotPassword, page:()=> ForgotpasswordScreen(),curve: Curves.easeIn),
          GetPage(name: Pages.twoFactorAuthentication, page:()=> Twofactorauthentication(),curve: Curves.easeIn),
-        // GetPage(name: Pages.bottomNav, page:()=> MyBottomNav(),curve: Curves.easeIn),
+         GetPage(name: Pages.notification, page:()=> NotificationsScreen(),curve: Curves.easeIn),
          GetPage(name: Pages.bottomNav, page:()=> CurvedBottomNave(),curve: Curves.easeIn),
           GetPage(name: Pages.myCards, page: ()=>Cardscreen(),curve: Curves.easeIn),
           GetPage(name: Pages.myProfile, page: ()=>ProfileScreen(),curve: Curves.easeIn),
@@ -85,7 +86,15 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: AppColor.primary100,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           useMaterial3: true,
+          brightness:Brightness.light,
         ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          //primarySwatch: Colors.blue,
+        //  scaffoldBackgroundColor: Colors.black,
+          // Customize other theme properties for dark mode
+        ),
+        themeMode:themeMode ,
         builder: (context, widget) {
           return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
         },

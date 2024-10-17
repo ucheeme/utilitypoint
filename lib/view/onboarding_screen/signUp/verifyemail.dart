@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -42,6 +43,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   late Animation<Size> _containerSizeAnimation;
   late OnboardNewBloc bloc;
   FocusNode _pinCodeFocusNode = FocusNode();
+  TextEditingController otpController= TextEditingController();
   bool activateKeyboard = false;
   @override
   void initState() {
@@ -254,7 +256,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-            controller: bloc.validation.otpController,
+            controller: otpController,
             focusNode: _pinCodeFocusNode,
             onTap: (){
               setState(() {
@@ -297,6 +299,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
               if(requiredNumber.length==4){
                 setState(() {
                   isCompleteOTP=true;
+                 bloc.validation.otpController=value;
                 });
               }else{
                 setState(() {

@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
@@ -259,20 +260,21 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                           onTap: () {
                             // Navigator.pop(context);
                             if (snapshot.hasData) {
-                              // if (widget.isNaira == false &&
-                              //     double.parse(loginResponse!.dollarWallet) ==
-                              //         0 &&
-                              //     (double.parse(loginResponse!.nairaWallet) !=
-                              //         0)) {
-                                Get.to(() => ConvertScreen(
+                              if (widget.isNaira == false &&
+                                  double.parse(userDetails!.dollarWallet) == 0) {
+                                if( (double.parse(userDetails!.nairaWallet) != 0)){
+                                  Get.to(() => ConvertScreen(
                                       amountToConvert: amountController.text,
-                                       isCreateCard:true
-                                    )
-                                );
-                            //  } else {
-
-                                // widget.bloc.add(CreateCardEvent(widget.bloc.validation.createCardRequest()));
-                            //  }
+                                      isCreateCard:true
+                                  )
+                                  );
+                                }else{
+                                  AppUtils.showInfoSnackFromBottom(
+                                      "Insufficient Balance", context);
+                                }
+                             } else {
+                                widget.bloc.add(CreateCardEvent(widget.bloc.validation.createCardRequest()));
+                             }
                             } else {
                               AppUtils.showInfoSnackFromBottom(
                                   "All Field must be filled", context);

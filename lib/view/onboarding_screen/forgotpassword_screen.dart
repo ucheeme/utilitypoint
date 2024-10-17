@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../utils/app_color_constant.dart';
@@ -39,9 +41,38 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnboardNewBloc>(context);
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    return BlocBuilder<OnboardNewBloc, OnboardNewState>(
+  builder: (context, state) {
+    if (state is OnBoardingError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          AppUtils.showSnack("${state.errorResponse.message} ${state.errorResponse.data}", context);
+        });
+      });
+      bloc.initial();
+    }
+
+    if (state is ForgotPasswordSuccess){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loginResponse = state.response;
+        showSlidingModal(context);
+
+      });
+      bloc.initial();
+    }
+
+    return OverlayLoaderWithAppIcon(
+      isLoading:state is OnboardingIsLoading,
+      overlayBackgroundColor: AppColor.black40,
+      circularProgressColor: AppColor.primary100,
+      appIconSize: 60.h,
+      appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
     );
+  },
+);
   }
   getBody(){
     return SingleChildScrollView(
@@ -111,7 +142,8 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
                           return CustomButton(
                             onTap: (){
                               if (snapshot.hasData==true && snapshot.data!=null) {
-                                showSlidingModal(context);
+                               // print(snapshot.data.toString());
+                             bloc.add(ForgotPasswordEvent(snapshot.data.toString()));
                               }else{
                                 AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
                               }

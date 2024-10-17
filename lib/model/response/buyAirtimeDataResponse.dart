@@ -4,22 +4,22 @@
 
 import 'dart:convert';
 
-BuyAirtimeResponse buyAirtimeResponseFromJson(String str) => BuyAirtimeResponse.fromJson(json.decode(str));
+BuyAirtimeDataResponse buyAirtimeResponseFromJson(String str) => BuyAirtimeDataResponse.fromJson(json.decode(str));
 
-String buyAirtimeResponseToJson(BuyAirtimeResponse data) => json.encode(data.toJson());
+String buyAirtimeResponseToJson(BuyAirtimeDataResponse data) => json.encode(data.toJson());
 
-class BuyAirtimeResponse {
+class BuyAirtimeDataResponse {
   bool status;
   String message;
   List<Datum> data;
 
-  BuyAirtimeResponse({
+  BuyAirtimeDataResponse({
     required this.status,
     required this.message,
     required this.data,
   });
 
-  factory BuyAirtimeResponse.fromJson(Map<String, dynamic> json) => BuyAirtimeResponse(
+  factory BuyAirtimeDataResponse.fromJson(Map<String, dynamic> json) => BuyAirtimeDataResponse(
     status: json["status"],
     message: json["message"],
     data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
@@ -56,20 +56,20 @@ class Datum {
   };
 }
 
-AirtimeAdminMessage airtimAdminMessageFromJson(String str) => AirtimeAdminMessage.fromJson(json.decode(str));
+AirtimeDataAdminMessage airtimAdminMessageFromJson(String str) => AirtimeDataAdminMessage.fromJson(json.decode(str));
 
-String airtimAdminMessageToJson(AirtimeAdminMessage data) => json.encode(data.toJson());
+String airtimAdminMessageToJson(AirtimeDataAdminMessage data) => json.encode(data.toJson());
 
-class AirtimeAdminMessage {
+class AirtimeDataAdminMessage {
   String status;
   Detail detail;
 
-  AirtimeAdminMessage({
+  AirtimeDataAdminMessage({
     required this.status,
     required this.detail,
   });
 
-  factory AirtimeAdminMessage.fromJson(Map<String, dynamic> json) => AirtimeAdminMessage(
+  factory AirtimeDataAdminMessage.fromJson(Map<String, dynamic> json) => AirtimeDataAdminMessage(
     status: json["Status"],
     detail: Detail.fromJson(json["Detail"]),
   );

@@ -14,6 +14,12 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>utilitypoint</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>This app require access to your gallary</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app require access to your camera</string>
+    <key>NSContactsUsageDescription</key>
+    <string>This app needs access to your contacts</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

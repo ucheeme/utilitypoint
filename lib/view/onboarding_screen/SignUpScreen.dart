@@ -357,7 +357,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                           stream: controller.confirmPassword,
                           builder: (context, snapshot) {
                             return SizedBox(
-                              height: 58.h,
+                              height: 70.h,
                               child: CustomizedTextField(
                                 onEditingComplete: (){controller.validatePasswords();
                                   setState(() {});

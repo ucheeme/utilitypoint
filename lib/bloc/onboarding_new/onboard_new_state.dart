@@ -56,8 +56,15 @@ class PinChanged extends OnboardNewState{
   List<Object?> get props =>[response];
 }
 
+class NewPasswordCreated extends OnboardNewState{
+  UserInfoUpdated response;
+  NewPasswordCreated(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
 class ForgotPasswordSuccess extends OnboardNewState{
-  DefaultApiResponse response;
+  UserInfoUpdated response;
   ForgotPasswordSuccess(this.response);
   @override
   List<Object?> get props =>[response];

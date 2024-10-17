@@ -4,11 +4,11 @@
 
 import 'dart:convert';
 
-List<DataPlanCategory> dataPlanCategoryFromJson(String str) => List<DataPlanCategory>.from(json.decode(str).map((x) => DataPlanCategory.fromJson(x)));
+List<ProductPlanCategoryItem> dataPlanCategoryFromJson(String str) => List<ProductPlanCategoryItem>.from(json.decode(str).map((x) => ProductPlanCategoryItem.fromJson(x)));
 
-String dataPlanCategoryToJson(List<DataPlanCategory> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String dataPlanCategoryToJson(List<ProductPlanCategoryItem> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class DataPlanCategory {
+class ProductPlanCategoryItem {
   String id;
   String productPlanCategoryName;
   String automationId;
@@ -19,7 +19,7 @@ class DataPlanCategory {
   DateTime createdAt;
   DateTime updatedAt;
 
-  DataPlanCategory({
+  ProductPlanCategoryItem({
     required this.id,
     required this.productPlanCategoryName,
     required this.automationId,
@@ -31,7 +31,7 @@ class DataPlanCategory {
     required this.updatedAt,
   });
 
-  factory DataPlanCategory.fromJson(Map<String, dynamic> json) => DataPlanCategory(
+  factory ProductPlanCategoryItem.fromJson(Map<String, dynamic> json) => ProductPlanCategoryItem(
     id: json["id"],
     productPlanCategoryName: json["product_plan_category_name"],
     automationId: json["automation_id"],

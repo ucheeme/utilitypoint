@@ -87,8 +87,8 @@ class CustomButton extends StatelessWidget {
 
 class CustomAppBar extends StatelessWidget {
   String title;
-
-  CustomAppBar({super.key, required this.title});
+  bool? isBottomNav;
+  CustomAppBar({super.key, required this.title,this.isBottomNav});
 
   @override
   Widget build(BuildContext context) {
@@ -98,22 +98,25 @@ class CustomAppBar extends StatelessWidget {
           onTap: () {
             Get.back(canPop: false);
           },
-          child: Container(
-            height: 40.h,
-            width: 40.w,
-            padding: EdgeInsets.only(
-              left: 4.w,
-            ),
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: AppColor.black0,
-                )),
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: AppColor.black0,
-              size: 21,
+          child: Visibility(
+            visible: isBottomNav==true?false:true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,
+            child: Container(
+              height: 40.h,
+              width: 40.w,
+              padding: EdgeInsets.only(
+                left: 4.w,
+              ),
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: AppColor.black0,
+                  )),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: AppColor.black0,
+                size: 21,
+              ),
             ),
           ),
         ),
@@ -227,7 +230,8 @@ class CustomizedTextField extends StatelessWidget {
   final Function(String)? onChanged;
   final bool? readOnly;
   bool? isPasswordVisible;
-  bool isTouched = false;
+  bool? isTouched = false;
+  bool? isProfile = false;
   final String? Function(String?)? validator;
   final void Function()? onTap;
   final BoxConstraints? suffixIconConstraints;
@@ -243,6 +247,7 @@ class CustomizedTextField extends StatelessWidget {
 
   CustomizedTextField(
       {super.key,
+        this.isProfile,
       this.prefix,
       this.prefixWidget,
       this.prefixIconConstraints,
@@ -265,90 +270,108 @@ class CustomizedTextField extends StatelessWidget {
       this.suffixIconConstraints,
       this.maxLength,
       this.suffixText,
-      required this.isTouched,
+       this.isTouched,
       this.isPasswordVisible});
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      autofocus: false,
-      obscureText: obsec ?? false,
-      textCapitalization: TextCapitalization.sentences,
-      controller: textEditingController,
-      keyboardType: keyboardType,
-      textAlignVertical: TextAlignVertical.center,
-      readOnly: readOnly ?? false,
-      onTap: onTap,
-      textInputAction: textInputAction,
-      inputFormatters: inputFormat ?? [],
-      onEditingComplete: onEditingComplete,
-      onChanged: onChanged,
-      maxLength: maxLength,
-      maxLines: maxLines ?? 1,
-      validator: validator ??
-          (value) {
-            if (value!.isEmpty) {
-              return "Fill empty field";
-            } else {
-              return null;
-            }
-          },
-      style: CustomTextStyle.kTxtMedium.copyWith(
-          color: AppColor.black100,
-          fontWeight: FontWeight.w400,
-          fontSize: 14.sp),
-      decoration: InputDecoration(
-          hintText: hintTxt,
-          contentPadding: EdgeInsets.symmetric(vertical: 15.h),
-          //hintTextDirection: TextDirection.LTR,
-          isDense: true,
-          suffixText: suffixText,
-          prefixText: prefix,
-          prefixIcon: prefixWidget ?? const SizedBox.shrink(),
-          prefixIconConstraints: suffixIconConstraints ??
-              BoxConstraints(
-                minWidth: 19.w,
-                minHeight: 19.h,
-              ),
-          suffixIconConstraints: suffixIconConstraints ??
-              BoxConstraints(minWidth: 19.w, minHeight: 19.h),
-          suffixIcon: surffixWidget ?? const SizedBox.shrink(),
-          fillColor: isTouched ? AppColor.primary20 : AppColor.black0,
-          filled: true,
-          errorText: error,
-          errorStyle: CustomTextStyle.kTxtMedium.copyWith(
-              color: (isConfirmPasswordMatch != null &&
-                      isConfirmPasswordMatch == false)
-                  ? AppColor.success100
-                  : AppColor.Error100,
-              fontSize: 10.sp),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColor.black40),
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          errorBorder: (error == null || error == "")
-              ? null
-              : OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColor.Error100, width: 0.2.w),
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            autofocus: false,
+            cursorColor: AppColor.primary100,
+            obscureText: obsec ?? false,
+            textCapitalization: TextCapitalization.sentences,
+            controller: textEditingController,
+            keyboardType: keyboardType,
+            textAlignVertical: TextAlignVertical.center,
+            readOnly: readOnly ?? false,
+            onTap: onTap,
+            textInputAction: textInputAction,
+            inputFormatters: inputFormat ?? [],
+            onEditingComplete: onEditingComplete,
+            onChanged: onChanged,
+            maxLength: maxLength,
+            maxLines: maxLines ?? 1,
+            validator: validator ??
+                (value) {
+                  if (value!.isEmpty) {
+                    return "Fill empty field";
+                  } else {
+                    return null;
+                  }
+                },
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.black100,
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp),
+            decoration: InputDecoration(
+                hintText: hintTxt,
+                contentPadding: EdgeInsets.symmetric(vertical: 15.h),
+                //hintTextDirection: TextDirection.LTR,
+                isDense: true,
+                suffixText: suffixText,
+                prefixText: prefix,
+                prefixIcon: prefixWidget ?? const SizedBox.shrink(),
+                prefixIconConstraints: suffixIconConstraints ??
+                    BoxConstraints(
+                      minWidth: 19.w,
+                      minHeight: 19.h,
+                    ),
+                suffixIconConstraints: suffixIconConstraints ??
+                    BoxConstraints(minWidth: 19.w, minHeight: 19.h),
+                suffixIcon: surffixWidget ?? const SizedBox.shrink(),
+                fillColor:(isProfile==true)?AppColor.primary30: isTouched==true ? AppColor.primary20 : AppColor.black0,
+                filled: true,
+                // errorText: error,
+                // errorStyle: CustomTextStyle.kTxtMedium.copyWith(
+                //     color: (isConfirmPasswordMatch != null &&
+                //             isConfirmPasswordMatch == false)
+                //         ? AppColor.success100
+                //         : AppColor.Error100,
+                //     fontSize: 10.sp),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColor.black80),
-            borderRadius: BorderRadius.circular(4.r),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: AppColor.black40),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                errorBorder: (error == null || error == "")
+                    ? null
+                    : OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColor.Error100, width: 0.2.w),
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(color: AppColor.black80),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                hintStyle: CustomTextStyle.kTxtRegular.copyWith(
+                    color: const Color(0xff79747E),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13.sp)),
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
-            borderRadius: BorderRadius.circular(4.r),
+          Gap(4.h),
+          Text(error??"",
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: (isConfirmPasswordMatch != null &&
+                    isConfirmPasswordMatch == false)
+                    ? AppColor.success100
+                    : AppColor.Error100,
+                fontSize: 10.sp),
           ),
-          hintStyle: CustomTextStyle.kTxtRegular.copyWith(
-              color: const Color(0xff79747E),
-              fontWeight: FontWeight.w400,
-              fontSize: 13.sp)),
+        ],
+      ),
     );
   }
 }
@@ -576,7 +599,7 @@ Widget dashboardHeader(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              completelyCurvedButton(depositOnTap),
+              completelyCurvedButton(depositOnTap,title: isNaira?"Deposit NGN":"Deposit USD"),
               completelyCurvedButton(withdrawOnTap,
                   icon: 'arrowDiagonalUp',
                   title: 'Withdraw',
@@ -605,8 +628,8 @@ Widget completelyCurvedButton(Function()? onTap,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-              height: 40.h,
-              width: 40.w,
+              height: 20.h,
+              width: 19.w,
               child: Image.asset("assets/image/icons/$icon.png")),
           Text(
             title,
@@ -625,12 +648,13 @@ Widget dashboardIcons(
     {String title = "Fund Wallet",
     String icon = 'fund_wallet',
     Function()? onTap,
+      bool isSelected =false,
     double horizontal = 5}) {
   return GestureDetector(
     onTap: onTap,
-    child: Container(
-      height: 84.h,
-      width: 74.w,
+    child: SizedBox(
+      height: 86.h,
+      // width: 74.w,
       child: Column(
         children: [
           Container(
@@ -638,6 +662,7 @@ Widget dashboardIcons(
             width: 56.w,
             padding: EdgeInsets.all(16.h),
             decoration: BoxDecoration(
+              border: Border.all(color: isSelected?AppColor.primary100:AppColor.black0),
                 borderRadius: BorderRadius.circular(10.r),
                 color: AppColor.black0),
             child: Image.asset(
@@ -659,10 +684,10 @@ Widget dashboardIcons(
   );
 }
 
-Widget listButtons({String title = "", String icons = ""}) {
+Widget airtimeDataCard({String title =""}){
   return Container(
-      height: 50.h,
-      width: 335.w,
+      height: 63.h,
+      width: 70.w,
       margin: EdgeInsets.symmetric(vertical: 16.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -671,7 +696,32 @@ Widget listButtons({String title = "", String icons = ""}) {
         ],
         color: AppColor.black0,
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      child:  Center(
+        child: Text(
+          title,
+          style: CustomTextStyle.kTxtMedium.copyWith(
+              color: AppColor.black100,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w400),
+        ),
+      ),);
+}
+
+Widget listButtons({String title = "", String icons = "", bool hasSwitch =false,
+bool switchValue=false, Function(bool)? onChanged}) {
+  return Container(
+      height: 50.h,
+      width: 335.w,
+      margin: EdgeInsets.symmetric(vertical: 14.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
+        ],
+        color: AppColor.black0,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 9.5.w, vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -702,6 +752,8 @@ Widget listButtons({String title = "", String icons = ""}) {
               ],
             ),
           ),
+          hasSwitch?
+              Switch(value: switchValue, onChanged: onChanged):
           Icon(
             Icons.arrow_forward_ios_outlined,
             color: AppColor.black60,
@@ -815,11 +867,11 @@ Widget cardDesign(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w400),
                       ),
-                      Gap(10.w),
-                      GestureDetector(
-                          onTap: copyCTA,
-                          child: Image.asset(
-                              "assets/image/images_png/copy_ic.png"))
+                      // Gap(10.w),
+                      // GestureDetector(
+                      //     onTap: copyCTA,
+                      //     child: Image.asset(
+                      //         "assets/image/images_png/copy_ic.png"))
                     ],
                   ),
                 )
@@ -845,7 +897,7 @@ Widget convertContainer(
     TextEditingController? amountController,
     BuildContext? context}) {
   return Container(
-    height: 86.h,
+    height: 90.h,
     width: 335.w,
     padding: EdgeInsets.all(12.h),
     decoration: BoxDecoration(
@@ -876,7 +928,8 @@ Widget convertContainer(
                 isFrom
                     ? "Account Balance ${NumberFormat.currency(symbol: isNaira ? '\₦' : '\$', decimalDigits: 0).format(accountBalance)}"
                     : "",
-                style: CustomTextStyle.kTxtMedium.copyWith(
+
+                style:  GoogleFonts.inter(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w400,
                     color: AppColor.black80),
@@ -891,7 +944,7 @@ Widget convertContainer(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: 40.h,
+                 height:44 .h,
                   width: 125.w,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -909,7 +962,7 @@ Widget convertContainer(
                             ),
                       Gap(6.w),
                       SizedBox(
-                        height: 40.h,
+                        height: 42.h,
                         width: 75.w,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -954,7 +1007,7 @@ Widget convertContainer(
                     isTouched: false,
                     onTap: textFieldTouch,
                     hintTxt: "0",
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     onChanged: onChanged,
                     readOnly: isReadOnly,
                     textEditingController: amountController,

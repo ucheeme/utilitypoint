@@ -26,6 +26,8 @@ class _CardDesignState extends State<CardDesign> {
   bool showCardDetails =false;
   @override
   Widget build(BuildContext context) {
+    print(widget.cardDetail?.freezeStatus);
+    print("thesrt");
     return  GestureDetector(
       onTap: (){
         if(widget.isVirtualCardScreen!=true||widget.isVirtualCardScreen==null){
@@ -37,12 +39,13 @@ class _CardDesignState extends State<CardDesign> {
         }
       },
       child: Container(
-          height: 164.h,
+          height: 167.h,
           width: 335.w,
           margin: EdgeInsets.symmetric(vertical: 16.h),
           padding: EdgeInsets.symmetric(vertical: 20.h,),
           decoration: BoxDecoration(
-             color: widget.cardDetail!.brand=="MASTERCARD"?AppColor.black100:AppColor.visaCard,
+             color:(widget.cardDetail?.freezeStatus=="1")?AppColor.iceColor:
+             widget.cardDetail!.brand=="MASTERCARD"?AppColor.black100:AppColor.visaCard,
               borderRadius: BorderRadius.circular(16.r)
           ),
           child: Column(
@@ -69,7 +72,7 @@ class _CardDesignState extends State<CardDesign> {
               ),
            Gap(20.h),
            SizedBox(
-             height:83.h,
+             height:86.h,
              width: 335.w,
              child: Row(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,7 +83,7 @@ class _CardDesignState extends State<CardDesign> {
                    child: Column(
                      children: [
                        SizedBox(
-                         height:31.h,
+                         height:33.h,
                          width: 277.w,
                          child: Text(
                            showCardDetails?widget.cardDetail!.cardNumber:
@@ -91,7 +94,7 @@ class _CardDesignState extends State<CardDesign> {
                                fontSize: 26.sp
                            ),),
                        ),
-                       Gap(21.5.h),
+                       Gap(20.h),
                        SizedBox(
                          width: 277.w,
                          child: Row(

@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'package:utilitypoint/main.dart';
+
 class AppColor{
   //PrimaryColor
   static const Color primary100 =Color(0xff134DB0);
@@ -7,7 +10,8 @@ class AppColor{
   static const Color primary80 =Color(0xff2565D2);
   static const Color primary60 =Color(0xff5997FF);
   static const Color primary40 =Color(0xff89B5FF);
-  static const Color primary20 =Color(0xffF5F8FE);
+  static const Color primary30 =Color(0xffD9E5FE);
+  static  Color primary20 =themeMode==ThemeMode.dark?Colors.black:Color(0xffF5F8FE);
   static const Color primary10 =Color(0xff08204A);
 
   //SecondaryColor
@@ -25,6 +29,8 @@ class AppColor{
   static const Color black20 =Color(0xffE9E9E9);
   static const Color black10 =Color(0xff6D86B2);
   static const Color black0 =Color(0xffFFFFFF);
+  static const Color black00 =Color(0xffD9D9D9);
+  static const Color iceColor =Color(0xffDBF1FD);
 
   //AccentColor
   static const Color success100 =Color(0xff14AE5C);

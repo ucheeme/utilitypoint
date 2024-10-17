@@ -27,7 +27,7 @@ String? userId = "";
 
 class OnboardingFormValidation {
   TextEditingController passwordController = TextEditingController();
-  TextEditingController otpController = TextEditingController();
+  String otpController = "";
   TextEditingController transactionPinController = TextEditingController();
   TextEditingController twoFactorController = TextEditingController();
   List<Map<String, String>> moreOptionTitle = [
@@ -301,12 +301,12 @@ class OnboardingFormValidation {
   CreateAccountRequest createAccountRequest() {
     return CreateAccountRequest(
         email: _emailSubject.value.toLowerCase(),
-        password: passwordController.text.trim(),
+        password: passwordController.text,
         passwordConfirmation: _confirmPasswordSubject.value.trim());
   }
 
   VerifiedEmailRequest verifiedEmailRequest() {
-    return VerifiedEmailRequest(userId: userId, otp: otpController.text);
+    return VerifiedEmailRequest(userId: userId, otp: otpController);
   }
 
   VerifiedEmailRequest resendVerifiedEmailRequest() {

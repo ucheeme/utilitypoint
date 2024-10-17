@@ -73,3 +73,10 @@ class ForgotPasswordEvent extends OnboardNewEvent{
   @override
   List<Object?> get props => [];
 }
+
+class SignInCreateNewPasswordEvent extends OnboardNewEvent{
+  final SignInResetPasswordRequest request;
+  const SignInCreateNewPasswordEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}

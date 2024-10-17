@@ -10,12 +10,12 @@ import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/fundWallet/fund_wallet.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
-import 'package:utilitypoint/view/profile/profile.dart';
 import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import '../utils/app_color_constant.dart';
 import '../utils/customClipPath.dart';
 import '../utils/myCustomCamera/myCameraScreen.dart';
+import 'menuOption/profile.dart';
 
 class MyBottomNav extends StatefulWidget {
   @override
@@ -28,10 +28,10 @@ class _MyBottomNavState extends State<MyBottomNav> {
   final List<Widget> _screens = [
     HomeScreen(),
    // Container(color: const Color(0xFFF5F8FE),),
-    Container(color: Colors.red,),
+    TransactionScreen(isBottomNav: true,),
     Container(color: Colors.greenAccent,), // Screen displayed when the Floating Action Button is tapped
     Container(color: Colors.purpleAccent,),
-    Container(color: Colors.yellow,),
+    ProfileScreen(isBottomNav: true,)
   ];
   late List<CameraDescription> cameras;
   @override
@@ -172,23 +172,26 @@ class _MyBottomNavState extends State<MyBottomNav> {
   GestureDetector itemWidget({required Function() onTap, required String title, required String image, required bool active}) {
     return GestureDetector(
         onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset("assets/image/icons/$image.svg",
-              color: active ?
-              const Color(0xFF134DB0):const Color(0xFF89B5FF),
-              width: 20.h,height: 20.h,fit: BoxFit.contain,),
-            SizedBox(height: 8.h,),
-            Text(title,style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 12.sp,
-                color:
-                active ?
-                const Color(0xFF134DB0):const Color(0xFF89B5FF)
-            ),)
-          ],
+        child: SizedBox(
+          height: 46.h,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset("assets/image/icons/$image.svg",
+                color: active ?
+                const Color(0xFF134DB0):const Color(0xFF89B5FF),
+                width: 20.h,height: 20.h,fit: BoxFit.contain,),
+              SizedBox(height: 8.h,),
+              Text(title,style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12.sp,
+                  color:
+                  active ?
+                  const Color(0xFF134DB0):const Color(0xFF89B5FF)
+              ),)
+            ],
 
+          ),
         ));
   }
 }

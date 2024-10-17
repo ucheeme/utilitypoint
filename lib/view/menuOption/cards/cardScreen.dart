@@ -162,13 +162,16 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
                             return cardDesign(
                                 accountBalance: double.parse(index==0?loginResponse!.nairaWallet:loginResponse!.dollarWallet),
                                 balanceRemaining: 0.00,
-                            cardNumber:cardRef ,
+                            cardNumber:"" ,
                               cardCTA: (){
-                                Get.to( MyAccountMoreDetails(
-                                  isNaira: index==1?false:true,
-                                  accountBalance:double.parse(index==0?loginResponse!.nairaWallet:loginResponse!.dollarWallet),
-                                  cardRef: cardRef,
-                                ),curve: Curves.easeIn);
+                                  if(index==1){
+                                    Get.to( MyAccountMoreDetails(
+                                      isNaira: index==1?false:true,
+                                      accountBalance:double.parse(index==0?loginResponse!.nairaWallet:loginResponse!.dollarWallet),
+                                      cardRef: "",
+                                    ),curve: Curves.easeIn);
+                                  }
+
                               },
                               copyCTA: (){
                                 //copyToClipboard(cntxt,"");

@@ -1,9 +1,15 @@
 PODS:
   - camera_avfoundation (0.0.1):
     - Flutter
+  - contacts_service (0.2.2):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
+  - dio_interceptor_plus (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - flutter_secure_storage (3.3.1):
     - Flutter
   - open_mail_app (0.0.1):
@@ -11,6 +17,8 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -19,27 +27,39 @@ PODS:
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - dio_interceptor_plus (from `.symlinks/plugins/dio_interceptor_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - open_mail_app (from `.symlinks/plugins/open_mail_app/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
+  contacts_service:
+    :path: ".symlinks/plugins/contacts_service/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
+  dio_interceptor_plus:
+    :path: ".symlinks/plugins/dio_interceptor_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   open_mail_app:
     :path: ".symlinks/plugins/open_mail_app/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   url_launcher_ios:
@@ -47,11 +67,15 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
+  contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
+  dio_interceptor_plus: 97c8a418478ab3afefab3ae8aa81f3e892307cb9
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   open_mail_app: 794172f6a22cd16319d3ddaf45e945b2f74952b0
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 

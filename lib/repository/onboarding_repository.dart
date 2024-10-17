@@ -8,6 +8,7 @@ import 'package:utilitypoint/repository/apiRepository.dart';
 
 import '../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../model/request/setTransactionPin.dart';
+import '../model/request/signInResetPasswordRequest.dart';
 import '../model/request/twoFactorAuthenticationRequest.dart';
 import '../model/request/updateUserInfo.dart';
 import '../model/response/accountCreated.dart';
@@ -21,6 +22,7 @@ class OnboardingRepository extends DefaultRepository{
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
+        print("tjjj");
         AccountCreatedResponse res = accountCreatedFromJson(json.encode(r.data));
         return res;
       } else {
@@ -28,6 +30,7 @@ class OnboardingRepository extends DefaultRepository{
       }
     }
     else {
+      print(response);
       handleErrorResponse(response);
       return errorResponse!;
     }
@@ -125,6 +128,22 @@ class OnboardingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+  Future<Object> createNewPassword(SignInResetPasswordRequest request) async {
+    var response = await postRequest(request, AppUrls.createNewPassword,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+       UserInfoUpdated res = userInfoUpdatedFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
 
   Future<Object> setUserInfo(UpdateUser request) async {
     var response = await postRequest(request, AppUrls.setUserInfo,
@@ -163,11 +182,11 @@ class OnboardingRepository extends DefaultRepository{
   }
   Future<Object> forgotPassword(String request) async {
     var response = await postRequest(null, "${AppUrls.forgotPassword}?email=$request",
-        true, HttpMethods.post);
+        true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        DefaultApiResponse res = defaultApiResponseFromJson(json.encode(r));
+        UserInfoUpdated res = userInfoUpdatedFromJson(json.encode(r.data));
         return res;
       } else {
         return r;

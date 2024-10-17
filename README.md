@@ -13,4 +13,8 @@ To build environment
 4. run dart run build_runner build --delete-conflicting-outputs
 
 
- 
+isLoading:state is OnboardingIsLoading,
+overlayBackgroundColor: AppColor.black40,
+circularProgressColor: AppColor.primary100,
+appIconSize: 60.h,
+appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),

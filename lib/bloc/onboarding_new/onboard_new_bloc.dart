@@ -7,6 +7,7 @@ import '../../model/defaultModel.dart';
 import '../../model/request/accountCreation.dart';
 import '../../model/request/loginRequest.dart';
 import '../../model/request/setTransactionPin.dart';
+import '../../model/request/signInResetPasswordRequest.dart';
 import '../../model/request/twoFactorAuthenticationRequest.dart';
 import '../../model/request/updateUserInfo.dart';
 import '../../model/request/verifyEmailRequest.dart';
@@ -35,6 +36,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     on<LoginUserTwoFactorAuthenticationEvent>((event, emit)async{handleTwoFactorAuthentication(event.request);});
     on<ResendTwoFactorAuthenticatorEvent>((event, emit)async{handleResendTwoFactorAuthentication(event.request);});
     on<ChangePinEvent>((event, emit)async{handleChangePin(event.request);});
+    on<SignInCreateNewPasswordEvent>((event, emit)async{handleSignInCreateNewPasswordEvent(event.request);});
   }
   void handleAccountCreateEvent(event)async{
     emit(OnboardingIsLoading());
@@ -151,14 +153,11 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     emit(OnboardingIsLoading());
     try {
       final   response = await onboardingRepository.forgotPassword(event);
-      if (response is DefaultApiResponse) {
-        if(response.status== true){
+      if (response is UserInfoUpdated) {
+
           emit(ForgotPasswordSuccess(response));
           AppUtils.debug("success");
-        }else{
-          emit(OnBoardingError(response as DefaultApiResponse));
-          AppUtils.debug("error");
-        }
+
       }else{
         emit(OnBoardingError(response as DefaultApiResponse));
         AppUtils.debug("error");
@@ -219,6 +218,23 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
           emit(OnBoardingError(response as DefaultApiResponse));
           AppUtils.debug("error");
         }
+      }else{
+        emit(OnBoardingError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+  void handleSignInCreateNewPasswordEvent(SignInResetPasswordRequest event)async{
+    emit(OnboardingIsLoading());
+    try {
+      final response = await onboardingRepository.createNewPassword(event);
+      if (response is UserInfoUpdated) {
+          emit(NewPasswordCreated(response));
+          AppUtils.debug("success");
       }else{
         emit(OnBoardingError(response as DefaultApiResponse));
         AppUtils.debug("error");

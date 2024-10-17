@@ -153,7 +153,7 @@ class CustomValidator {
     if (value.isEmpty) {
       return "Password is Required";
     } else if (value.length < requiredPasswordLength) {
-      return "Password can't be smaller than  $requiredPasswordLength characters";
+      return "Password must be at least  $requiredPasswordLength characters.";
     } else if (value.length > 50) {
       return "Password can't be then than 50 characters";
     }

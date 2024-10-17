@@ -58,6 +58,7 @@ class DefaultRepository{
     var response = await ApiService.makeApiCall(request, url,requireAccess:
     requiresToken, requestType: method,
         baseUrl: AppUrls.baseUrl);
+    print("this is the resposee: $response");
     if(response is Success) {
       var r = defaultApiResponseFromJson(response.response as String);
       return r;

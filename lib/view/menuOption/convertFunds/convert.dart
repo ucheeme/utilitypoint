@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/reviewOrder.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
@@ -282,15 +283,28 @@ class _ConvertScreenState extends State<ConvertScreen>
                           Positioned(
                             top: 80.h,
                             left: 147.5.w,
-                            child: Container(
-                              height: 30.h,
-                              width: 30.w,
-                              padding: EdgeInsets.all(3.w),
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColor.primary100),
-                              child: Image.asset(
-                                  "assets/image/images_png/fi_refresh.png"),
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  if(currencyConvertingFrom=="USD"){
+                                    currencyConvertingFrom ="NGN";
+                                    currencyConvertingTo ="USD";
+                                  }else{
+                                    currencyConvertingFrom ="USD";
+                                    currencyConvertingTo ="NGN";
+                                  }
+                                });
+                              },
+                              child: Container(
+                                height: 30.h,
+                                width: 30.w,
+                                padding: EdgeInsets.all(3.w),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColor.primary100),
+                                child: Image.asset(
+                                    "assets/image/images_png/fi_refresh.png"),
+                              ),
                             ),
                           ),
                         ],
@@ -355,6 +369,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                     Gap(83.h),
                     CustomButton(
                       onTap: () {
+
                         converting = ConvertingData(
                             currency: currencyConvertingFrom,
                             amount: amountToConvertController.text
@@ -363,12 +378,31 @@ class _ConvertScreenState extends State<ConvertScreen>
                             currency: currencyConvertingTo,
                             amount: amountConvertedController.text
                                 .replaceAll(",", ""));
-                        Get.to(
-                            ReviewOrder(
-                              exchangeRate: exchangeRate,
-                              isCreateCard: widget.isCreateCard,
-                            ),
-                        );
+                        if(currencyConvertingFrom=="USD"){
+                          if(double.parse(amountToConvertController.text)>double.parse(userDetails!.dollarWallet)){
+                            AppUtils.showInfoSnack("Insufficient Balance", context);
+                          }else{
+                            Get.to(
+                              ReviewOrder(
+                                exchangeRate: exchangeRate,
+                                isCreateCard: widget.isCreateCard,
+                              ),
+                            );
+                          }
+                        }else if(currencyConvertingFrom =="NGN"){
+                         if(double.parse(amountToConvertController.text)>double.parse(userDetails!.nairaWallet)){
+                           AppUtils.showInfoSnack("Insufficient Balance", context);
+
+                         }else{
+                           Get.to(
+                             ReviewOrder(
+                               exchangeRate: exchangeRate,
+                               isCreateCard: widget.isCreateCard,
+                             ),
+                           );
+                         }
+                        }
+
                       },
                       buttonText: "Review Order",
                       height: 58.h,

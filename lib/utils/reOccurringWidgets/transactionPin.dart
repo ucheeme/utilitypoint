@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -18,7 +19,8 @@ import '../reuseable_widget.dart';
 import '../text_style.dart';
 
 class TransactionPin extends StatefulWidget {
-  const TransactionPin({super.key});
+ bool? isTransactionScreen;
+  TransactionPin({super.key, this.isTransactionScreen});
 
   @override
   State<TransactionPin> createState() => _TransactionPinState();
@@ -31,7 +33,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
   // TextEditingController ttController=TextEditingController();
   late Animation<Offset> _slideAnimation;
   late Animation<Offset> _slideAnimationTop;
-
+  TextEditingController transactionPinController = TextEditingController();
   late OnboardNewBloc bloc;
   @override
   void initState() {
@@ -113,7 +115,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
               padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Set transaction Pin")),
+                  child: CustomAppBar(title:widget.isTransactionScreen==true? "Set transaction Pin":"Enter Pin")),
             ),
           ),
           Gap(20.h),
@@ -135,13 +137,16 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                         height: 30.h,
                         child: pinCodeTextField(context: context)),
                     Gap(42.h),
-                    CustomKeypad(controller: bloc.validation.transactionPinController),
-                    height55,
+                    CustomKeypad(controller: transactionPinController),
+                    height45,
                     StreamBuilder<Object>(
                         stream: bloc.validation.otpValue,
                         builder: (context, snapshot) {
                           return CustomButton(onTap: () {
-                            Get.back(result: [true, bloc.validation.transactionPinController.text]);
+                            bloc.validation.transactionPinController.text=transactionPinController.text;
+                            Get.back(result: [true,transactionPinController.text]);
+                            bloc.validation.setOtpValue("");
+
                           }, buttonText: "Submit", textfontSize: 16.sp,
                             borderRadius: 8.r,
                             textColor: AppColor.black0,height:58.h,
@@ -171,7 +176,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                   decoration:BoxDecoration(
                       color: AppColor.primary100,shape: BoxShape.circle)),
               animationType: AnimationType.slide,
-              controller: bloc.validation.transactionPinController,
+              controller: transactionPinController,
               keyboardType: TextInputType.none,
               textStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700,color: AppColor.primary100),
               obscureText: true,

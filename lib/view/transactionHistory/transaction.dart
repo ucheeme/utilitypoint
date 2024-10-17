@@ -1,19 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/model/request/getProduct.dart';
+import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/card/virtualcard_bloc.dart';
+import '../../bloc/product/product_bloc.dart';
+import '../../model/response/airtimeDatatransactionHistory.dart';
 import '../../utils/app_color_constant.dart';
+import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
+import '../../utils/reusable_widget_two.dart';
 import '../../utils/reuseable_widget.dart';
-
+List<ProductTransactionList> transactionList =[];
+List<ProductTransactionList> tempTransactionList =[];
 class TransactionScreen extends StatefulWidget {
-  const TransactionScreen({super.key});
+   bool? isBottomNav;
+  TransactionScreen({super.key, this.isBottomNav});
 
   @override
   State<TransactionScreen> createState() => _TransactionScreenState();
@@ -25,14 +36,35 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
   bool isDataAirtime= false;
   bool isNairaTransactions= false;
   bool isDollarTransactions= false;
-  late VirtualcardBloc bloc;
+  late ProductBloc bloc;
+  List<ProductTransactionList> transactionList =[];
+  DateTime currentDateTime = DateTime.now();
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      transactionList =tempTransactionList;
+      if(tempTransactionList.isEmpty){
+        bloc.add(GetProductTransactionHistoryEvent(GetProductRequest(
+          userId: loginResponse!.id,
+          dateFrom: "${currentDateTime.year}-${currentDateTime.month}-01",
+          dateTo:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+        )));
+      }
+
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
   }
+  int _getLastDayOfTheMonth(){
+    DateTime firstDayOfNextMonth = (currentDateTime.month < 12)
+        ? DateTime(currentDateTime.year, currentDateTime.month + 1, 1)
+        : DateTime(currentDateTime.year + 1, 1, 1);
 
+    // Subtract one day to get the last day of the current month
+    DateTime lastDayOfCurrentMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    return lastDayOfCurrentMonth.day;
+  }
   @override
   void dispose() {
     // Dispose the animation manager to avoid memory leaks
@@ -41,8 +73,38 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: appBodyDesign(getBody()),
+    bloc =BlocProvider.of<ProductBloc>(context);
+    return BlocBuilder<ProductBloc, ProductState>(
+  builder: (context, state) {
+    if (state is ProductError){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, (){
+          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+        });
+      });
+      bloc.initial();
+    }
+
+    if(state is AirtimeDataTransactionHistorySuccess){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        transactionList=state.response;
+        tempTransactionList = transactionList;
+      });
+      bloc.initial();
+    }
+
+
+    return OverlayLoaderWithAppIcon(
+      isLoading: state is ProductIsLoading,
+      overlayBackgroundColor: AppColor.black40,
+      circularProgressColor: AppColor.primary100,
+      appIconSize: 60.h,
+      appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
+      child: Scaffold(
+        body: appBodyDesign(getBody()),
+      ),
+    );
+  },
     );
   }
   getBody(){
@@ -55,7 +117,9 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
               padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Transaction history")),
+                  child: CustomAppBar(title: "Transaction history",
+                    isBottomNav: widget.isBottomNav,)
+              ),
             ),
           ),
           Gap(20.h),
@@ -153,7 +217,12 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
                       ),
                     ),
                     Gap(24.h),
-
+                   ...transactionList.mapIndexed((element, index) =>
+                   Padding(
+                     padding:  EdgeInsets.only(bottom:12.h),
+                     child: ProductTransactionWidgetDesgin(transactionList: element,),
+                   )
+                   )
                   ],
                 ),
               ),

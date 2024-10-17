@@ -42,7 +42,7 @@ class _CardTransactionHistoryState extends State<CardTransactionHistory>with Tic
       bloc.add(GetCardTransactionHistoryEvent(GetProductRequest(
           userId: loginResponse!.id,
           cardId:widget.cardId,
-          startDate: "${currentDateTime.year}-${currentDateTime.month}-${currentDateTime.day}",
+          startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
           endDate: "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
           pageSize: 40.toString(),
           page: 1.toString()

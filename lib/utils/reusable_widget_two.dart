@@ -11,7 +11,7 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
 import '../model/response/cardTransactions.dart';
-import '../model/response/transactionHistory.dart';
+import '../model/response/airtimeDatatransactionHistory.dart';
 import 'app_color_constant.dart';
 import 'app_util.dart';
 
@@ -33,16 +33,18 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           imageContainer(transactionList.transactionCategory),
-          Gap(12.w),
+          //Gap(12.w),
           SizedBox(
             height: 44.h,
-            width: 178.w,
+            width: 158.w,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(transactionList.description,
-                style: CustomTextStyle.kTxtMedium.copyWith(
+                style: CustomTextStyle.kTxtBold.copyWith(
                   color: AppColor.black100,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400
@@ -60,11 +62,14 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
           SizedBox(
             width: 90.w,
             child: Text(
+              textAlign: TextAlign.end,
                 NumberFormat.currency(
                     symbol: transactionList.walletCategory=="naira_wallet"?'\₦' : '\$',
                     decimalDigits: 0)
                     .format(double.parse(transactionList.amount)),
               style: GoogleFonts.inter(
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
                 color:transactionList.transactionCategory=="fund"?AppColor.success100:
                     AppColor.Error100
               ),
@@ -75,7 +80,7 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
     );
   }
   Widget imageContainer(String transactionType){
-    return Image.asset(transactionType!="fund"?income_Image:expenses_Image);
+    return Image.asset(transactionType=="fund"?income_Image:expenses_Image);
   }
 }
 
@@ -86,7 +91,7 @@ class CardTransactionWidgetDesign extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 66.h,
+      height: 70.h,
       width: 335.w,
       padding: EdgeInsets.all(9.h),
       decoration: BoxDecoration(
@@ -97,13 +102,13 @@ class CardTransactionWidgetDesign extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           imageContainer(transactionList.description?.toLowerCase()??""),
-          Gap(12.w),
+        //  Gap(8.w),
           SizedBox(
-            height: 44.h,
-            width: 178.w,
+            height: 50.h,
+            width: 190.w,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

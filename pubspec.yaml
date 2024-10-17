@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc:
+  carousel_slider: ^5.0.0
+  carousel_indicator: ^1.0.6
   flutter_svg:
   get:
   animate_do: ^3.1.2
@@ -44,10 +46,16 @@ dependencies:
   shared_preferences: ^2.2.2
   rxdart:
   device_info_plus:
-  dio:
-  dio_cache_interceptor:
-  dio_logging_interceptor:
+  contacts_service: ^0.6.1
+  permission_handler:
+  dio: ^5.7.0
+  dio_cache_interceptor: ^3.5.0
+#  dio_logging_interceptor: ^1.0.1
+  dio_interceptor_plus: ^0.0.2
   date_time_format: ^2.0.1
+#  firebase_core: ^3.1.0
+#  firebase_messaging: ^15.0.1
+  flutter_local_notifications: ^17.1.2
   equatable:
   cherry_toast: ^1.11.0
   flutter_flavor:
@@ -63,6 +71,7 @@ dependencies:
   google_fonts: ^6.2.1
   local_session_timeout:
   syncfusion_flutter_datepicker: ^27.1.51
+  flutter_slidable: ^3.1.1
 
 
   envied: ^0.3.0+3

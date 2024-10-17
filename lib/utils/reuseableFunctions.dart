@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/reusable_widget_two.dart';
 
 import 'app_color_constant.dart';
@@ -81,4 +82,26 @@ void openRequestAccountStatementCalendar(BuildContext context,
     AppUtils.debug("start Date ${result.startDate}");
     AppUtils.debug("End Date ${result.endDate}");
   }
+}
+
+String getNetworkProvider(String phoneNumber) {
+  // Clean the phone number by removing any spaces, dashes, or country code
+  phoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+
+  // Remove country code if it's there (assuming it's +234 for Nigeria)
+  if (phoneNumber.startsWith('234')) {
+    phoneNumber = phoneNumber.substring(3);
+  } else if (phoneNumber.startsWith('+234')) {
+    phoneNumber = phoneNumber.substring(4);
+  }
+
+  // Check if phone number starts with '0' after removing country code
+  if (phoneNumber.startsWith('0')) {
+    phoneNumber = phoneNumber.substring(1);
+  }
+
+
+  // Check if the phone number has a valid network prefix
+  String prefix = phoneNumber.substring(0, 3); // First 3 digits
+  return networkPrefixes[prefix] ?? 'Unknown network provider';
 }

@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:utilitypoint/bloc/card/virtualcard_bloc.dart';
 import 'package:utilitypoint/bloc/product/product_bloc.dart';
+import 'package:utilitypoint/bloc/profile/profile_bloc.dart';
 import 'package:utilitypoint/repository/card_repository.dart';
+import 'package:utilitypoint/repository/profileRepository.dart';
 
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
@@ -26,6 +28,10 @@ class ProviderWidget{
       BlocProvider(
           create: (BuildContext context)=>
               ProductBloc(Productsrepository())
+      ),
+      BlocProvider(
+          create: (BuildContext context)=>
+              ProfileBloc(profileRepository: ProfileRepository())
       ),
     ];
   }

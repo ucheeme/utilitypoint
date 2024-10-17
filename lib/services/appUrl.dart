@@ -10,6 +10,7 @@ class AppUrls{
   static const setUserInfo="${baseUrl}user/update_user";
   static const login="${baseUrl}auth/login";
   static const forgotPassword="${baseUrl}auth/forgot_password";
+  static const createNewPassword="${baseUrl}auth/complete_password_reset";
   static const completeTwoFactorAuthentication="${baseUrl}auth/complete_two_factor_authentication";
   static const resendCompleteTwoFactorAuthentication="${baseUrl}auth/resend_2fa_code";
   static const getUserCards="${baseUrl}user/view_virtual_cards";
@@ -19,6 +20,7 @@ class AppUrls{
   static const freezeUserCard="${baseUrl}user/freeze_card";
   static const unFreezeUserCard="${baseUrl}user/unfreeze_card";
   static const getTransactionHistory="${baseUrl}user/fetch_transactions";
+  static const getUserDetails="${baseUrl}user/fetch_single_user";
   static const getExchangeRate="${baseUrl}fetch_currency_conversion_setting";
   static const getNetworks="${baseUrl}user/fetch_networks";
   static const getProduct="${baseUrl}user/fetch_products";
@@ -30,6 +32,11 @@ class AppUrls{
   static const cableSubscription="${baseUrl}user/buy_cable_tv";
   static const buyAirtime="${baseUrl}user/buy_airtime";
   static const buyDollar="${baseUrl}currency/buy_dollar";
+  static const buyData="${baseUrl}user/buy_data";
+  static const buyCableSub="${baseUrl}user/buy_cable_tv";
+  static const updateUserPassword="${baseUrl}user/reset_password";
+  static const resetUserPin="${baseUrl}user/change_user_pin";
+  static const updateUserDetails="${baseUrl}user/update_user";
  // static const completeTwoFactorAuthentication=
  // "${baseUrl}auth/complete_two_factor_authentication";
 }

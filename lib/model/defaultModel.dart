@@ -56,3 +56,34 @@ class DefaultErrorApiResponse {
   };
 }
 
+
+
+SecondDefaultResponse secondDefaultResponseFromJson(String str) => SecondDefaultResponse.fromJson(json.decode(str));
+
+String secondDefaultResponseToJson(SecondDefaultResponse data) => json.encode(data.toJson());
+
+class SecondDefaultResponse {
+  bool status;
+  String message;
+  List<dynamic> data;
+
+  SecondDefaultResponse({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+
+  factory SecondDefaultResponse.fromJson(Map<String, dynamic> json) => SecondDefaultResponse(
+    status: json["status"],
+    message: json["message"],
+    data: List<dynamic>.from(json["data"].map((x) => x)),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "message": message,
+    "data": List<dynamic>.from(data.map((x) => x)),
+  };
+}
+
+

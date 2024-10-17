@@ -4,9 +4,9 @@ sealed class ProductEvent extends Equatable {
   const ProductEvent();
 }
 
-class GetTransactionHistoryEvent extends ProductEvent {
+class GetProductTransactionHistoryEvent extends ProductEvent {
   final GetProductRequest request;
-  const GetTransactionHistoryEvent(this.request);
+  const GetProductTransactionHistoryEvent(this.request);
   @override
   List<Object?> get props => [];
 }
@@ -23,16 +23,64 @@ class GetAllProductEvent extends ProductEvent {
   List<Object?> get props => [];
 }
 
-class GetAllDataProductPlanCategoryEvent extends ProductEvent {
+class GetAllProductPlanCategoryEvent extends ProductEvent {
   final GetProductRequest request;
-  const GetAllDataProductPlanCategoryEvent(this.request);
+  const GetAllProductPlanCategoryEvent(this.request);
   @override
   List<Object?> get props => [];
 }
 
-class GetAllDataProductPlanEvent extends ProductEvent {
+class GetAllProductPlanEvent extends ProductEvent {
   final GetProductRequest request;
-  const GetAllDataProductPlanEvent(this.request);
+  const GetAllProductPlanEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetUserDetails extends ProductEvent{
+  final GetProductRequest request;
+  const GetUserDetails(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class BuyAirtimeEvent extends ProductEvent{
+  final BuyAirtimeDataRequest request;
+  const BuyAirtimeEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class BuyDataEvent extends ProductEvent{
+  final BuyAirtimeDataRequest request;
+  const BuyDataEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class ConfirmMeterNameEvent extends ProductEvent{
+  final ConfirmMeterOrCableNameRequest request;
+  const ConfirmMeterNameEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class ConfirmCableNameEvent extends ProductEvent{
+  final ConfirmMeterOrCableNameRequest request;
+  const ConfirmCableNameEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class BuyCableSubscriptionEvent extends ProductEvent{
+  final BuyCableSubscriptionRequest request;
+  const BuyCableSubscriptionEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+class BuyElectricityEvent extends ProductEvent{
+  final BuyElectricityRequest request;
+  const BuyElectricityEvent(this.request);
   @override
   List<Object?> get props => [];
 }

@@ -1,0 +1,37 @@
+// To parse this JSON data, do
+//
+//     final resetUserPinRequest = resetUserPinRequestFromJson(jsonString);
+
+import 'dart:convert';
+
+ResetUserPinRequest resetUserPinRequestFromJson(String str) => ResetUserPinRequest.fromJson(json.decode(str));
+
+String resetUserPinRequestToJson(ResetUserPinRequest data) => json.encode(data.toJson());
+
+class ResetUserPinRequest {
+  String userId;
+  String currentPin;
+  String newPin;
+  String confirmNewPin;
+
+  ResetUserPinRequest({
+    required this.userId,
+    required this.currentPin,
+    required this.newPin,
+    required this.confirmNewPin,
+  });
+
+  factory ResetUserPinRequest.fromJson(Map<String, dynamic> json) => ResetUserPinRequest(
+    userId: json["user_id"],
+    currentPin: json["current_pin"],
+    newPin: json["new_pin"],
+    confirmNewPin: json["confirm_new_pin"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "user_id": userId,
+    "current_pin": currentPin,
+    "new_pin": newPin,
+    "confirm_new_pin": confirmNewPin,
+  };
+}

@@ -104,7 +104,7 @@ class Cardvalidator {
   }
 
   FreezeUnfreezeCard freezeUnfreezeCard(){
-    return FreezeUnfreezeCard(userId: loginResponse!.id, cardId: cardId);
+    return FreezeUnfreezeCard(userId: loginResponse!.id, cardId: cardId, pin: "");
   }
 
 }
