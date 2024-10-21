@@ -38,7 +38,7 @@ class ProductPlanCategoryItem {
     productId: json["product_id"],
     isHotSales: json["is_hot_sales"],
     visibility: json["visibility"],
-    networkId: json["network_id"],
+    networkId: json["network_id"] ?? "",
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );

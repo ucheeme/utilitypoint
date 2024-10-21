@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
+import 'package:utilitypoint/model/response/nairaDollarTransactionList.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/text_style.dart';
@@ -20,7 +23,8 @@ import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
 import '../../utils/reusable_widget_two.dart';
 import '../../utils/reuseable_widget.dart';
-List<ProductTransactionList> transactionList =[];
+import '../menuOption/notifications.dart';
+List<UserTransactions> tempUserTransactionList =[];
 List<ProductTransactionList> tempTransactionList =[];
 class TransactionScreen extends StatefulWidget {
    bool? isBottomNav;
@@ -37,20 +41,30 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
   bool isNairaTransactions= false;
   bool isDollarTransactions= false;
   late ProductBloc bloc;
-  List<ProductTransactionList> transactionList =[];
+  List<UserTransactions> transactionList =[];
+  TextEditingController searchController = TextEditingController();
   DateTime currentDateTime = DateTime.now();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
-      transactionList =tempTransactionList;
-      if(tempTransactionList.isEmpty){
+     // transactionList =tempTransactionList;
+     // if(tempTransactionList.isEmpty){
         bloc.add(GetProductTransactionHistoryEvent(GetProductRequest(
           userId: loginResponse!.id,
           dateFrom: "${currentDateTime.year}-${currentDateTime.month}-01",
           dateTo:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
         )));
-      }
-
+      //}
+        bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
+          userId: loginResponse!.id,
+          startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+          endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+        )));
+        bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
+          userId: loginResponse!.id,
+          startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+          endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+        )));
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -71,6 +85,16 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
     _animationManager.dispose();
     super.dispose();
   }
+
+  searchList(String value){
+    transactionList = tempUserTransactionList.where((element)=>element.description.toLowerCase().contains(value.toLowerCase())).toList();
+    setState(() {
+      transactionList =transactionList;
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     bloc =BlocProvider.of<ProductBloc>(context);
@@ -87,12 +111,76 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
 
     if(state is AirtimeDataTransactionHistorySuccess){
       WidgetsBinding.instance.addPostFrameCallback((_){
-        transactionList=state.response;
-        tempTransactionList = transactionList;
+        for(var item in state.response){
+          transactionList.add(UserTransactions(
+            isProduct: true,
+              userId: item.userId,
+              actionBy: "",
+              transactionCategory: item.transactionCategory,
+              balanceBefore: item.balanceBefore,
+              balanceAfter: item.balanceAfter,
+              description: item.description,
+              productPlanId: item.productPlanId,
+              status: item.status,
+              walletCategory: item.walletCategory,
+              phoneNumber: item.phoneNumber,
+              smartCardNumber: item.smartCardNumber,
+              metreNumber: item.metreNumber,
+              cableTvSlots: item.cableTvSlots,
+              utilitySlots: item.utilitySlots,
+              amount: item.amount,
+              referralCommissionValue: item.referralCommissionValue,
+              discountedAmount: item.discountedAmount,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt));
+        }
+        // transactionList=state.response;
+         tempTransactionList = state.response;
+         tempUserTransactionList = transactionList;
       });
       bloc.initial();
     }
 
+    if(state is AllNairaTransactions){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        for(var item in state.response){
+          transactionList.add(UserTransactions(
+            isProduct: false,
+              userId: item.userId,
+              actionBy: item.actionBy,
+              transactionCategory: item.transactionCategory,
+              balanceBefore: item.balanceBefore,
+              balanceAfter: item.balanceAfter,
+              description: item.description,
+              transactionId: item.transactionId,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt));
+        }
+        // transactionList=state.response;
+        tempUserTransactionList = transactionList;
+      });
+      bloc.initial();
+    }
+    if(state is AllDollarTransactions){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        for(var item in state.response){
+          transactionList.add(UserTransactions(
+            isProduct: false,
+              userId: item.userId,
+              actionBy: item.actionBy,
+              transactionCategory: item.transactionCategory,
+              balanceBefore: item.balanceBefore,
+              balanceAfter: item.balanceAfter,
+              description: item.description,
+              transactionId: item.transactionId,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt));
+        }
+        // transactionList=state.response;
+        tempUserTransactionList = transactionList;
+      });
+      bloc.initial();
+    }
 
     return OverlayLoaderWithAppIcon(
       isLoading: state is ProductIsLoading,
@@ -135,9 +223,9 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
               ),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       height:41.h,
                         child: Row(
                           children: [
@@ -147,6 +235,8 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
                                     width: 260.w,
                                     height: 41.h,
                                     child: SearchTransactionHistory(
+                                      textEditingController: searchController,
+                                      onChanged: searchList,
                                       hintTxt: "Search History",
                                       surffixWidget: Container(
                                           height:20.h ,
@@ -154,16 +244,44 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
                                           padding: EdgeInsets.all(8.h),
                                           child: Image.asset(search_Image,height: 14.h,width: 14.w,)),
                                     )),
-                                Container(
-                                  height: 41.h,
-                                  width:41.w,
-                                  padding: EdgeInsets.all(12.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
-                                    bottomRight: Radius.circular(8.r)),
-                                    color: AppColor.primary100
+                                GestureDetector(
+                                  onTap:() async {
+                                    StartDateEndDate? result =await showCupertinoModalBottomSheet(
+                                        topRadius:
+                                        Radius.circular(20.r),
+                                        context: context,
+                                        backgroundColor:AppColor.primary20,
+                                        shape:RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                        ),
+                                        builder: (context) => SizedBox(
+                                            height: 400.h,
+                                            child: CustomDateRangePicker())
+                                    );
+                                    if (result != null){
+                                      // completionHandler(result);
+                                      AppUtils.debug("start Date ${result.startDate}");
+                                      AppUtils.debug("End Date ${result.endDate}");
+                                      bloc.add(GetProductTransactionHistoryEvent(GetProductRequest(
+                                          userId: loginResponse!.id,
+                                          dateFrom: result.startDate,
+                                          dateTo: result.endDate,
+                                          pageSize: 40.toString(),
+                                          page: 1.toString()
+                                      )));
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 41.h,
+                                    width:41.w,
+                                    padding: EdgeInsets.all(12.h),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
+                                      bottomRight: Radius.circular(8.r)),
+                                      color: AppColor.primary100
+                                    ),
+                                    child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                                   ),
-                                  child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                                 )
                               ],
                             ),
@@ -184,45 +302,68 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
                               isDataAirtime=false;
                               isNairaTransactions=false;
                               isDollarTransactions=false;
+                              transactionList = tempUserTransactionList;
                             });
                           }),
                           Gap(8.w),
                           filterDesign("Data & Airtime", isDataAirtime,(){
+                            transactionList =tempUserTransactionList.where((element)=>(element.description.toLowerCase().contains("airtime")||
+                            element.description.toLowerCase().contains("data"))).toList();
                             setState(() {
                               isDataAirtime=true;
                               isAll=false;
                               isNairaTransactions=false;
                               isDollarTransactions=false;
+                              transactionList = transactionList;
                             });
                           }),
                           Gap(8.w),
                           filterDesign("Naira Transactions", isNairaTransactions,(){
+
                             setState(() {
                               isNairaTransactions=true;
                               isDataAirtime=false;
                               isAll=false;
                               isDollarTransactions=false;
+                              transactionList= tempUserTransactionList.where((element)=>element.isProduct==false).toList();
                             });
+                            // bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
+                            //   userId: loginResponse!.id,
+                            //   startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+                            //   endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+                            // )));
                           }),
                           Gap(8.w),
                           filterDesign("Dollar Transactions", isDollarTransactions,(){
+
                             setState(() {
                               isDollarTransactions=true;
                               isDataAirtime=false;
                               isNairaTransactions=false;
                               isAll=false;
+                              transactionList= tempUserTransactionList.where((element)=>element.isProduct==false).toList();
                             });
+
                           }),
                         ],
                       ),
                     ),
                     Gap(24.h),
-                   ...transactionList.mapIndexed((element, index) =>
-                   Padding(
-                     padding:  EdgeInsets.only(bottom:12.h),
-                     child: ProductTransactionWidgetDesgin(transactionList: element,),
-                   )
-                   )
+                   SizedBox(
+                     height: 500.h,
+                     child: transactionList.isEmpty?
+                     EmptyInfo(body: 'You have not carried out any transaction!',):
+                     ListView.builder(
+                       padding: EdgeInsets.only(top: 10.h),
+                       itemCount:transactionList.length ,
+                         itemBuilder: (context,index){
+                           UserTransactions element=transactionList[index];
+                      return Padding(
+                        padding:  EdgeInsets.only(bottom:12.h),
+                        child: TransactionWidgetDesgin(transactionList: element,),
+                      );
+                     }),
+                   ),
                   ],
                 ),
               ),

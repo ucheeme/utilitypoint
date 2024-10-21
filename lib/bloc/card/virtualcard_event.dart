@@ -32,6 +32,23 @@ class CreateCardEvent extends VirtualcardEvent {
   List<Object?> get props => [];
 }
 
+class GetNairaFundingOptionsEvent extends VirtualcardEvent {
+  const GetNairaFundingOptionsEvent();
+  @override
+  List<Object?> get props => [];
+}
+class GetUserVirtualAccountEvent extends VirtualcardEvent {
+  final GetProductRequest request;
+  const GetUserVirtualAccountEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+class CreateUserVirtualAccountEvent extends VirtualcardEvent {
+  final GenerateBankAccountRequest request;
+  const CreateUserVirtualAccountEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
 class FundCardEvent extends VirtualcardEvent {
   final TopUpCardRequest request;
   const FundCardEvent(this.request);

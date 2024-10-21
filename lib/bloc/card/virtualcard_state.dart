@@ -42,6 +42,13 @@ class CardCreationSuccessful extends VirtualcardState{
   List<Object?> get props => [response];
 }
 
+class NairaFundingOptionFound extends VirtualcardState{
+  final List<NairaFundingOptions> response;
+  const NairaFundingOptionFound(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
 class CardTopUpSuccessful extends VirtualcardState{
   final TopUpCardSuccessful response;
   const CardTopUpSuccessful(this.response);
@@ -72,6 +79,20 @@ class ExchangeRate extends VirtualcardState{
 class SuccessfullyBoughtDollar extends VirtualcardState{
   final DefaultApiResponse response;
   const SuccessfullyBoughtDollar(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class AllUserVirtualAccounts extends VirtualcardState{
+  final List<UserVirtualAccouts> response;
+  const AllUserVirtualAccounts(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class UserVirtualAccountGenerated extends VirtualcardState{
+  final CreateVirtualAccountNumberSuccess response;
+  const UserVirtualAccountGenerated(this.response);
   @override
   List<Object?> get props => [response];
 }

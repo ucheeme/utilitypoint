@@ -99,7 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
                           });
                             }
-                         )),
+                         )
+                    ),
                   ],
                 );
               })

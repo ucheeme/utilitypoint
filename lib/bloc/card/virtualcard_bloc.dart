@@ -9,14 +9,19 @@ import 'package:utilitypoint/view/menuOption/convertFunds/reviewOrder.dart';
 
 import '../../model/defaultModel.dart';
 import '../../model/request/createCard.dart';
+import '../../model/request/generateBankAcct.dart';
 import '../../model/request/getProduct.dart';
 import '../../model/request/topUpCard.dart';
 import '../../model/request/unfreezeCard.dart';
 import '../../model/response/cardTransactions.dart';
+import '../../model/response/createVirtualAcctNum.dart';
 import '../../model/response/exchangeRate.dart';
 import '../../model/response/freezeUnFreezeResponse.dart';
 import '../../model/response/listofVirtualCard.dart';
+import '../../model/response/nairaFundingOptions.dart';
 import '../../model/response/top_up_card.dart';
+import '../../model/response/userDetails.dart';
+import '../../model/response/userVirtualAccounts.dart';
 import '../../model/response/virtualCardSuccessful.dart';
 import '../../utils/app_util.dart';
 
@@ -34,11 +39,14 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
     });
     on<GetUserCardEvent>((event,emit){handleGetUserCardEvent(event.request);});
     on<CreateCardEvent>((event,emit){handleCreateCardEvent(event.request);});
+    on<GetNairaFundingOptionsEvent>((event,emit){handleGetNairaFundingOptionEvent();});
     on<FundCardEvent>((event,emit){handleFundCardEvent(event.request);});
     on<FreezeCardEvent>((event,emit){handleFreezeCardEvent(event.request);});
     on<UnFreezeCardEvent>((event,emit){handleUnFreezeCardEvent(event.request);});
     on<GetExchangeRateEvent>((event,emit){handleGetExchangeRateEvent();});
     on<BuyDollarEvent>((event,emit){handleBuyDollarEvent(event.request);});
+    on<GetUserVirtualAccountEvent>((event,emit){handleGetUserVirtualAccountEvent(event.request);});
+    on<CreateUserVirtualAccountEvent>((event,emit){handleCreateUserVirtualAccountEvent(event.request);});
   }
 
   void handleGetCardTransactionHistoryEvent(GetProductRequest event)async{
@@ -117,7 +125,23 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
         AppUtils.debug("error");
       }
     }catch(e,trace){
-      print(trace);
+      // print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetNairaFundingOptionEvent()async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.getNairaFundingOptions();
+      if (response is List<NairaFundingOptions> ) {
+        emit(NairaFundingOptionFound(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      // print(trace);
       emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
@@ -159,6 +183,38 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       final   response = await cardRepository.unfreezeCard(event);
       if (response is FreezeCardSuccess ) {
         emit(CardUnFreezeSuccessful(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetUserVirtualAccountEvent( event)async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.getUserVirtualAccounts(event);
+      if (response is  List<UserVirtualAccouts>) {
+        emit(AllUserVirtualAccounts(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleCreateUserVirtualAccountEvent( event)async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.createVirtualAccount(event);
+      if (response is CreateVirtualAccountNumberSuccess) {
+        emit(UserVirtualAccountGenerated(response));
         AppUtils.debug("success");
       }else{
         emit(VirtualcardError(response as DefaultApiResponse));

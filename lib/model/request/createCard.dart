@@ -13,6 +13,7 @@ class CreateCardRequest {
   String currency;
   String brand;
   String amount;
+  String cardCreationCharge;
   String cardType;
   String pin;
 
@@ -21,6 +22,7 @@ class CreateCardRequest {
     required this.currency,
     required this.brand,
     required this.amount,
+    required this.cardCreationCharge,
     required this.cardType,
     required this.pin
   });
@@ -30,6 +32,7 @@ class CreateCardRequest {
     currency: json["currency"],
     brand: json["brand"],
     amount: json["amount"],
+    cardCreationCharge: json["card_creation_charge"],
     cardType: json["card_type"],
     pin: json["pin"]
   );
@@ -39,6 +42,7 @@ class CreateCardRequest {
     "currency": currency,
     "brand": brand,
     "amount": amount,
+    "card_creation_charge":cardCreationCharge,
     "card_type": cardType,
     "pin":pin
   };

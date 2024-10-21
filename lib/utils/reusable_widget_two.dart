@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseableFunctions.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
@@ -12,6 +13,7 @@ import 'package:utilitypoint/utils/text_style.dart';
 
 import '../model/response/cardTransactions.dart';
 import '../model/response/airtimeDatatransactionHistory.dart';
+import '../model/response/nairaDollarTransactionList.dart';
 import 'app_color_constant.dart';
 import 'app_util.dart';
 
@@ -22,7 +24,7 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 66.h,
+      height: 76.h,
       width: 335.w,
       padding: EdgeInsets.all(9.h),
       decoration: BoxDecoration(
@@ -36,17 +38,18 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           imageContainer(transactionList.transactionCategory),
-          //Gap(12.w),
+          Gap(10.w),
           SizedBox(
-            height: 44.h,
+            height: 58.h,
             width: 158.w,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(transactionList.description,
                 style: CustomTextStyle.kTxtBold.copyWith(
                   color: AppColor.black100,
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w400
                 ),),
                 Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
@@ -80,7 +83,8 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
     );
   }
   Widget imageContainer(String transactionType){
-    return Image.asset(transactionType=="fund"?income_Image:expenses_Image);
+    return Image.asset(transactionType=="fund"?income_Image:expenses_Image,
+    height: 48.h,width: 48.w,);
   }
 }
 
@@ -102,23 +106,24 @@ class CardTransactionWidgetDesign extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           imageContainer(transactionList.description?.toLowerCase()??""),
-        //  Gap(8.w),
+          Gap(10.w),
           SizedBox(
             height: 50.h,
             width: 190.w,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(transactionList.description??"",
                   style: CustomTextStyle.kTxtBold.copyWith(
                       color: AppColor.black100,
-                      fontSize: 9.sp,
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w400
                   ),),
-                Gap(4.h),
+
                 Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
@@ -129,7 +134,7 @@ class CardTransactionWidgetDesign extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          Expanded(
             child: Text(
               textAlign: TextAlign.end,
               NumberFormat.currency(
@@ -137,7 +142,7 @@ class CardTransactionWidgetDesign extends StatelessWidget {
                   decimalDigits: 0)
                   .format(double.parse(transactionList.amount??"0")),
               style: GoogleFonts.inter(
-                fontSize: 14.sp,
+                fontSize: 12.sp,
                   color:(transactionList.description!=null && transactionList.description!.toLowerCase().contains("topup"))?AppColor.success100:
                   AppColor.Error100
               ),
@@ -148,7 +153,9 @@ class CardTransactionWidgetDesign extends StatelessWidget {
     );
   }
   Widget imageContainer(String transactionType){
-    return Image.asset(transactionType!="topup"?income_Image:expenses_Image);
+    return Image.asset(transactionType!="topup"?income_Image:expenses_Image,
+    height: 45.h,width: 45.w,
+    );
   }
 }
 
@@ -175,127 +182,195 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
         return;
       }
       startDateControl.text =
-          DateFormat('dd-MM-yyyy').format(startDate!);
+          DateFormat('yyyy-MM-dd').format(startDate!);
       endDateControl.text =
-          DateFormat('dd-MM-yyyy').format(endDate!);
+          DateFormat('yyy-MM-dd').format(endDate!);
     });
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 660.h,width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15.r),
-        color:AppColor.black0,
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded (
-            child: SfDateRangePicker(
-              selectionMode: DateRangePickerSelectionMode.extendableRange,
-              view: DateRangePickerView.month,
-              headerHeight: 58.h,
-              headerStyle: DateRangePickerHeaderStyle(
-
-                  backgroundColor: AppColor.primary100,
-                  textAlign: TextAlign.center,
-                  textStyle: TextStyle(
-                    color: AppColor.black100,
-                    fontSize: 18.sp,
-                    fontFamily: 'HKGroteskMedium',
-                    fontWeight: FontWeight.w500,
-                  )
-              ),
-              toggleDaySelection: false,
-              showNavigationArrow: true,
-              //showActionButtons: true,
-              selectionColor: AppColor.primary80,
-              todayHighlightColor: AppColor.primary100,
-              rangeSelectionColor: AppColor.primary100.withOpacity(0.50),
-
-              selectionShape: DateRangePickerSelectionShape.rectangle,
-              startRangeSelectionColor: AppColor.primary100.withOpacity(0.50),
-
-              endRangeSelectionColor: Colors.red.withOpacity(0.50),
-              //selectionRadius: 15.r,
-              selectionTextStyle:TextStyle(
-                color: AppColor.black0,
-                fontSize: 15.sp,
-                fontFamily: 'HKGroteskRegular',
-                fontWeight: FontWeight.w600,
-              ),
-              monthCellStyle: DateRangePickerMonthCellStyle(
-                cellDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.r),
-                    color: AppColor.black80
+    return Scaffold(
+      body: Container(
+        height: 400.h,width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.r),
+          color:AppColor.primary20,
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded (
+              child: SfDateRangePicker(
+                backgroundColor:AppColor.primary20,
+               viewSpacing: 30.h,
+                selectionMode: DateRangePickerSelectionMode.extendableRange,
+                view: DateRangePickerView.month,
+                headerHeight: 38.h,
+                headerStyle: DateRangePickerHeaderStyle(
+      
+                    backgroundColor: AppColor.primary20,
+                    textAlign: TextAlign.center,
+                    textStyle: TextStyle(
+                      color: AppColor.black100,
+                      fontSize: 18.sp,
+                      fontFamily: 'HKGroteskMedium',
+                      fontWeight: FontWeight.w500,
+                    )
                 ),
-                textStyle: TextStyle(
-                  color: AppColor.black100,
-                  fontSize: 13.sp,
+                toggleDaySelection: false,
+                showNavigationArrow: true,
+                //showActionButtons: true,
+                selectionColor: AppColor.primary100,
+                todayHighlightColor: AppColor.secondary100,
+                rangeSelectionColor: AppColor.secondary100.withOpacity(0.50),
+      
+                selectionShape: DateRangePickerSelectionShape.rectangle,
+                startRangeSelectionColor: AppColor.primary100,
+      
+                endRangeSelectionColor:AppColor.primary100,
+                //selectionRadius: 15.r,
+                selectionTextStyle:TextStyle(
+                  color: AppColor.black0,
+                  fontSize: 15.sp,
                   fontFamily: 'HKGroteskRegular',
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                 ),
-
-              ),
-              yearCellStyle: DateRangePickerYearCellStyle(
+                monthCellStyle: DateRangePickerMonthCellStyle(
                   cellDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.r),
-                      color: AppColor.black80
+                      borderRadius: BorderRadius.circular(8.r),
+                      color: AppColor.black0
                   ),
                   textStyle: TextStyle(
-                    color: AppColor.black80,
+                    color: AppColor.black100,
                     fontSize: 13.sp,
                     fontFamily: 'HKGroteskRegular',
                     fontWeight: FontWeight.w400,
-                  )
+                  ),
+      
+                ),
+                yearCellStyle: DateRangePickerYearCellStyle(
+                    cellDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.r),
+                        color: AppColor.black0
+                    ),
+                    textStyle: TextStyle(
+                      color: AppColor.black80,
+                      fontSize: 13.sp,
+                      fontFamily: 'HKGroteskRegular',
+                      fontWeight: FontWeight.w400,
+                    )
+                ),
+                monthViewSettings: DateRangePickerMonthViewSettings(
+                    showWeekNumber: false,
+                    dayFormat: "EEE",
+                    viewHeaderHeight: 30.h,
+                    showTrailingAndLeadingDates: false,
+                    viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                        textStyle: TextStyle(
+                          color: AppColor.primary100,
+                          fontSize: 12.sp,
+                          fontFamily: 'creatoDisplayMedium',
+                          fontWeight: FontWeight.bold,
+                        )
+                    )
+                ),
+                onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
+      
+                  if(args.value.startDate != null &&args.value.endDate != null){
+                    _handleDateRangeChanged(args);
+                  }
+                },
               ),
-              monthViewSettings: DateRangePickerMonthViewSettings(
-                  showWeekNumber: false,
-                  dayFormat: "EEE",
-                  viewHeaderHeight: 40.h,
-                  showTrailingAndLeadingDates: false,
-                  viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                      textStyle: TextStyle(
-                        color: AppColor.black100,
-                        fontSize: 15.sp,
-                        fontFamily: 'creatoDisplayMedium',
-                        fontWeight: FontWeight.w500,
-                      )
-                  )
-              ),
-              onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
-
-                if(args.value.startDate != null &&args.value.endDate != null){
-                  _handleDateRangeChanged(args);
-                }
-              },),
-          ),
-          Padding(
-            padding: screenPad(),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: SetDateTextFieldWidget(dateControl:startDateControl, title: 'Start date',)),
-                Gap(21.w),
-                Expanded(child: SetDateTextFieldWidget(dateControl:endDateControl, title: 'End date',))
-              ],
             ),
-          ),
-          Gap(21.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w),
-            child: CustomButton(
-                buttonText: "Proceed", onTap: (){
-              if(startDateControl.text.isNotEmpty && endDateControl.text.isNotEmpty){
-                StartDateEndDate startAndEndDate = StartDateEndDate(
-                    startDate: startDateControl.text,
-                    endDate: endDateControl.text );
-                Navigator.pop(context,startAndEndDate);
-              }
-              // return date range
-            }),
-          ),
-          Gap(25.h),
-        ],
+            Padding(
+              padding: screenPad(),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Start Date",
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          color:AppColor.black100,
+                        ),
+                      ),
+                      Container(
+                        height:40.h,
+                        width: 150.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColor.primary100)
+                        ),
+                        child: Center(
+                          child: Text(
+                            startDateControl.text,
+                            style: GoogleFonts.inter(
+                                fontSize: 12.sp,
+                                color:AppColor.black100,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Gap(21.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "End Date",
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          color:AppColor.black100,
+                        ),
+                      ),
+                      Container(
+                        height:40.h,
+                        width: 150.w,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(color: AppColor.primary100)
+                        ),
+                        child: Center(
+                          child: Text(
+                            endDateControl.text,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.sp,
+                              color:AppColor.black100,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // SizedBox(
+                  //     height:40.h,
+                  //     child: CustomizedTextField(textEditingController:endDateControl, labeltxt: 'End date',))
+                ],
+              ),
+            ),
+            Gap(21.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
+              child: CustomButton(
+                  height: 40.h,
+                  borderRadius: 10.r,
+                  buttonColor: AppColor.primary100,
+                  textColor: AppColor.black0,
+                  buttonText: "Proceed", onTap: (){
+                if(startDateControl.text.isNotEmpty && endDateControl.text.isNotEmpty){
+                  StartDateEndDate startAndEndDate = StartDateEndDate(
+                      startDate: startDateControl.text,
+                      endDate: endDateControl.text );
+                  Navigator.pop(context,startAndEndDate);
+                }
+                // return date range
+              }),
+            ),
+            Gap(25.h),
+          ],
+        ),
       ),
     );
   }
@@ -318,51 +393,53 @@ class SetDateTextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(clipBehavior: Clip.none,
-      children: [
-        Container(
-          height: 47.h,width: 180.w,
-          padding: EdgeInsets.symmetric(horizontal: 15.w),
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.r),
-            border: Border.all(
-              color: AppColor.secondary60,
-              width: 0.5.h,
+    return Material(
+      child: Stack(clipBehavior: Clip.none,
+        children: [
+          Container(
+            height: 47.h,width: 180.w,
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              border: Border.all(
+                color: AppColor.secondary60,
+                width: 0.5.h,
+              ),
+            ),
+            child: TextFormField(
+              enabled: false,
+              controller: dateControl,
+              cursorHeight: 15.h,
+              cursorColor:AppColor.primary100,
+              style: TextStyle(
+                color: AppColor.black100, fontSize: 16.sp,
+                fontFamily: 'HKGroteskMedium',
+                fontWeight: FontWeight.w500,
+              ),
+              onChanged: (value){},
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(bottom: 10.h),
+                border: InputBorder.none,
+              ),
+              // textInputAction: TextInputAction.done,
             ),
           ),
-          child: TextFormField(
-            enabled: false,
-            controller: dateControl,
-            cursorHeight: 15.h,
-            cursorColor:AppColor.primary100,
-            style: TextStyle(
-              color: AppColor.black100, fontSize: 16.sp,
-              fontFamily: 'HKGroteskMedium',
-              fontWeight: FontWeight.w500,
+          Positioned(
+            left: 20.w,
+            top: -10.h,
+            child: Container(
+              height: 19.h,
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              color: AppColor.primary20, // Customize the background color of the label
+              child: Text(title,style: CustomTextStyle.kTxtRegular.copyWith(
+                fontSize: 16.sp,
+                color: AppColor.primary100,
+              ) ),
             ),
-            onChanged: (value){},
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(bottom: 10.h),
-              border: InputBorder.none,
-            ),
-            // textInputAction: TextInputAction.done,
-          ),
-        ),
-        Positioned(
-          left: 20.w,
-          top: -10.h,
-          child: Container(
-            height: 19.h,
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
-            color: AppColor.black80, // Customize the background color of the label
-            child: Text(title,style: CustomTextStyle.kTxtRegular.copyWith(
-              fontSize: 16.sp,
-              color: AppColor.black100,
-            ) ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -377,3 +454,222 @@ class StartDateEndDate {
 }
 EdgeInsets screenPad() => EdgeInsets.symmetric(horizontal: 13.w);
 
+class NairaTransactionWidgetDesgin extends StatelessWidget {
+  NairaTransactionList transactionList;
+  NairaTransactionWidgetDesgin({super.key,required this.transactionList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 78.h,
+      width: 335.w,
+      padding: EdgeInsets.all(9.h),
+      decoration: BoxDecoration(
+        color: AppColor.black0,
+        borderRadius: BorderRadius.circular(8.r),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 5)),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          imageContainer(transactionList.transactionCategory),
+          Gap(10.w),
+          SizedBox(
+            height: 59.h,
+            width: 168.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(transactionList.description,
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400
+                  ),),
+                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                  style: CustomTextStyle.kTxtMedium.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.sp,
+                      color: AppColor.black80
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 90.w,
+            child: Text(
+              textAlign: TextAlign.end,
+              NumberFormat.currency(
+                  symbol: '\₦',
+                  name: 'NGN',
+                  decimalDigits: 0)
+                  .format(double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter)),
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  color:transactionList.transactionCategory.toLowerCase().contains("purchase")?AppColor.Error100:
+                  AppColor.success100
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget imageContainer(String transactionType){
+    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
+      height: 48.h,width: 48.w,);
+  }
+}
+class DollarTransactionWidgetDesgin extends StatelessWidget {
+  NairaTransactionList transactionList;
+  DollarTransactionWidgetDesgin({super.key,required this.transactionList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 76.h,
+      width: 335.w,
+      padding: EdgeInsets.all(9.h),
+      decoration: BoxDecoration(
+        color: AppColor.black0,
+        borderRadius: BorderRadius.circular(8.r),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 5)),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          imageContainer(transactionList.transactionCategory),
+          Gap(10.w),
+          SizedBox(
+            height: 58.h,
+            width: 168.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(transactionList.description,
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400
+                  ),),
+                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                  style: CustomTextStyle.kTxtMedium.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.sp,
+                      color: AppColor.black80
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 90.w,
+            child: Text(
+              textAlign: TextAlign.end,
+              NumberFormat.currency(
+                  symbol: '\$',
+                  name: 'USD',
+                  decimalDigits: 0)
+                  .format(double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter)),
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  color:transactionList.transactionCategory.toLowerCase().contains("purchase")?AppColor.Error100:
+                  AppColor.success100
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget imageContainer(String transactionType){
+    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
+      height: 48.h,width: 48.w,);
+  }
+}
+
+class TransactionWidgetDesgin extends StatelessWidget {
+  UserTransactions transactionList;
+  TransactionWidgetDesgin({super.key,required this.transactionList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 76.h,
+      width: 335.w,
+      padding: EdgeInsets.all(9.h),
+      decoration: BoxDecoration(
+        color: AppColor.black0,
+        borderRadius: BorderRadius.circular(8.r),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 5)),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          imageContainer(transactionList.transactionCategory),
+          Gap(10.w),
+          SizedBox(
+            height: 58.h,
+            width: 160.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(transactionList.description,
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400
+                  ),),
+                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                  style: CustomTextStyle.kTxtMedium.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.sp,
+                      color: AppColor.black80
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 90.w,
+            child: Text(
+              textAlign: TextAlign.end,
+              NumberFormat.currency(
+                  symbol: transactionList.walletCategory=="naira_wallet"?'\₦' : '\$',
+                  decimalDigits: 0)
+                  .format(getAmount()),
+              style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  color:transactionList.transactionCategory.toLowerCase().contains("topup")?AppColor.success100:
+                  AppColor.Error100
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  double getAmount() {
+    return double.parse(transactionList.amount??(
+                double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceBefore)
+            ).toString().replaceAll("-", ""));
+  }
+  Widget imageContainer(String transactionType){
+    return Image.asset(transactionType.toLowerCase().contains("topup")?income_Image:expenses_Image,
+      height: 48.h,width: 48.w,);
+  }
+}

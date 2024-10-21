@@ -1,7 +1,8 @@
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -103,11 +104,12 @@ late ProductBloc bloc;
             productPlanList= state.response;
             Get.to(AirtimeConfirmPayment(
               airtimeRecharge: AirtimeRecharge(
-                  airtimeCategotyId,
-                  networkId,
-                  phoneNumberController.text,
-                  networkName,
-                  airtimeAmountController.text.trim(), getNetworkIcon(networkName)),
+                  networkId: networkId,
+                  number:  phoneNumberController.text,
+                  productPlanCategoryId: airtimeCategotyId,
+                  networkName: networkName,
+                  networkIcon:  getNetworkIcon(networkName),
+                  amount:   airtimeAmountController.text.trim()),
             productPlanList: productPlanList,));
           });
           bloc.initial();
@@ -373,7 +375,7 @@ late ProductBloc bloc;
                                       });
                 
                                     },
-                                    child: airtimeDataCard(title: element))
+                                    child: airtimeCard(title: element))
                                 )
                               ],
                             ),
@@ -390,7 +392,7 @@ late ProductBloc bloc;
                                             airtimeAmountController.text=element;
                                           });
                                         },
-                                        child: airtimeDataCard(title: element))
+                                        child: airtimeCard(title: element))
                                 )
                               ],
                             ),
@@ -502,11 +504,11 @@ late ProductBloc bloc;
     final PermissionStatus permissionStatus = await Permission.contacts.request();
     if (permissionStatus == PermissionStatus.granted) {
 
-      final Contact? contact = await ContactsService.openDeviceContactPicker();
+      final Contact? contact = await FlutterContacts.openExternalPick();
       if (contact != null) {
         setState(() {
           // _selectedContactName = contact.displayName ?? '';
-          phoneNumberController.text = contact.phones!.isNotEmpty ? contact.phones!.first.value! : '';
+          phoneNumberController.text = contact.phones!.isNotEmpty ? contact.phones!.first.number! : '';
           // contactName.text=_selectedContactName;
           // bloc.data.whatsappPhoneNumber(_selectedContactName);
           // bloc.data.setFullName(_selectedContactName);

@@ -19,6 +19,11 @@ class Cardvalidator {
     // "Account Information",
     "Transaction History", "Virtual Card"
   ];
+
+  List<String> cardInformation = [
+    "Available Balance",
+    "Card Number", "Expiry Date", "CVV","Status"
+  ];
   TextEditingController amountController = TextEditingController();
   List<UserVirtualCards> userCards = [];
 
@@ -76,23 +81,28 @@ class Cardvalidator {
     }
   });
 
-  CreateCardRequest createCardRequest() {
+  CreateCardRequest createCardRequest(String cardCreationCharge,String pin) {
+    print(loginResponse!.id);
+    print(_currenciesSubject.value.trim());
+    print(_cardTypeSubject.value.trim());
+    print( _amountSubject.value.trim());
 
     return CreateCardRequest(
         userId: loginResponse!.id,
         currency: _currenciesSubject.value.trim(),
         brand: _cardTypeSubject.value.trim(),
         amount: _amountSubject.value.trim(),
-        pin: _pinSubject.value.trim(),
-        cardType: "virtual");
+        pin: pin,
+        cardType: "virtual",
+        cardCreationCharge: cardCreationCharge);
   }
 
-  TopUpCardRequest topUpCardRequest() {
-    return TopUpCardRequest(
-        userId: loginResponse!.id,
-        cardId: cardId!,
-        amount: double.parse(_amountSubject.value));
-  }
+  // TopUpCardRequest topUpCardRequest() {
+  //   return TopUpCardRequest(
+  //       userId: loginResponse!.id,
+  //       cardId: cardId!,
+  //       amount: double.parse(_amountSubject.value));
+  // }
 
   GetProductRequest getCardTransactions(){
     return GetProductRequest(

@@ -16,12 +16,16 @@ class AppUrls{
   static const getUserCards="${baseUrl}user/view_virtual_cards";
   static const getCardTransaction="${baseUrl}user/virtual_card_transactions";
   static const createUserCard="${baseUrl}user/create_virtual_card";
+  static const createVirtualAcct="${baseUrl}user/generate_naira_virtual_accounts";
   static const topUpCard="${baseUrl}user/topup_virtual_card";
   static const freezeUserCard="${baseUrl}user/freeze_card";
   static const unFreezeUserCard="${baseUrl}user/unfreeze_card";
   static const getTransactionHistory="${baseUrl}user/fetch_transactions";
+  static const getUserSettings="${baseUrl}settings";
+  static const getUserVirtualAccounts="${baseUrl}user/fetch_naira_virtual_accounts";
   static const getUserDetails="${baseUrl}user/fetch_single_user";
   static const getExchangeRate="${baseUrl}fetch_currency_conversion_setting";
+  static const getNairaFunding="${baseUrl}fetch_naira_funding_options";
   static const getNetworks="${baseUrl}user/fetch_networks";
   static const getProduct="${baseUrl}user/fetch_products";
   static const getProductDataPlanCategory="${baseUrl}user/fetch_product_plan_categories";
@@ -37,6 +41,16 @@ class AppUrls{
   static const updateUserPassword="${baseUrl}user/reset_password";
   static const resetUserPin="${baseUrl}user/change_user_pin";
   static const updateUserDetails="${baseUrl}user/update_user";
+  static const logOut="${baseUrl}auth/logout";
+  static const getUserNotification="${baseUrl}user/fetch_user_notifications";
+  static const markNotification="${baseUrl}user/toggle_user_notification_read_status";
+  static const getNairaTransactions="${baseUrl}user/fetch_naira_wallet_transactions";
+  static const getDollarsTransactions="${baseUrl}user/fetch_dollar_wallet_transactions";
+  static const getUserUploadedKYC="${baseUrl}kyc/fetch_user_kyc_details";
+  static const getUSerKYCVerificationStatus="${baseUrl}kyc/user_verification_status";
+  static const uploadKYCDocumentC="${baseUrl}kyc/upload_user_kyc_document";
+  static const uploadBVNDocumentC="${baseUrl}kyc/user_bvn_verification";
+  static const updateAppSetting="${baseUrl}user/update_appside_setting";
  // static const completeTwoFactorAuthentication=
  // "${baseUrl}auth/complete_two_factor_authentication";
 }

@@ -3,6 +3,7 @@
 //     final getProductRequest = getProductRequestFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 GetProductRequest getProductRequestFromJson(String str) => GetProductRequest.fromJson(json.decode(str));
 
@@ -21,7 +22,10 @@ class GetProductRequest {
   String? endDate;
   String? pageSize;
   String? page;
-
+  String? pin;
+  String? bvn;
+  String? documentCategory;
+  File? documentFile;
   GetProductRequest({
      this.networkId,
      this.planCategoryId,
@@ -31,14 +35,19 @@ class GetProductRequest {
      this.dateFrom,
      this.dateTo,
     this.cardId,
+    this.documentCategory,
     this.startDate,
     this.endDate,
     this.pageSize,
-    this.page
+    this.page,
+    this.pin,
+    this.bvn,
+    this.documentFile
   });
 
   factory GetProductRequest.fromJson(Map<String, dynamic> json) => GetProductRequest(
     networkId: json["network_id"],
+    bvn: json["bvn"],
     planCategoryId: json["plan_category_id"],
     amount: json["amount"],
     productSlug: json["product_slug"],
@@ -49,7 +58,10 @@ class GetProductRequest {
     startDate: json["start_date"],
     endDate: json["end_date"],
     pageSize: json["page_size"],
-    page: json["page"]
+    page: json["page"],
+    pin: json["pin"],
+    documentFile: json["document_file"],
+      documentCategory:json["document_category"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +76,10 @@ class GetProductRequest {
     "start_date":startDate,
     "end_date":endDate,
     "page_size":pageSize,
-    "page":page
+    "page":page,
+    "pin":pin,
+    "bvn":bvn,
+    "document_file":documentFile?.path,
+    "document_category":documentCategory
   };
 }

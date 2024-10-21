@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/menuOption/cards/virtualCardScreens.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
@@ -93,7 +94,7 @@ class _MyAccountMoreDetailsState extends State<MyAccountMoreDetails> with Ticker
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     cardDesign(
-                        accountBalance:widget.accountBalance,
+                        accountBalance:double.parse(userDetails!.dollarWallet),
                         balanceRemaining: 0.00,
                         cardNumber: widget.cardRef,
                         isNaira:widget.isNaira

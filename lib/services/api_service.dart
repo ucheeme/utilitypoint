@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:get/get.dart' as nav;
+import 'package:get/get_core/src/get_main.dart';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:utilitypoint/model/request/getProduct.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 // import 'package:dio_logging_interceptor/dio_logging_interceptor.dart';
 
 import '../model/defaultModel.dart';
@@ -51,10 +55,12 @@ class ApiService {
   static Future<Object> makeApiCall(request,
       url,
       {bool requireAccess = true, HttpMethods requestType = HttpMethods.post,
-        required String baseUrl}) async {
+        required String baseUrl,bool isFile=false,dynamic queryParameters}) async {
     initiateDio(requireAccess, baseUrl);
     try {
-      var body = request != null ? json.encode(request.toJson()) : null;
+      Object? body;
+        body = request != null ? json.encode(request.toJson()) : null;
+
       Response<String>? response;
       switch (requestType) {
         case HttpMethods.get:
@@ -96,7 +102,13 @@ class ApiService {
         }
         if (399 <= (response.statusCode ?? 400) &&
             (response.statusCode ?? 400) <= 500) {
-          if (response.data is String) {
+          print("this is the status code: ${response.statusCode}");
+          if(response.statusCode == 401){
+            print("i am here 401");
+          nav.Get.offAll(SignInPage(),predicate: (route) => false);
+            var apiRes = defaultApiResponseFromJson(response.data as String);
+            return Failure(response.statusCode ?? 400, (apiRes));
+          }else if ((response.data is String )&& (response.statusCode !=401)) {
             print("I am the issue: ${response.data}");
             try {
               var apiRes = defaultApiResponseFromJson(response.data as String);
@@ -104,12 +116,13 @@ class ApiService {
             } catch (e) {
               print("error: $e");
             }
-          } else {
+          }
+          else {
             return ForbiddenAccess();
           }
         }
         if (ApiResponseCodes.authorizationError == response.statusCode) {
-          return ForbiddenAccess();
+          return SignInPage();
         }
         else {
           return Failure(response.statusCode!, "Error Occurred");
@@ -123,4 +136,76 @@ class ApiService {
       return NetWorkFailure();
     }
   }
+
+
+  static Future<Object> uploadDoc(GetProductRequest requestBody , String url, {String? docType}) async {
+    try {
+      var request = http.MultipartRequest(
+        'POST', Uri.parse(url),
+
+      );
+      Map<String,String> headers={
+        "Authorization":"Bearer $accessToken",
+        "Content-type": "multipart/form-data"
+      };
+      request.files.add(
+        http.MultipartFile(
+          'document_file',
+          requestBody.documentFile!.readAsBytes().asStream(),
+          requestBody.documentFile!.lengthSync(),
+          filename: requestBody.documentCategory,
+         // contentType: MediaType('image','jpeg'),
+        ),
+      );
+      request.headers.addAll(headers);
+      request.fields.addAll({
+        "user_id":requestBody.userId!,
+        "document_category":requestBody.documentCategory!,
+      });
+      print("request: "+request.toString());
+      var res = await request.send();
+      final response = await res.stream.bytesToString();
+      AppUtils.debug("/****rest call response starts****/");
+      AppUtils.debug("status code: ${res.statusCode}");
+      AppUtils.debug("rest response: "+response);
+      print("This is response:"+response.toString());
+
+      AppUtils.debug("/****rest call request starts****/");
+      AppUtils.debug("url: $url");
+      AppUtils.debug("headers: $headers");
+      AppUtils.debug("request body: ${request.fields}");
+      // var res = await request.send();
+
+      AppUtils.debug("/****rest call response starts****/");
+      AppUtils.debug("status code: ${res.statusCode}");
+      AppUtils.debug("rest response: $response");
+      if (ApiResponseCodes.success == res.statusCode){
+        return  Success(res.statusCode!,response);
+      }
+      if (ApiResponseCodes.error == res.statusCode || ApiResponseCodes.internalServerError == res.statusCode){
+        return  Failure(res.statusCode!,(defaultApiResponseFromJson( response)));
+      }
+      if (ApiResponseCodes.authorizationError == res.statusCode){
+        return ForbiddenAccess();
+      }
+      else{
+        return  Failure(res.statusCode!,"Error Occurred");
+      }
+    }on HttpException{
+      return  NetWorkFailure();
+
+    }on FormatException{
+      return  UnExpectedError();
+
+    }catch (e){
+      return NetWorkFailure();
+    }
+  }
+
+  Future<String?> networkImageToBase64(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    final bytes = response.bodyBytes;
+    return (bytes != null ? base64Encode(bytes) : null);
+  }
+
 }

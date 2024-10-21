@@ -10,9 +10,13 @@ String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
 
 class UserDetails {
   String id;
+  String bvn;
+  dynamic bvnJson;
+  String bvnVerificationStatus;
+  String kycVerificationStatus;
   String firstName;
   String lastName;
-  dynamic otherNames;
+  String otherNames;
   String userName;
   String pin;
   String userPlanId;
@@ -20,6 +24,10 @@ class UserDetails {
   String dollarWallet;
   String nairaWallet;
   String email;
+  String accountDeactivation;
+  String smsAlert;
+  String pushNotification;
+  String emailNotification;
   String phoneNumber;
   String uplineId;
   DateTime emailVerifiedAt;
@@ -28,6 +36,7 @@ class UserDetails {
   String twoFactorCode;
   DateTime twoFactorCodeExpirationTime;
   String active;
+  String? profilePic;
   dynamic twoFactorSecret;
   dynamic twoFactorRecoveryCodes;
   DateTime createdAt;
@@ -35,6 +44,10 @@ class UserDetails {
 
   UserDetails({
     required this.id,
+    required this.bvn,
+    required this.bvnJson,
+    required this.bvnVerificationStatus,
+    required this.kycVerificationStatus,
     required this.firstName,
     required this.lastName,
     required this.otherNames,
@@ -45,8 +58,13 @@ class UserDetails {
     required this.dollarWallet,
     required this.nairaWallet,
     required this.email,
+    required this.accountDeactivation,
+    required this.smsAlert,
+    required this.pushNotification,
+    required this.emailNotification,
     required this.phoneNumber,
     required this.uplineId,
+    this.profilePic,
     required this.emailVerifiedAt,
     required this.emailOtp,
     required this.otpExpirationTime,
@@ -61,6 +79,10 @@ class UserDetails {
 
   factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
     id: json["id"],
+    bvn: json["bvn"],
+    bvnJson: json["bvn_json"],
+    bvnVerificationStatus: json["bvn_verification_status"],
+    kycVerificationStatus: json["kyc_verification_status"],
     firstName: json["first_name"],
     lastName: json["last_name"],
     otherNames: json["other_names"],
@@ -71,6 +93,10 @@ class UserDetails {
     dollarWallet: json["dollar_wallet"],
     nairaWallet: json["naira_wallet"],
     email: json["email"],
+    accountDeactivation: json["account_deactivation"],
+    smsAlert: json["sms_alert"],
+    pushNotification: json["push_notification"],
+    emailNotification: json["email_notification"],
     phoneNumber: json["phone_number"],
     uplineId: json["upline_id"],
     emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
@@ -87,6 +113,10 @@ class UserDetails {
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "bvn": bvn,
+    "bvn_json": bvnJson,
+    "bvn_verification_status": bvnVerificationStatus,
+    "kyc_verification_status": kycVerificationStatus,
     "first_name": firstName,
     "last_name": lastName,
     "other_names": otherNames,
@@ -97,6 +127,10 @@ class UserDetails {
     "dollar_wallet": dollarWallet,
     "naira_wallet": nairaWallet,
     "email": email,
+    "account_deactivation": accountDeactivation,
+    "sms_alert": smsAlert,
+    "push_notification": pushNotification,
+    "email_notification": emailNotification,
     "phone_number": phoneNumber,
     "upline_id": uplineId,
     "email_verified_at": emailVerifiedAt.toIso8601String(),

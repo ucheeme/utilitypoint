@@ -17,6 +17,12 @@ class DefaultRepository{
       if (res['errors'].isNotEmpty) {
         _errorResponse?.message =
         "${res.publicMessage} ";
+      }else{
+        if(value!.message.toLowerCase().contains("unauthenticated")){
+          _errorResponse?.message = "Please Login again";
+        }else {
+          _errorResponse?.message = value!.message;
+        }
       }
     }
   }
@@ -54,10 +60,23 @@ class DefaultRepository{
       return errorResponse!;
     }
   }
+
   Future<Object> postRequest(request, url, requiresToken, HttpMethods method) async {
     var response = await ApiService.makeApiCall(request, url,requireAccess:
     requiresToken, requestType: method,
         baseUrl: AppUrls.baseUrl);
+    print("this is the response: $response");
+    if(response is Success) {
+      var r = defaultApiResponseFromJson(response.response as String);
+      return r;
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> postRequestImage(request, url, requiresToken, HttpMethods method) async {
+    var response = await ApiService.uploadDoc(request, url,);
     print("this is the resposee: $response");
     if(response is Success) {
       var r = defaultApiResponseFromJson(response.response as String);

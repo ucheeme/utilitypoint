@@ -11,9 +11,9 @@ String dataPlanResponseToJson(List<ProductPlanItemResponse> data) => json.encode
 class ProductPlanItemResponse {
   String productPlanId;
   String amount;
-  int sellingPrice;
+  dynamic sellingPrice;
   String productPlanName;
-  String dataSizeInMb;
+  dynamic dataSizeInMb;
   String validityInDays;
   String automationId;
 
@@ -22,7 +22,7 @@ class ProductPlanItemResponse {
     required this.amount,
     required this.sellingPrice,
     required this.productPlanName,
-    required this.dataSizeInMb,
+     this.dataSizeInMb,
     required this.validityInDays,
     required this.automationId,
   });

@@ -21,14 +21,29 @@ import '../../../utils/text_style.dart';
 
 class AirtimeRecharge {
   String networkId;
-  String phoneNumber;
+  String number;
   String productPlanCategoryId;
   String networkName;
   String networkIcon;
   String amount;
+  String? productPlanId;
+  String? cableName;
+  String? subPlan;
+  int? index;
 
-  AirtimeRecharge(this.productPlanCategoryId, this.networkId, this.phoneNumber,
-      this.networkName, this.amount, this.networkIcon);
+  AirtimeRecharge({
+    required this.networkId,
+    required this.number,
+    required this.productPlanCategoryId,
+    required this.networkName,
+    required this.networkIcon,
+    required this.amount,
+    this.cableName,
+    this.subPlan,
+    this.productPlanId,
+    this.index,
+  }
+      );
 }
 
 class AirtimeConfirmPayment extends StatefulWidget {
@@ -208,7 +223,7 @@ class _AirtimeConfirmPaymentState extends State<AirtimeConfirmPayment>
                                     fontWeight: FontWeight.w400),
                               ),
                               Text(
-                                widget.airtimeRecharge.phoneNumber,
+                                widget.airtimeRecharge.number,
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,
@@ -339,7 +354,7 @@ class _AirtimeConfirmPaymentState extends State<AirtimeConfirmPayment>
                                   BuyAirtimeDataRequest(
                                       networkId:widget.airtimeRecharge.networkId,
                                       userId: loginResponse!.id,
-                                      phoneNumber:widget.airtimeRecharge.phoneNumber,
+                                      phoneNumber:widget.airtimeRecharge.number,
                                       productPlanCategoryId: widget.airtimeRecharge.productPlanCategoryId,
                                       pin: response[1],
                                       amount: widget.productPlanList.isEmpty?widget.airtimeRecharge.amount:

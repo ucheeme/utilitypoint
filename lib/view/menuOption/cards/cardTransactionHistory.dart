@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
@@ -84,9 +85,10 @@ int _getLastDayOfTheMonth(){
 
         if (state is AllCardTransactions) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            for(var item in state.response.details.transactions){
-              cardTransactionList.add(item);
-            }
+            cardTransactionList=state.response.details.transactions;
+            // for(var item in state.response.details.transactions){
+            //   cardTransactionList.add(item);
+            // }
           });
           bloc.initial();
         }
@@ -150,25 +152,31 @@ int _getLastDayOfTheMonth(){
                                   )),
                               GestureDetector(
                                 onTap: () async {
-                                  // StartDateEndDate? result =await showModalBottomSheet(
-                                  //     isDismissible: true,
-                                  //     isScrollControlled: true,
-                                  //     context: context,
-                                  //     backgroundColor:AppColor.black10,
-                                  //     shape:RoundedRectangleBorder(
-                                  //       borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
-                                  //     ),
-                                  //     builder: (context) => Padding(
-                                  //       padding: EdgeInsets.only(
-                                  //           bottom: MediaQuery.of(context).viewInsets.bottom),
-                                  //       child:  CustomDateRangePicker(),
-                                  //     )
-                                  // );
-                                  // if (result != null){
-                                  //  // completionHandler(result);
-                                  //   AppUtils.debug("start Date ${result.startDate}");
-                                  //   AppUtils.debug("End Date ${result.endDate}");
-                                  // }
+                                  StartDateEndDate? result =await showCupertinoModalBottomSheet(
+                                      topRadius:
+                                      Radius.circular(20.r),
+                                      context: context,
+                                      backgroundColor:AppColor.primary20,
+                                      shape:RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                      ),
+                                      builder: (context) => SizedBox(
+                                          height: 400.h,
+                                          child: CustomDateRangePicker())
+                                  );
+                                  if (result != null){
+                                   // completionHandler(result);
+                                    AppUtils.debug("start Date ${result.startDate}");
+                                    AppUtils.debug("End Date ${result.endDate}");
+                                    bloc.add(GetCardTransactionHistoryEvent(GetProductRequest(
+                                        userId: loginResponse!.id,
+                                        cardId:widget.cardId,
+                                        startDate: result.startDate,
+                                        endDate: result.endDate,
+                                        pageSize: 40.toString(),
+                                        page: 1.toString()
+                                    )));
+                                  }
                                 },
                                 child: Container(
                                   height: 41.h,
@@ -190,6 +198,43 @@ int _getLastDayOfTheMonth(){
                       ),
                     ),
                     Gap(24.h),
+                    Visibility(
+                      visible: cardTransactionList.isEmpty,
+                      child: Center(
+                        child: SizedBox(
+                          height: 500.h,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/image/images_png/empty.png",
+                                height: 40.h,
+                                width: 60.w,
+                              ),
+                              Text(
+                                "No Transaction from the selected date",
+                                style: CustomTextStyle.kTxtBold.copyWith(
+                                    color: AppColor.black100,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16.sp),
+                              ),
+                              SizedBox(
+                                height: 49.h,
+                                width: 269.w,
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  "Use this card for more transaction",
+                                  style: CustomTextStyle.kTxtMedium.copyWith(
+                                      color: AppColor.black80,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12.sp),),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     ...cardTransactionList.mapIndexed((_element,index)=>
                        Padding(
                          padding:  EdgeInsets.only(bottom: 15.h),

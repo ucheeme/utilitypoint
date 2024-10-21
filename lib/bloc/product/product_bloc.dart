@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:utilitypoint/model/request/buyCableSubscriptionRequest.dart';
 import 'package:utilitypoint/model/request/confirmElectricityMeterOrCableName.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
+import 'package:utilitypoint/model/response/userSetting.dart';
 
 import '../../model/defaultModel.dart';
 import '../../model/request/buyAirtimeData.dart';
@@ -14,9 +15,13 @@ import '../../model/response/buy_electricity_response.dart';
 import '../../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../../model/response/dataPlanCategory.dart';
 import '../../model/response/dataPlanResponse.dart';
+import '../../model/response/exchangeRate.dart';
+import '../../model/response/kycValidated.dart';
+import '../../model/response/nairaDollarTransactionList.dart';
 import '../../model/response/networksList.dart';
 import '../../model/response/products.dart';
 import '../../model/response/airtimeDatatransactionHistory.dart';
+import '../../model/response/userKYCResponse.dart';
 import '../../repository/productsRepository.dart';
 import '../../utils/app_util.dart';
 
@@ -32,6 +37,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     //   handleGetTransactionHistory(event.request);
     // });
     on<GetAllNetworkEvent>((event,emit){handleGetAllNetwork();});
+    on<GetUserSettingsEvent>((event,emit){handleGetUserSetting();});
     on<GetAllProductEvent>((event,emit){handleGetAllProducts();});
     on<GetAllProductPlanCategoryEvent>((event,emit){handleGetAllDataProductPlanCategoryEvent(event.request);});
     on<GetAllProductPlanEvent>((event,emit){handleGetAllDataProductPlanEvent(event.request);});
@@ -43,6 +49,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<BuyElectricityEvent>((event,emit){handleElectricityEvent(event.request);});
     on<ConfirmMeterNameEvent>((event,emit){handleConfirmMeterNameEvent(event.request);});
     on<ConfirmCableNameEvent>((event,emit){handleConfirmCableNameEvent(event.request);});
+    on<GetExchangeRateEvent>((event,emit){handleGetExchangeRateEvent();});
+    on<GetAllNairaWalletTransactionsEvent>((event,emit){handleGetAllNairaWalletTransactionsEvent(event.request);});
+    on<GetAllDollarWalletTransactionsEvent>((event,emit){handleGetAllDollarWalletTransactionsEvent(event.request);});
+    on<GetAllUserUploadedKYCEvent>((event,emit){handleGetAllUserUploadedKYCEvent(event.request);});
+    on<GetUserKYCStatusEvent>((event,emit){handleGetUserKYCStatusEvent(event.request);});
+    on<UploadUserKYCEvent>((event,emit){handleUploadUserKYCEvent(event.request);});
+    on<VerifyBVNEvent>((event,emit){handleVerifyBVNEvent(event.request);});
   }
   void handleGetTransactionHistory(GetProductRequest event)async{
     emit(ProductIsLoading());
@@ -66,6 +79,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final   response = await productRepository.getNetwork();
       if (response is List<NetworkList>) {
         emit(ProductAllNetworks(response));
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetUserSetting()async{
+ //   emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.getUserSetting();
+      if (response is List<UserGeneralSettings>) {
+        emit(GeneralSettings(response));
         AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -211,7 +240,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final   response = await productRepository.buyCableSub(event);
       if (response is BuyAirtimeDataResponse) {
-        emit(ElectricityBought(response));
+        emit(CableRechargeBought(response));
        AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -254,6 +283,133 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
+  void handleGetExchangeRateEvent()async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.getExchangeRate();
+      if (response is FetchCurrencyConversionRate) {
+        emit(ProductExchangeRate(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetAllNairaWalletTransactionsEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.getNairaTransactions(event);
+
+      if (response is List<NairaTransactionList>) {
+        emit(AllNairaTransactions(response) );
+        AppUtils.debug("success");
+      }else{
+        if(response==[]){
+          emit(AllNairaTransactions(const []) );
+        }else{
+          emit(ProductError(response as DefaultApiResponse));
+          AppUtils.debug("error");
+        }
+
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetAllDollarWalletTransactionsEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.getDollarsTransactions(event);
+      if (response is List<NairaTransactionList>) {
+        emit(AllDollarTransactions(response) );
+        AppUtils.debug("success");
+      }else{
+        if(response==[]){
+          emit(AllDollarTransactions(const []) );
+        }else{
+          emit(ProductError(response as DefaultApiResponse));
+          AppUtils.debug("error");
+        }
+
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+  void handleGetAllUserUploadedKYCEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.getUserKYCUploads(event);
+      if (response is UserKycResponse) {
+        emit(UserKYCs(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetUserKYCStatusEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.getUserKYCStatus(event);
+      if (response is UserKycResponse) {
+        emit(UserKYCVerificationStatus(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleUploadUserKYCEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.uploadKYC(event);
+      if (response is KycVerificationResponse) {
+        emit(KYCUpdated(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleVerifyBVNEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.verifyBVN(event);
+      if (response is DefaultApiResponse) {
+        emit(BVNVerified(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+
   initial(){
     emit(ProductInitial());
   }

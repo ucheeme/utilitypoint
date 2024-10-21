@@ -35,6 +35,13 @@ class ProductAllNetworks extends ProductState{
   List<Object?> get props =>[response];
 }
 
+class GeneralSettings extends ProductState{
+  List<UserGeneralSettings> response;
+  GeneralSettings(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
 class AllProduct extends ProductState{
   List<Products> response;
   AllProduct(this.response);
@@ -55,6 +62,7 @@ class AllProductPlanSuccess extends ProductState{
   @override
   List<Object?> get props =>[response];
 }
+
 class AirtimeDataTransactionHistorySuccess extends ProductState{
   List<ProductTransactionList> response;
   AirtimeDataTransactionHistorySuccess(this.response);
@@ -77,6 +85,27 @@ class AirtimeBought extends ProductState{
 class DataBought extends ProductState{
   BuyAirtimeDataResponse response;
   DataBought(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class UserKYCs extends ProductState{
+  UserKycResponse response;
+  UserKYCs(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class UserKYCVerificationStatus extends ProductState{
+  UserKycResponse response;
+  UserKYCVerificationStatus(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class KYCUpdated extends ProductState{
+  KycVerificationResponse response;
+  KYCUpdated(this.response);
   @override
   List<Object?> get props =>[response];
 }
@@ -105,6 +134,33 @@ class ElectricityBought extends ProductState{
 class CableRechargeBought extends ProductState{
   final BuyAirtimeDataResponse response;
   const CableRechargeBought(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class ProductExchangeRate extends ProductState{
+  final FetchCurrencyConversionRate response;
+  const ProductExchangeRate(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class AllNairaTransactions extends ProductState{
+  List<NairaTransactionList> response;
+  AllNairaTransactions(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class AllDollarTransactions extends ProductState{
+  List<NairaTransactionList> response;
+  AllDollarTransactions(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+class BVNVerified extends ProductState{
+ DefaultApiResponse response;
+  BVNVerified(this.response);
   @override
   List<Object?> get props =>[response];
 }

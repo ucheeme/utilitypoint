@@ -16,13 +16,21 @@ import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
+import '../../../model/request/getUserRequest.dart';
+import '../../../model/request/topUpCard.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/reuseable_widget.dart';
+import 'convert.dart';
 
 class ReviewOrder extends StatefulWidget {
   String? exchangeRate;
+  String? convertionFee;
+  String? cardId;
   bool? isCreateCard;
-  ReviewOrder({super.key, this.exchangeRate, this.isCreateCard});
+  bool? isTopUpCard;
+
+  ReviewOrder(
+      {super.key, this.exchangeRate,this.cardId, this.convertionFee,this.isTopUpCard, this.isCreateCard});
 
   @override
   State<ReviewOrder> createState() => _ReviewOrderState();
@@ -32,11 +40,18 @@ class _ReviewOrderState extends State<ReviewOrder>
     with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
   bool isCreateCard = false;
+  String cardCharge = "";
+  String convertionCharge = "";
   late VirtualcardBloc bloc;
 
   @override
   void initState() {
-    isCreateCard =widget.isCreateCard??false;
+    isCreateCard = widget.isCreateCard ?? false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isCreateCard) {
+        bloc.add(GetExchangeRateEvent());
+      }
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
@@ -48,7 +63,9 @@ class _ReviewOrderState extends State<ReviewOrder>
     _animationManager.dispose();
     super.dispose();
   }
-  String userPin ="";
+
+  String userPin = "";
+
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<VirtualcardBloc>(context);
@@ -65,20 +82,53 @@ class _ReviewOrderState extends State<ReviewOrder>
         }
         if (state is CardCreationSuccessful) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pop(context, );
-            Navigator.pop(context,true);
-           // Navigator.pop(context,true);
+            Navigator.pop(
+              context,
+            );
+            Navigator.pop(context, true);
+            // Navigator.pop(context,true);
           });
-         bloc.initial();
+          bloc.initial();
+        }
+        if (state is ExchangeRate) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            cardCharge = state.response.cardCreationFeeInCurrency;
+            convertionCharge = state.response.feeRatePerCurrency;
+          });
+          bloc.initial();
+        }
+        if (state is CardTopUpSuccessful) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Get.back();
+            Get.back();
+            Get.back(result: true);
+            showSuccessSlidingModal(context,
+                successMessage: "Card Successfully Topped up!");
+          });
+          bloc.initial();
         }
         if (state is SuccessfullyBoughtDollar) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
 
-            if(isCreateCard){
-              bloc.add(CreateCardEvent(bloc.validation.createCardRequest()));
-            }else{
+            if (isCreateCard) {
+              List<dynamic> response = await Get.to(TransactionPin());
+              if (response[0]) {
+                // pin=response[1];
+                bloc.add(CreateCardEvent(bloc.validation
+                    .createCardRequest(cardCharge, response[1])));
+              }
+            }else if(widget.isTopUpCard==true){
+              bloc.add(FundCardEvent(TopUpCardRequest(
+                userId: loginResponse!.id,
+                cardId: widget.cardId!,
+                amount: double.parse(receiving!.amount),
+                pin:userPin,
+              )));
+            } else {
+              Get.back();
+              Get.back();
               showSuccessSlidingModal(context,
-                  successMessage:state.response.message);
+                  successMessage: state.response.message);
             }
           });
           bloc.initial();
@@ -254,7 +304,9 @@ class _ReviewOrderState extends State<ReviewOrder>
                                 NumberFormat.currency(
                                         name: receiving!.currency,
                                         decimalDigits: 2)
-                                    .format(10),
+                                    .format(double.parse(receiving!.amount) *
+                                        double.parse(currencyConversionRateFees!
+                                            .feeRatePerCurrency)),
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,
@@ -278,13 +330,18 @@ class _ReviewOrderState extends State<ReviewOrder>
                             List<dynamic> response =
                                 await Get.to(() => TransactionPin());
                             if (response[0]) {
+                              userPin=response[1];
                               bloc.validation.setPin(response[1]);
-                              bloc.add(BuyDollarEvent(
-                                  ConvertNairaToDollarRequest(
-                                    userId: loginResponse!.id,
-                                    amountInDollar:receiving!.amount,
-                                    pin: response[1],
-                                  )));
+                              bloc.add(
+                                  BuyDollarEvent(ConvertNairaToDollarRequest(
+                                userId: loginResponse!.id,
+                                amountInDollar: receiving!.amount,
+                                pin: response[1],
+                                totalChargeFee:
+                                    (double.parse(receiving!.amount) *
+                                            double.parse(currencyConversionRateFees!.feeRatePerCurrency))
+                                        .toString(),
+                              )));
                             }
                           },
                           buttonText: "Convert",

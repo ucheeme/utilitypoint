@@ -1,3 +1,5 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,9 +9,12 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
+import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseableFunctions.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/bottomsheet/currencyOptions.dart';
+
+import '../model/response/dataPlanResponse.dart';
 
 class CustomButton extends StatelessWidget {
   CustomButton({
@@ -96,7 +101,9 @@ class CustomAppBar extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Get.back(canPop: false);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
           },
           child: Visibility(
             visible: isBottomNav==true?false:true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,
@@ -525,6 +532,8 @@ Future<dynamic> openBottomSheet(BuildContext context, Widget bottomScreen,
 Widget dashboardHeader(
     {double accountBalance = 0,
     Function()? sideBarOnTap,
+      int initialPage=0,
+   Function(int, CarouselPageChangedReason)? onPageChanged,
     Function()? depositOnTap,
     Function()? withdrawOnTap,
     double accountBalanceFractions = .00,
@@ -547,68 +556,97 @@ Widget dashboardHeader(
         end: Alignment.bottomCenter,
       ),
     ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Gap(72.h),
-        SizedBox(
-          height: 40.h,
-          width: Get.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Account balance",
-                style: CustomTextStyle.kTxtMedium.copyWith(
-                    color: AppColor.black0,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400),
+    child:
+    CarouselSlider.builder(
+      itemCount:2,
+      options: CarouselOptions(
+        //pageSnapping: false,
+        //scrollPhysics: BouncingScrollPhysics(),
+        height: 266.h,
+        padEnds: false,
+        disableCenter: false,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.3,
+        enlargeStrategy: CenterPageEnlargeStrategy.scale,
+        //height: 400,
+        // aspectRatio: 16/19,
+        viewportFraction: 1.0,
+        initialPage: initialPage,
+        enableInfiniteScroll: true,
+        reverse: false,
+        autoPlay: false,
+        onPageChanged: onPageChanged,
+        scrollDirection: Axis.horizontal,
+      ),
+        itemBuilder: (BuildContext context, int index, int realIndex){
+        return   Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(72.h),
+            SizedBox(
+              height: 40.h,
+              width: Get.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Account balance",
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        color: AppColor.black0,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400),
+                  ),
+                  GestureDetector(
+                      onTap: sideBarOnTap,
+                      child: Image.asset("assets/image/icons/sideBar.png")),
+                ],
               ),
-              GestureDetector(
-                  onTap: sideBarOnTap,
-                  child: Image.asset("assets/image/icons/sideBar.png")),
-            ],
-          ),
-        ),
-        Gap(8.h),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                  text: NumberFormat.currency(
+            ),
+            Gap(8.h),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                      text: NumberFormat.currency(
                           symbol: isNaira ? '\₦' : '\$', decimalDigits: 0)
-                      .format(accountBalance),
-                  style: GoogleFonts.inter(
-                      color: AppColor.black0,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 32.sp)),
-              TextSpan(
-                  text:
+                          .format(accountBalance),
+                      style: GoogleFonts.inter(
+                          color: AppColor.black0,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32.sp)),
+                  TextSpan(
+                      text:
                       '.${accountBalanceFractions.toStringAsFixed(2).split(".")[1]}',
-                  style: GoogleFonts.inter(
-                      color: AppColor.black10,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 32.sp)),
-            ],
-          ),
-        ),
-        Gap(28.h),
-        SizedBox(
-          height: 48.h,
-          width: Get.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              completelyCurvedButton(depositOnTap,title: isNaira?"Deposit NGN":"Deposit USD"),
-              completelyCurvedButton(withdrawOnTap,
-                  icon: 'arrowDiagonalUp',
-                  title: 'Withdraw',
-                  buttonColor: AppColor.primary90),
-            ],
-          ),
-        )
-      ],
-    ),
+                      style: GoogleFonts.inter(
+                          color: AppColor.black10,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32.sp)),
+                ],
+              ),
+            ),
+            Gap(28.h),
+            SizedBox(
+              height: 48.h,
+              width: Get.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  completelyCurvedButton(depositOnTap,title: isNaira?"Deposit NGN":"Deposit USD"),
+                  Visibility(
+                    visible: !isNaira,
+                    child: completelyCurvedButton(withdrawOnTap,
+                        icon: 'arrowDiagonalUp',
+                        title: 'Wallet History',
+                        buttonColor: AppColor.primary90),
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+        }
+    )
+
   );
 }
 
@@ -620,7 +658,7 @@ Widget completelyCurvedButton(Function()? onTap,
     onTap: onTap,
     child: Container(
       height: 48.h,
-      width: 148.w,
+      width: 154.w,
       padding: EdgeInsets.symmetric(vertical: 13.h, horizontal: 21.w),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30.r), color: buttonColor),
@@ -684,7 +722,128 @@ Widget dashboardIcons(
   );
 }
 
-Widget airtimeDataCard({String title =""}){
+Widget dataCard(ProductPlanItemResponse response,bool selectedOption){
+  return Container(
+    height: 100.h,
+    width: 90.w,
+    //margin: EdgeInsets.symmetric(vertical: 16.h),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12.r),
+      border:Border.all(color: selectedOption?AppColor.secondary100:AppColor.black0) ,
+      boxShadow: [
+        BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
+      ],
+      color: AppColor.black0,
+    ),
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+    child:  Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Center(
+          child: Text(
+            response.dataSizeInMb==null?extractSizeValue(response.productPlanName):
+            getDataValue(double.parse(response.dataSizeInMb)),
+            style: CustomTextStyle.kTxtBold.copyWith(
+                color: AppColor.black100,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        Center(
+          child: Text(
+            "${response.validityInDays} Days",
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.black60,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        Center(
+          child: Text(
+            NumberFormat.currency(
+                symbol: '\₦', decimalDigits: 0)
+                .format(double.parse(response.sellingPrice.toString())),
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.secondary100,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        // Center(
+        //   child: Text(
+        //     response.sellingPrice,
+        //     style: CustomTextStyle.kTxtMedium.copyWith(
+        //         color: AppColor.secondary100,
+        //         fontSize: 10.sp,
+        //         fontWeight: FontWeight.w400),
+        //   ),
+        // ),
+      ],
+    ),);
+}
+
+
+Widget cablePlanCard(ProductPlanItemResponse response,bool selectedOption){
+  return Container(
+    height: 120.h,
+    width: 90.w,
+    //margin: EdgeInsets.symmetric(vertical: 16.h),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12.r),
+      border:Border.all(color: selectedOption?AppColor.secondary100:AppColor.black0) ,
+      boxShadow: [
+        BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
+      ],
+      color: AppColor.black0,
+    ),
+    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+    child:  Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Center(
+          child: Text(
+            response.productPlanName,
+            style: CustomTextStyle.kTxtBold.copyWith(
+                color: AppColor.black100,
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        Center(
+          child: Text(
+            "${response.validityInDays} Days",
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.black60,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        Center(
+          child: Text(
+            NumberFormat.currency(
+                symbol: '\₦', decimalDigits: 0)
+                .format(double.parse(response.sellingPrice.toString())),
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.secondary100,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w400),
+          ),
+        ),
+        // Center(
+        //   child: Text(
+        //     response.sellingPrice,
+        //     style: CustomTextStyle.kTxtMedium.copyWith(
+        //         color: AppColor.secondary100,
+        //         fontSize: 10.sp,
+        //         fontWeight: FontWeight.w400),
+        //   ),
+        // ),
+      ],
+    ),);
+}
+
+
+Widget airtimeCard({String title =""}){
   return Container(
       height: 63.h,
       width: 70.w,
@@ -709,6 +868,7 @@ Widget airtimeDataCard({String title =""}){
 }
 
 Widget listButtons({String title = "", String icons = "", bool hasSwitch =false,
+  bool isNotification=false,String notifications ="0",
 bool switchValue=false, Function(bool)? onChanged}) {
   return Container(
       height: 50.h,
@@ -753,7 +913,29 @@ bool switchValue=false, Function(bool)? onChanged}) {
             ),
           ),
           hasSwitch?
-              Switch(value: switchValue, onChanged: onChanged):
+              Switch(
+                inactiveTrackColor: AppColor.black40,
+                  activeTrackColor:AppColor.primary100,
+                  value: switchValue, onChanged: onChanged):
+              isNotification?
+                  Container(
+                    height: 44.h,
+                    padding: EdgeInsets.all(6.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColor.secondary100
+                    ),
+                    child: Center(
+                      child: Text(
+                        notifications,
+                        style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.black0,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp
+                        ),
+                      ),
+                    ),
+                  ):
           Icon(
             Icons.arrow_forward_ios_outlined,
             color: AppColor.black60,
@@ -1021,3 +1203,5 @@ Widget convertContainer(
 }
 
 
+String nairaSymbol ='₦' ;
+String dollarSymbol='\$';

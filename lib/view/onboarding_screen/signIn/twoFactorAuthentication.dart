@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -22,6 +24,7 @@ import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/height.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 import 'login_screen.dart';
@@ -35,6 +38,7 @@ class Twofactorauthentication extends StatefulWidget {
 
 class _TwofactorauthenticationState extends State<Twofactorauthentication> with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
+  TextEditingController twoFactorController = TextEditingController();
   late OnboardNewBloc bloc;
   FocusNode _pinCodeFocusNode = FocusNode();
   bool activateKeyboard = false;
@@ -89,6 +93,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
           userId = state.response.id;
           accessToken = state.response.token;
           loginResponse = state.response;
+          MySharedPreference.saveUserLoginResponse(jsonEncode(loginResponse));
           Get.offAll(MyBottomNav(), predicate: (route) => false);
         });
       });
@@ -211,7 +216,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-            controller: bloc.validation.twoFactorController,
+            controller:twoFactorController,
             focusNode: _pinCodeFocusNode,
             onTap: (){
               setState(() {
@@ -248,6 +253,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
             ),
             animationDuration: const Duration(milliseconds: 300),
             onChanged: (value) {
+
               setState(() {
                 requiredNumber = value;
               });
@@ -261,7 +267,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication> with 
                   });
 
               }
-
+              bloc.validation.twoFactorController.text=twoFactorController.text;
             },
           );
         }

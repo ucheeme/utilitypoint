@@ -59,8 +59,8 @@ class _BulkAirtimeConfirmPaymentState extends State<BulkAirtimeConfirmPayment>
     }
 
 
-    if(widget.phonenumbers.last!=widget.airtimeRecharge.phoneNumber){
-      widget.phonenumbers.add(widget.airtimeRecharge.phoneNumber);
+    if(widget.phonenumbers.last!=widget.airtimeRecharge.number){
+      widget.phonenumbers.add(widget.airtimeRecharge.number);
     }
     super.initState();
     // Initialize the SlideAnimationManager

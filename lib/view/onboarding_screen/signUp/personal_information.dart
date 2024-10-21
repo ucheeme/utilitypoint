@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +12,15 @@ import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 
+import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/height.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
+import '../signIn/login_screen.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({super.key});
@@ -93,6 +99,17 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
 
     if (state is UserInfoUpdatedState){
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        loginResponse?.email =state.response.email;
+        loginResponse?.firstName =state.response.firstName;
+        loginResponse?.lastName =state.response.lastName;
+        loginResponse?.userName =state.response.userName;
+        loginResponse?.id =state.response.id;
+        loginResponse?.dollarWallet =state.response.dollarWallet;
+        loginResponse?.nairaWallet =state.response.nairaWallet;
+        loginResponse?.token = state.response.token;
+        accessToken =state.response.token;
+        userId = state.response.id;
+        MySharedPreference.saveUserLoginResponse(jsonEncode(loginResponse));
         Get.toNamed(Pages.transactionPin);
       });
       bloc.initial();

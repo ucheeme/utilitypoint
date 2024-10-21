@@ -16,6 +16,11 @@ class GetAllNetworkEvent extends ProductEvent {
   @override
   List<Object?> get props => [];
 }
+class GetUserSettingsEvent extends ProductEvent {
+  const GetUserSettingsEvent();
+  @override
+  List<Object?> get props => [];
+}
 
 class GetAllProductEvent extends ProductEvent {
   const GetAllProductEvent();
@@ -81,6 +86,55 @@ class BuyCableSubscriptionEvent extends ProductEvent{
 class BuyElectricityEvent extends ProductEvent{
   final BuyElectricityRequest request;
   const BuyElectricityEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetExchangeRateEvent extends ProductEvent {
+
+  const GetExchangeRateEvent();
+  @override
+  List<Object?> get props => [];
+}
+
+class GetAllNairaWalletTransactionsEvent extends ProductEvent {
+  final GetProductRequest request;
+  const GetAllNairaWalletTransactionsEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetAllDollarWalletTransactionsEvent extends ProductEvent {
+  final GetProductRequest request;
+  const GetAllDollarWalletTransactionsEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetAllUserUploadedKYCEvent extends ProductEvent {
+  final GetProductRequest request;
+  const GetAllUserUploadedKYCEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetUserKYCStatusEvent extends ProductEvent {
+  final GetProductRequest request;
+  const GetUserKYCStatusEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class UploadUserKYCEvent extends ProductEvent {
+  final GetProductRequest request;
+  const UploadUserKYCEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class VerifyBVNEvent extends ProductEvent {
+  final GetProductRequest request;
+  const VerifyBVNEvent(this.request);
   @override
   List<Object?> get props => [];
 }

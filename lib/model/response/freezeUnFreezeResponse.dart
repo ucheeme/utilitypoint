@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+
+
 FreezeCardSuccess freezeCardSuccessFromJson(String str) => FreezeCardSuccess.fromJson(json.decode(str));
 
 String freezeCardSuccessToJson(FreezeCardSuccess data) => json.encode(data.toJson());
@@ -68,8 +70,8 @@ class Card {
   String id;
   String firstSix;
   String lastFour;
-  int prevBalance;
-  int balance;
+  dynamic prevBalance;
+  dynamic balance;
 
   Card({
     required this.id,

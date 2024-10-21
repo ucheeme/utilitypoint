@@ -42,3 +42,37 @@ class PasswordChangedSuccefully extends ProfileState{
   @override
   List<Object?> get props => [response];
 }
+
+class UserLogOut extends ProfileState{
+  DefaultApiResponse response;
+  UserLogOut(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class UserNotifications extends ProfileState{
+  AllUserNotification response;
+  UserNotifications(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class MarkedAsRead extends ProfileState{
+  MarkAsReadUnReadResponse response;
+  MarkedAsRead(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class MarkedAsUnRead extends ProfileState{
+  MarkAsReadUnReadResponse response;
+  MarkedAsUnRead(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+class UserAppSettingUpdated extends ProfileState{
+  UserAlertResponse response;
+  UserAppSettingUpdated(this.response);
+  @override
+  List<Object?> get props => [response];
+}

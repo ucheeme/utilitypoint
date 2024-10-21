@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../model/response/airtimeDatatransactionHistory.dart';
+
 void statusBarTheme(){
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.light));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,]);
@@ -67,3 +69,54 @@ final Map<String, String> networkPrefixes = {
   '908': '9mobile',
   '909': '9mobile',
 };
+
+class UserTransactions{
+  String? nairaDollarid;
+  String userId;
+  bool isProduct;
+  dynamic transactionId;
+  String actionBy;
+  String transactionCategory;
+  String balanceBefore;
+  String balanceAfter;
+  String description;
+  DateTime createdAt;
+  DateTime updatedAt;
+  String? productid;
+  String? productPlanId;
+  String? status;
+  String? walletCategory;
+  String? phoneNumber;
+  String? smartCardNumber;
+  String? metreNumber;
+  String? cableTvSlots;
+  String? utilitySlots;
+  String? amount;
+  dynamic referralCommissionValue;
+  String? discountedAmount;
+  UserTransactions({
+    required this.isProduct,
+     this.nairaDollarid,
+     this.productid,
+     required this.userId,
+     required this.actionBy,
+     this.productPlanId,
+     required this.transactionCategory,
+     this.status,
+     this.walletCategory,
+     this.phoneNumber,
+     this.smartCardNumber,
+     this.metreNumber,
+     this.cableTvSlots,
+     this.utilitySlots,
+     this.amount,
+     this.referralCommissionValue,
+     this.discountedAmount,
+     required this.balanceBefore,
+     required this.balanceAfter,
+     required this.description,
+     required this.createdAt,
+     required this.updatedAt,
+     this.transactionId,
+});
+}

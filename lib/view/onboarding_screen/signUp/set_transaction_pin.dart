@@ -11,8 +11,11 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:utilitypoint/services/api_service.dart';
 import 'package:utilitypoint/utils/height.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
+import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
@@ -96,7 +99,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
     if (state is UserInfoUpdatedState){
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration.zero, (){
-          // Get.toNamed(Pages.personalInformation);
+
           Get.toNamed(Pages.accountCreated);
         });
       });
@@ -208,6 +211,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
+            cursorColor: Colors.transparent,
             appContext: context,
             enableActiveFill: true,
             autoFocus: true,
