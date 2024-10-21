@@ -104,12 +104,13 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
           WidgetsBinding.instance.addPostFrameCallback((_) {
             productPlanList= state.response;
             Get.to(BulkAirtimeConfirmPayment(
-              airtimeRecharge: AirtimeRecharge(
-                  airtimeCategotyId,
-                  networkId,
-                  phoneNumberController.text,
-                  networkName,
-                  airtimeAmountController.text.trim(), getNetworkIcon(networkName)),
+              airtimeRecharge:AirtimeRecharge(
+                  networkId: networkId,
+                  number:  phoneNumberController.text,
+                  productPlanCategoryId: airtimeCategotyId,
+                  networkName: networkName,
+                  networkIcon:  getNetworkIcon(networkName),
+                  amount:   airtimeAmountController.text.trim()),
               productPlanList: productPlanList,
               phonenumbers: multiplePhoneNumbers,));
           });
@@ -382,7 +383,7 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                                           });
 
                                         },
-                                        child: airtimeDataCard(title: element))
+                                        child: airtimeCard(title: element))
                                 )
                               ],
                             ),
@@ -399,7 +400,7 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                                             airtimeAmountController.text=element;
                                           });
                                         },
-                                        child: airtimeDataCard(title: element))
+                                        child: airtimeCard(title: element))
                                 )
                               ],
                             ),
@@ -466,46 +467,46 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                         ],
                       ),
                     ),
-                    Container(
-                     // color: Colors.red,
-                      height:multipleTextController.isEmpty?0.h:150.h,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                          itemCount: multipleTextController.length,
-                          itemBuilder: (context,index){
-                            print(index);
-                        return Container(
-                          //color: Colors.yellow,
-                          //width:295.w,
-                          height: 60.h,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width:290.w,
-                                child: CustomizedTextField(
-                                  textEditingController: multipleTextController[index],
-                                  onChanged: (value){
-                                    setState(() {
-                                      multiplePhoneNumbers[index]=value;
-                                    });
-                                  },
-                                    isTouched: false
-                                ),
-                              ),
-                              Gap(10.w),
-                              GestureDetector(
-                                  onTap: (){
-                                    setState(() {
-                                      multipleTextController.removeAt(index);
-                                      multiplePhoneNumbers.removeAt(index);
-                                    });
-                                  },
-                                  child: Image.asset("assets/image/icons/bulk_delete_Icon.png",
-                                    height: 24.h,width: 24.w,))
-                            ],
-                          ),
-                        );
-                      }),
+                    SizedBox(
+                        height:multipleTextController.isEmpty?0.h:150.h,
+                        child: Column(
+                          children: [
+                            ...multipleTextController.mapIndexed((element,index)=>
+                                Container(
+                                  //color: Colors.yellow,
+                                  //width:295.w,
+                                  height: 60.h,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width:290.w,
+                                        child: CustomizedTextField(
+                                            keyboardType: TextInputType.phone,
+                                            textEditingController: multipleTextController[index],
+                                            onChanged: (value){
+                                              setState(() {
+                                                multiplePhoneNumbers[index]=value;
+                                              });
+                                            },
+                                            isTouched: false
+                                        ),
+                                      ),
+                                      Gap(10.w),
+                                      GestureDetector(
+                                          onTap: (){
+                                            setState(() {
+                                              multipleTextController.removeAt(index);
+                                              multiplePhoneNumbers.removeAt(index);
+                                            });
+                                          },
+                                          child: Image.asset("assets/image/icons/bulk_delete_Icon.png",
+                                            height: 24.h,width: 24.w,))
+                                    ],
+                                  ),
+                                )
+                            )
+                          ],
+                        )
                     ),
                     GestureDetector(
                       onTap: (){

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
@@ -154,16 +155,44 @@ class _TransactionScreenState extends State<TransactionScreen>with TickerProvide
                                           padding: EdgeInsets.all(8.h),
                                           child: Image.asset(search_Image,height: 14.h,width: 14.w,)),
                                     )),
-                                Container(
-                                  height: 41.h,
-                                  width:41.w,
-                                  padding: EdgeInsets.all(12.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
-                                    bottomRight: Radius.circular(8.r)),
-                                    color: AppColor.primary100
+                                GestureDetector(
+                                  onTap:() async {
+                                    StartDateEndDate? result =await showCupertinoModalBottomSheet(
+                                        topRadius:
+                                        Radius.circular(20.r),
+                                        context: context,
+                                        backgroundColor:AppColor.primary20,
+                                        shape:RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                        ),
+                                        builder: (context) => SizedBox(
+                                            height: 400.h,
+                                            child: CustomDateRangePicker())
+                                    );
+                                    if (result != null){
+                                      // completionHandler(result);
+                                      AppUtils.debug("start Date ${result.startDate}");
+                                      AppUtils.debug("End Date ${result.endDate}");
+                                      bloc.add(GetProductTransactionHistoryEvent(GetProductRequest(
+                                          userId: loginResponse!.id,
+                                          dateFrom: result.startDate,
+                                          dateTo: result.endDate,
+                                          pageSize: 40.toString(),
+                                          page: 1.toString()
+                                      )));
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 41.h,
+                                    width:41.w,
+                                    padding: EdgeInsets.all(12.h),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(8.r),
+                                      bottomRight: Radius.circular(8.r)),
+                                      color: AppColor.primary100
+                                    ),
+                                    child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                                   ),
-                                  child: Image.asset(filter_Image,height: 18.h,width: 18.w,),
                                 )
                               ],
                             ),

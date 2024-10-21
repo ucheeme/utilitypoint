@@ -30,8 +30,8 @@ class Details {
   Customer customer;
   Card card;
   String currency;
-  int prevBalance;
-  int balance;
+  double prevBalance;
+  double balance;
   String refId;
   String action;
   DateTime createdAt;
@@ -81,8 +81,8 @@ class Card {
   String firstSix;
   String lastFour;
   String brand;
-  int prevBalance;
-  int balance;
+  double prevBalance;
+  double balance;
 
   Card({
     required this.id,

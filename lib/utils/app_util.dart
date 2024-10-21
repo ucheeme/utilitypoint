@@ -7,19 +7,33 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:utilitypoint/bloc/card/virtualcard_bloc.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/height.dart';
+import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 
+import '../bloc/onboarding_new/onBoardingValidator.dart';
+import '../bloc/profile/profile_bloc.dart';
 import '../model/defaultModel.dart';
+import '../model/request/logOutRequest.dart';
+import '../view/bottomNav.dart';
+import '../view/fundWallet/chooseFundingMethonds.dart';
+import '../view/fundWallet/convertToUsD.dart';
+import '../view/fundWallet/enterAmountToConvert.dart';
 import '../view/onboarding_screen/signIn/login_screen.dart';
 import '../view/onboarding_screen/signIn/reset_password.dart';
 import 'image_paths.dart';
@@ -335,7 +349,6 @@ void showNoMailAppsDialog(BuildContext context) {
   );
 }
 
-
 void showSuccessSlidingModal(BuildContext context,{String successMessage="",String headerText ="Successful!"}) {
   showModalBottomSheet(
     context: context,
@@ -413,7 +426,7 @@ void showSuccessSlidingModal(BuildContext context,{String successMessage="",Stri
                 height10,
                 TextButton(
                   onPressed: () {
-                    // Handle resend email action
+                    Get.offAll(MyBottomNav(position: 1,), predicate: (route) => false);
                   },
                   child: Text(
                     'Notifications',
@@ -511,4 +524,172 @@ void showNewPasswordSuccessfulSlidingModal(BuildContext context,{String successM
       );
     },
   );
+}
+
+void showSlidingModalFundScreen(BuildContext context,{
+  bool isUserName=false,bool isConvertNGNWallet =false, bool isBankTransfer=false,
+  Function()? userNameReceive,Function()? ngnWalletTransfer,Function()? bankTransfer
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: false,
+    backgroundColor: Colors.transparent, // Makes the background transparent
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        shouldCloseOnMinExtent: false,
+        initialChildSize: 0.8, // This is 60% of the screen height
+        minChildSize: 0.4,     // Minimum height when you drag down
+        maxChildSize: 0.8,     // Maximum height
+        builder: (_, controller) {
+          return ChooseFundingMethodDesign(controller: controller,);
+        },
+      );
+    },
+  );
+}
+
+
+
+void showSlidingModalConvertNGN(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: false,enableDrag: false,
+    backgroundColor: Colors.transparent, // Makes the background transparent
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        expand: false,
+        shouldCloseOnMinExtent: false,
+        initialChildSize: 0.8, // This is 60% of the screen height
+        minChildSize: 0.4,     // Minimum height when you drag down
+        maxChildSize: 0.8, // Maximum height
+        builder: (_, controller) {
+          return EnterUsdAmountScreen(controller: controller);
+        },
+      );
+    },
+  );
+}
+void showSlidingModalCreate(BuildContext context,String amount) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: false,enableDrag: false,
+    backgroundColor: Colors.transparent, // Makes the background transparent
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        expand: false,
+        shouldCloseOnMinExtent: false,
+        initialChildSize: 0.8, // This is 60% of the screen height
+        minChildSize: 0.4,     // Minimum height when you drag down
+        maxChildSize: 0.8, // Maximum height
+        builder: (_, controller) {
+          return ConvertToUSDFund(controller: controller, amount: amount,);
+        },
+      );
+    },
+  );
+}
+
+ showSlidingModalLogOut(BuildContext context,) {
+  showDialog(
+    context: context,
+    // Makes the background transparent
+    builder: (BuildContext context) {
+      return LogOut();
+    },
+  );
+}
+RxBool isLogOut = false.obs;
+class LogOut extends StatelessWidget {
+   LogOut({super.key});
+   late ProfileBloc bloc;
+  @override
+  Widget build(BuildContext context) {
+    bloc= BlocProvider.of<ProfileBloc>(context);
+    return BlocBuilder<ProfileBloc, ProfileState>(
+  builder: (context, state) {
+    if (state is ProfileError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, () {
+          AppUtils.showSnack("${state.errorResponse.message}", context);
+        });
+      });
+      bloc.initial();
+    }
+    if (state is UserLogOut) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.offAll(SignInPage(), predicate: (route) => false);
+      });
+      bloc.initial();
+    }
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body:Animate(
+        effects: [SlideEffect()],
+        child: Container(
+          margin: EdgeInsets.only(top: Get.height/2,left: 12.w,right: 12.w),
+          height: 220.h,
+          width: Get.width,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.r),
+              color: AppColor.black0
+          ),
+          child: Column(
+            children: [
+              Gap(24.h),
+              Text(
+                "Logout",
+                style: CustomTextStyle.kTxtBold.copyWith(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.black100
+                ),
+              ),
+              Gap(15.h),
+              Text(
+                "Are you sure you want to logout?",
+                style: CustomTextStyle.kTxtMedium.copyWith(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.black100
+                ),
+              ),
+              Gap(22.h),
+              CustomButton(
+                height: 58.h,
+                onTap: (){
+                  // isLogOut = true.obs;
+                  Get.back(result: true);
+                  bloc.add(LogOutUserEvent(
+                      LogOutRequest(
+                        userId: userId!,
+                      )));
+                },
+                width: 222.w,
+                buttonText: "Log me out",
+                buttonColor: AppColor.primary100,
+                textColor: AppColor.black0,
+                borderRadius: 8.r,
+              ),
+              TextButton(onPressed: (){
+                Get.back(result: false);
+              },
+                  child: Text(
+                    "Cancel",
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                      color: AppColor.secondary100,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400
+                    ),
+              ))
+            ],
+          ),
+        ),
+      ),
+    );
+  },
+);
+  }
 }

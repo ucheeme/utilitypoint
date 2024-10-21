@@ -6,6 +6,7 @@ import 'package:utilitypoint/model/response/networksList.dart';
 import 'package:utilitypoint/model/response/products.dart';
 import 'package:utilitypoint/model/response/airtimeDatatransactionHistory.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
+import 'package:utilitypoint/model/response/userSetting.dart';
 import 'package:utilitypoint/repository/apiRepository.dart';
 
 import '../model/request/buyCableSubscriptionRequest.dart';
@@ -16,6 +17,7 @@ import '../model/response/buyAirtimeDataResponse.dart';
 import '../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../model/response/dataPlanCategory.dart';
 import '../model/response/dataPlanResponse.dart';
+import '../model/response/exchangeRate.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
 
@@ -69,6 +71,23 @@ class Productsrepository extends DefaultRepository {
       if (r.status == true) {
         List<NetworkList> res =
         networkListFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getUserSetting() async {
+    var response = await postRequest(
+        null, AppUrls.getUserSettings, true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        List<UserGeneralSettings> res =
+        userGeneralSettingsFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -235,6 +254,24 @@ class Productsrepository extends DefaultRepository {
     }
   }
 
+
+  Future<Object> getExchangeRate() async {
+    var response = await postRequest(
+        null, AppUrls.getExchangeRate, true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        FetchCurrencyConversionRate res =
+        fetchCurrenctConversionRateFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
 
 
 

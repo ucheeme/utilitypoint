@@ -19,6 +19,7 @@ import '../../../utils/customAnimation.dart';
 import '../../../utils/height.dart';
 import '../../../utils/reuseableFunctions.dart';
 import '../../../utils/text_style.dart';
+import '../../home/home_screen.dart';
 import 'accountMoreDetails.dart';
 
 class Cardscreen extends StatefulWidget {
@@ -160,18 +161,17 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
                               itemBuilder:(cntxt,index){
                                 String cardRef =generateRandomNumberString(9);
                             return cardDesign(
-                                accountBalance: double.parse(index==0?loginResponse!.nairaWallet:loginResponse!.dollarWallet),
+                                accountBalance: double.parse(index==0?userDetails!.nairaWallet:userDetails!.dollarWallet),
                                 balanceRemaining: 0.00,
                             cardNumber:"" ,
                               cardCTA: (){
                                   if(index==1){
                                     Get.to( MyAccountMoreDetails(
                                       isNaira: index==1?false:true,
-                                      accountBalance:double.parse(index==0?loginResponse!.nairaWallet:loginResponse!.dollarWallet),
+                                      accountBalance:double.parse(index==0?userDetails!.nairaWallet:userDetails!.dollarWallet),
                                       cardRef: "",
                                     ),curve: Curves.easeIn);
                                   }
-
                               },
                               copyCTA: (){
                                 //copyToClipboard(cntxt,"");

@@ -5,8 +5,10 @@ import 'package:utilitypoint/model/defaultModel.dart';
 import 'package:utilitypoint/model/request/resetPin.dart';
 import 'package:utilitypoint/model/request/updateUserRequest.dart';
 import 'package:utilitypoint/model/response/userInfoUpdated.dart';
+import 'package:utilitypoint/repository/apiRepository.dart';
 
 import '../../model/request/changePassword.dart';
+import '../../model/request/logOutRequest.dart';
 import '../../model/response/updateUserResponse.dart';
 import '../../repository/profileRepository.dart';
 import '../../utils/app_util.dart';
@@ -22,6 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ResetPinEvent>((event,emit){handleResetPinEvent(event.request);});
     on<UpdateUserDetailsEvent>((event,emit){handleUpdateUserDetailsEvent(event.request);});
     on<ChangePasswordEvent>((event,emit){handleChangePasswordEvent(event.request);});
+    on<LogOutUserEvent>((event,emit){handleLogOutEvent(event.request);});
   }
   void handleResetPinEvent(ResetUserPinRequest event)async{
     emit(ProfileIsLoading());
@@ -62,6 +65,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (response is SecondDefaultResponse) {
         if(response.status==true){
           emit(PasswordChangedSuccefully(response));
+          AppUtils.debug("success");
+        }else{
+          emit(ProfileError(response as DefaultApiResponse));
+          AppUtils.debug("error");
+        }
+      }else{
+        emit(ProfileError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleLogOutEvent(LogOutRequest event)async{
+    //emit(ProfileIsLoading());
+    try {
+      final response = await profileRepository.logOutUser(event);
+      if (response is DefaultApiResponse) {
+        if(response.status==true){
+          emit(UserLogOut(response));
           AppUtils.debug("success");
         }else{
           emit(ProfileError(response as DefaultApiResponse));

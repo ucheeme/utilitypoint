@@ -4,16 +4,20 @@ import 'package:utilitypoint/model/request/createCard.dart';
 import 'package:utilitypoint/model/request/getUserRequest.dart';
 import 'package:utilitypoint/model/request/topUpCard.dart';
 import 'package:utilitypoint/model/request/unfreezeCard.dart';
+import 'package:utilitypoint/model/response/createVirtualAcctNum.dart';
 
 import '../bloc/card/virtualcard_bloc.dart';
 import '../model/defaultModel.dart';
 import '../model/request/convertNairaRequest.dart';
+import '../model/request/generateBankAcct.dart';
 import '../model/request/getProduct.dart';
 import '../model/response/cardTransactions.dart';
 import '../model/response/exchangeRate.dart';
 import '../model/response/freezeUnFreezeResponse.dart';
 import '../model/response/listofVirtualCard.dart';
+import '../model/response/nairaFundingOptions.dart';
 import '../model/response/top_up_card.dart';
+import '../model/response/userVirtualAccounts.dart';
 import '../model/response/virtualCardSuccessful.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
@@ -38,7 +42,7 @@ class CardRepository extends DefaultRepository{
     }
   }
 
-  Future<Object> getExchangeRate() async {
+ Future<Object> getExchangeRate() async {
     var response = await postRequest(
         null, AppUrls.getExchangeRate, true, HttpMethods.get);
     var r = handleSuccessResponse(response);
@@ -46,6 +50,24 @@ class CardRepository extends DefaultRepository{
       if (r.status == true) {
         FetchCurrencyConversionRate res =
         fetchCurrenctConversionRateFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+ Future<Object> getNairaFundingOptions() async {
+    var response = await postRequest(
+        null, AppUrls.getNairaFunding, true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        List<NairaFundingOptions> res =
+        nairaFundingOptionsFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -76,6 +98,27 @@ class CardRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
+  Future<Object> getUserVirtualAccounts(GetProductRequest request) async {
+    var response = await postRequest(
+        null, "${AppUrls.getUserVirtualAccounts}?user_id=${request.userId}&"
+        "pin=${request.pin}",
+        true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        List<UserVirtualAccouts> res =
+        userVirtualAccoutsFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
   Future<Object> createCard(CreateCardRequest request) async {
     var response = await postRequest(
         request, AppUrls.createUserCard,
@@ -94,6 +137,26 @@ class CardRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
+  Future<Object> createVirtualAccount(GenerateBankAccountRequest request) async {
+    var response = await postRequest(
+        request,AppUrls.createVirtualAcct,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        CreateVirtualAccountNumberSuccess res =
+        createVirtualAccountNumberSuccessFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
   Future<Object> fundCard(TopUpCardRequest request) async {
     var response = await postRequest(
         request, AppUrls.topUpCard,
@@ -112,6 +175,7 @@ class CardRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
   Future<Object> freezeCard(FreezeUnfreezeCard request) async {
     var response = await postRequest(request, AppUrls.freezeUserCard,
         true, HttpMethods.post);
@@ -129,6 +193,7 @@ class CardRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
   Future<Object> unfreezeCard(FreezeUnfreezeCard request) async {
     var response = await postRequest(request, AppUrls.unFreezeUserCard,
         true, HttpMethods.post);

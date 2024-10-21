@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:utilitypoint/model/request/buyCableSubscriptionRequest.dart';
 import 'package:utilitypoint/model/request/confirmElectricityMeterOrCableName.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
+import 'package:utilitypoint/model/response/userSetting.dart';
 
 import '../../model/defaultModel.dart';
 import '../../model/request/buyAirtimeData.dart';
@@ -14,6 +15,7 @@ import '../../model/response/buy_electricity_response.dart';
 import '../../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../../model/response/dataPlanCategory.dart';
 import '../../model/response/dataPlanResponse.dart';
+import '../../model/response/exchangeRate.dart';
 import '../../model/response/networksList.dart';
 import '../../model/response/products.dart';
 import '../../model/response/airtimeDatatransactionHistory.dart';
@@ -32,6 +34,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     //   handleGetTransactionHistory(event.request);
     // });
     on<GetAllNetworkEvent>((event,emit){handleGetAllNetwork();});
+    on<GetUserSettingsEvent>((event,emit){handleGetUserSetting();});
     on<GetAllProductEvent>((event,emit){handleGetAllProducts();});
     on<GetAllProductPlanCategoryEvent>((event,emit){handleGetAllDataProductPlanCategoryEvent(event.request);});
     on<GetAllProductPlanEvent>((event,emit){handleGetAllDataProductPlanEvent(event.request);});
@@ -43,6 +46,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<BuyElectricityEvent>((event,emit){handleElectricityEvent(event.request);});
     on<ConfirmMeterNameEvent>((event,emit){handleConfirmMeterNameEvent(event.request);});
     on<ConfirmCableNameEvent>((event,emit){handleConfirmCableNameEvent(event.request);});
+    on<GetExchangeRateEvent>((event,emit){handleGetExchangeRateEvent();});
   }
   void handleGetTransactionHistory(GetProductRequest event)async{
     emit(ProductIsLoading());
@@ -66,6 +70,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final   response = await productRepository.getNetwork();
       if (response is List<NetworkList>) {
         emit(ProductAllNetworks(response));
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetUserSetting()async{
+ //   emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.getUserSetting();
+      if (response is List<UserGeneralSettings>) {
+        emit(GeneralSettings(response));
         AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -211,7 +231,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final   response = await productRepository.buyCableSub(event);
       if (response is BuyAirtimeDataResponse) {
-        emit(ElectricityBought(response));
+        emit(CableRechargeBought(response));
        AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
@@ -245,6 +265,23 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       if (response is ConfirmSmartCardMeterNameResponse) {
         emit(MeterNameConfirm(response));
        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+  void handleGetExchangeRateEvent()async{
+    emit(ProductIsLoading());
+    try {
+      final   response = await productRepository.getExchangeRate();
+      if (response is FetchCurrencyConversionRate) {
+        emit(ProductExchangeRate(response) );
+        AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));
         AppUtils.debug("error");

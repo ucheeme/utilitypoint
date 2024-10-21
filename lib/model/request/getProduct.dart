@@ -21,6 +21,7 @@ class GetProductRequest {
   String? endDate;
   String? pageSize;
   String? page;
+  String? pin;
 
   GetProductRequest({
      this.networkId,
@@ -34,7 +35,8 @@ class GetProductRequest {
     this.startDate,
     this.endDate,
     this.pageSize,
-    this.page
+    this.page,
+    this.pin
   });
 
   factory GetProductRequest.fromJson(Map<String, dynamic> json) => GetProductRequest(
@@ -49,7 +51,8 @@ class GetProductRequest {
     startDate: json["start_date"],
     endDate: json["end_date"],
     pageSize: json["page_size"],
-    page: json["page"]
+    page: json["page"],
+    pin: json["pin"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +67,7 @@ class GetProductRequest {
     "start_date":startDate,
     "end_date":endDate,
     "page_size":pageSize,
-    "page":page
+    "page":page,
+    "pin":pin
   };
 }

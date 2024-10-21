@@ -167,6 +167,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
         stream: bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
+            cursorColor: Colors.transparent,
               appContext: context,
               enableActiveFill: true,
               autoFocus: true,

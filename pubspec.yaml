@@ -49,6 +49,7 @@ dependencies:
   contacts_service: ^0.6.1
   permission_handler:
   dio: ^5.7.0
+  http:
   dio_cache_interceptor: ^3.5.0
 #  dio_logging_interceptor: ^1.0.1
   dio_interceptor_plus: ^0.0.2

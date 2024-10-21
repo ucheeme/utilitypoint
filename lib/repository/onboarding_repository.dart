@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:utilitypoint/model/defaultModel.dart';
 import 'package:utilitypoint/model/request/changePin.dart';
 import 'package:utilitypoint/model/request/loginRequest.dart';
@@ -7,6 +8,7 @@ import 'package:utilitypoint/model/request/verifyEmailRequest.dart';
 import 'package:utilitypoint/repository/apiRepository.dart';
 
 import '../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../model/request/accountCreation.dart';
 import '../model/request/setTransactionPin.dart';
 import '../model/request/signInResetPasswordRequest.dart';
 import '../model/request/twoFactorAuthenticationRequest.dart';
@@ -22,7 +24,7 @@ class OnboardingRepository extends DefaultRepository{
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        print("tjjj");
+
         AccountCreatedResponse res = accountCreatedFromJson(json.encode(r.data));
         return res;
       } else {
@@ -215,5 +217,43 @@ class OnboardingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
+  Future<Object> newUser(CreateAccountRequest request) async {
+  var headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Accept':'*/*',
+    'Accept-Encoding':'gzip,deflate,br',
+    'Connection':'keep-alive',
+    'User-Agent':'Postman Runtime/7.42.0'
+  };
+  var data = json.encode(request.toJson());
+  var dio = Dio();
+  var response = await dio.request(
+    'https://app.zennalfinance.com/vdc/api/auth/register',
+    options: Options(
+      method: 'POST',
+      headers: headers,
+    ),
+    data: data,
+  );
+  print(response.statusCode);
+  print(response.data);
+  var r = handleSuccessResponse(response);
+  if (r is DefaultApiResponse) {
+    if (r.status == true) {
+      AccountCreatedResponse res = accountCreatedFromJson(json.encode(r.data));
+      return res;
+    } else {
+      return r;
+    }
+  }
+  else {
+    print(response);
+    handleErrorResponse(response);
+    return errorResponse!;
+  }
+}
+
 
 }

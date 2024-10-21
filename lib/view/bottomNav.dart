@@ -15,9 +15,12 @@ import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 import '../utils/app_color_constant.dart';
 import '../utils/customClipPath.dart';
 import '../utils/myCustomCamera/myCameraScreen.dart';
+import 'home/moreOptions.dart';
 import 'menuOption/profile.dart';
 
 class MyBottomNav extends StatefulWidget {
+  int? position;
+  MyBottomNav({super.key,this.position});
   @override
   _MyBottomNavState createState() => _MyBottomNavState();
 }
@@ -37,7 +40,9 @@ class _MyBottomNavState extends State<MyBottomNav> {
   @override
   void initState() {
     // Get the list of available cameras
-
+    if(widget.position!=null){
+      _currentIndex=widget.position!;
+    }
     super.initState();
   }
   @override
@@ -47,10 +52,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
       extendBody: true,
       floatingActionButton: GestureDetector(
         onTap: () async {
-          cameras = await availableCameras();
-          setState(() {
-            _currentIndex = 2; // Set index to display the Center screen
-          });
+          Get.to(Moreoptions(), curve: Curves.easeIn);
         },
         child: customerRoundItemBtn(),
       ),
@@ -173,7 +175,8 @@ class _MyBottomNavState extends State<MyBottomNav> {
     return GestureDetector(
         onTap: onTap,
         child: SizedBox(
-          height: 46.h,
+          height: 47.4.h,
+          width: 78.w,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

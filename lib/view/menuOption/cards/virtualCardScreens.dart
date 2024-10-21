@@ -23,6 +23,7 @@ import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 import '../../bottomsheet/createNewCard.dart';
 import '../../onboarding_screen/signIn/login_screen.dart';
+import '../convertFunds/convert.dart';
 import 'cardTransactionHistory.dart';
 
 class VirtualCards extends StatefulWidget {
@@ -37,11 +38,13 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
   late SlideAnimationManager _animationManager;
   List<UserVirtualCards>userCards =[];
   late VirtualcardBloc bloc;
-  bool isFreezed = false;
+  String cardCreationCharge ="";
+  bool isCreatNewCard = false;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
       bloc.add(GetUserCardEvent(GetUserIdRequest(userId: loginResponse!.id)));
+     // bloc.add(GetExchangeRateEvent());
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -89,6 +92,36 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
           bloc.initial();
         }
 
+        if (state is ExchangeRate){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            cardCreationCharge = state.response.cardCreationFeeInCurrency;
+            if(cardCreationCharge.isNotEmpty && isCreatNewCard){
+              bool response=  await showCupertinoModalBottomSheet(
+                  topRadius:
+                  Radius.circular(10.r),
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (context) {
+                    return
+                      Container(
+                          height: 500.h,
+                          color: AppColor.primary20,
+                          child:  CreateNewCardScreen(bloc: bloc,
+                            isNaira:widget.isNaira,
+                            cardCreationCharge: cardCreationCharge,)
+                      );
+                  });
+              if(response){
+                bloc.add(GetUserCardEvent(GetUserIdRequest(userId: loginResponse!.id)));
+                showSuccessSlidingModal(
+                    context,
+                    successMessage: "Your Dollar Debit card was created and funded successfully!");
+              }
+            }
+
+          });
+          bloc.initial();
+        }
         return OverlayLoaderWithAppIcon(
           isLoading: state is VirtualcardIsLoading,
           overlayBackgroundColor: AppColor.black40,
@@ -166,79 +199,39 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
                         padding: EdgeInsets.zero,
                           itemCount:userCards.length,
                           itemBuilder: (context,index){
-                        return Slidable(
-                            endActionPane:  ActionPane(motion: StretchMotion(),
-                                children: [
-                                  Gap(20),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      List response = await Get.to(() => TransactionPin());
-                                      if(response[0]){
-                                        bloc.add(FreezeCardEvent(FreezeUnfreezeCard(
-                                            userId: loginResponse!.id,
-                                            cardId: userCards[index].cardId,
-                                            pin: response[1]
-                                        )));
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 40.h,
-                                      width: 40.w,
-                                     padding: EdgeInsets.all(8.h),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(4.r),
-                                          color: AppColor.primary40
-                                      ),
-                                      child:Image.asset("assets/image/icons/freeze_Icon.png") ,
-                                    ),
-                                  ),
-                                  Gap(10.w),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      List response = await Get.to(() => TransactionPin());
-                                      if(response[0]){
-                                        bloc.add(UnFreezeCardEvent(FreezeUnfreezeCard(
-                                          userId: loginResponse!.id,
-                                          cardId: userCards[index].cardId,
-                                          pin: response[1]
-                                        )));
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 40.h,
-                                      width: 40.w,
-                                      padding: EdgeInsets.all(8.h),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(4.r),
-                                          color: AppColor.primary100
-                                      ),
-                                      child:Image.asset("assets/image/icons/unfreeze_Icon.png") ,
-                                    ),
-                                  )
-                                ]),
-                            child: CardDesign(cardDetail:userCards[index]));
+                        return CardDesign(cardDetail:userCards[index]);
                       }) ),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: CustomButton(onTap: () async {
-                    bool response=  await showCupertinoModalBottomSheet(
-                                topRadius:
-                                Radius.circular(10.r),
-                                backgroundColor: Colors.white,
-                                context: context,
-                                builder: (context) {
-                                  return
-                                    Container(
-                                        height: 500.h,
-                                        color: AppColor.primary20,
-                                        child:  CreateNewCardScreen(bloc: bloc,isNaira:widget.isNaira)
-                                    );
-                                });
-                    if(response){
-                      showSuccessSlidingModal(
-                          context,
-                          successMessage: "Your Dollar Debit card was created and funded successfully!");
-                    }
+                      isCreatNewCard= true;
+                      if(currencyConversionRateFees==null){
+                        bloc.add(GetExchangeRateEvent());
+                      }else{
+                        cardCreationCharge = currencyConversionRateFees!.cardCreationFeeInCurrency;
+                        bool response=  await showCupertinoModalBottomSheet(
+                            topRadius:
+                            Radius.circular(10.r),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            builder: (context) {
+                              return
+                                Container(
+                                    height: 500.h,
+                                    color: AppColor.primary20,
+                                    child:  CreateNewCardScreen(bloc: bloc,
+                                      isNaira:widget.isNaira,
+                                      cardCreationCharge: cardCreationCharge,)
+                                );
+                            });
+                        if(response){
+                          bloc.add(GetUserCardEvent(GetUserIdRequest(userId: loginResponse!.id)));
+                          showSuccessSlidingModal(
+                              context,
+                              successMessage: "Your Dollar Debit card was created and funded successfully!");
+                        }
+                      }
+
                     },
                       buttonText: "Create New Card",
                       buttonColor: AppColor.primary100,
@@ -393,6 +386,3 @@ class _AllCardsState extends State<AllCards> with TickerProviderStateMixin {
     );
   }
 }
-
-
-

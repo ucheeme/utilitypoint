@@ -25,11 +25,13 @@ class Splashscreen extends StatefulWidget {
 
 class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMixin {
   late AnimationController _slideController;
+  late AnimationController _slideControllerB;
   late AnimationController _scaleController;
   late AnimationController _moveController;
   late AnimationController _containerController;
 
   late Animation<Offset> _slideAnimation;
+  late Animation<Offset> _slideAnimationB;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
@@ -37,7 +39,11 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
   @override
   void initState() {
     super.initState();
-
+    _slideControllerB = AnimationController(
+      vsync: this,
+      // duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 600),
+    );
     // Slide Animation
     _slideController = AnimationController(
       vsync: this,
@@ -68,6 +74,15 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
       vsync: this,
       duration: Duration(seconds: 1),
     );
+    // Slide animation from bottom
+    _slideAnimationB = Tween<Offset>(
+      begin: Offset(0.0, 1.0),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _slideControllerB,
+      curve: Curves.easeInOut,
+    ));
+
 
     _moveAnimation = Tween<Offset>(
       begin: Offset(0.0, 0.0),
@@ -98,6 +113,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
           Future.delayed(Duration(seconds: 1), () {
             _moveController.forward();
             _containerController.forward();
+            _slideControllerB.forward();
           });
         });
       });
@@ -149,12 +165,11 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                   ),
                 ),
                 height30,
-                AnimatedBuilder(
-                  animation: _containerSizeAnimation,
-                  builder: (context, child) {
-                    return Container(
-                      width: _containerSizeAnimation.value.width,
-                      height: _containerSizeAnimation.value.height,
+                SlideTransition(
+
+                    child: Container(
+
+                      height: 400.h,
                       decoration: BoxDecoration(
                         color: AppColor.primary20,
                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
@@ -219,8 +234,8 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                           ],
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  position: _slideAnimationB,
                 ),
               ],
             ),

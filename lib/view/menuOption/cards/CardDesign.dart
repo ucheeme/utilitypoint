@@ -11,6 +11,7 @@ import 'package:utilitypoint/utils/image_paths.dart';
 import '../../../model/response/listofVirtualCard.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/text_style.dart';
+import 'cardDetails.dart';
 import 'cardTransactionHistory.dart';
 
 class CardDesign extends StatefulWidget {
@@ -31,11 +32,9 @@ class _CardDesignState extends State<CardDesign> {
     return  GestureDetector(
       onTap: (){
         if(widget.isVirtualCardScreen!=true||widget.isVirtualCardScreen==null){
-          setState(() {
-            showCardDetails = !showCardDetails;
-          });
+          Get.to(()=>CardInformation(userVirtualCards: widget.cardDetail,));
         }else{
-          Get.to(()=>CardTransactionHistory(cardId:widget.cardDetail!.cardId,));
+          Get.to(()=>CardTransactionHistory(cardId: widget.cardDetail!.cardId,));
         }
       },
       child: Container(

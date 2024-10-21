@@ -17,6 +17,12 @@ class ChangePasswordEvent extends ProfileEvent{
   @override
   List<Object?> get props => [];
 }
+class LogOutUserEvent extends ProfileEvent{
+  LogOutRequest request;
+  LogOutUserEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
 
 class UpdateUserDetailsEvent extends ProfileEvent{
   UpdateUserDetailRequest request;

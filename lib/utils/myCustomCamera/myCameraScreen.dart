@@ -1,10 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
+import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:utilitypoint/utils/myCustomCamera/rectangularOverlay.dart';
-
-import 'circularOverlay.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 class CameraOverlayScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -18,8 +17,10 @@ class CameraOverlayScreen extends StatefulWidget {
 class _CameraOverlayScreenState extends State<CameraOverlayScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-  bool isCircularOverlay = true; // Controls between circular and rectangular overlay
+  String? _lastCapturedImagePath;
   bool isProcessing = false;
+  final double overlayWidthFactor = 0.8; // Percentage of screen width
+  final double overlayHeightFactor = 0.6; // Percentage of screen height
 
   @override
   void initState() {
@@ -37,45 +38,53 @@ class _CameraOverlayScreenState extends State<CameraOverlayScreen> {
     super.dispose();
   }
 
-   _takePicture()  {
+  Future<void> _takePicture() async {
     try {
-      // Check brightness before taking picture
       if (!isProcessing) {
         setState(() {
           isProcessing = true;
         });
 
-           _controller.startImageStream((image)  async {
-          if (await isBrightEnough(image)) {
-            _controller.stopImageStream();
+        // Ensure that the camera is initialized before taking a picture
+        await _initializeControllerFuture;
 
-            // If bright enough, take a picture
-            XFile picture = await _controller.takePicture();
-            img.Image image = img.decodeImage(await picture.readAsBytes())!;
+        // Capture the picture
+        XFile picture = await _controller.takePicture();
 
-            // Check if image is blurry
-            if (await isImageBlurry(image)) {
-              // Notify the user that the image is blurry
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Image is blurry! Please retake.'),
-              ));
-            } else {
-              // If not blurry, save the image
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Image captured successfully!'),
-              ));
-            }
-          }
-          else {
-            // Notify the user to move to a brighter place
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Please move to a brighter location.'),
-            ));
-          }
+        // Decode the image to manipulate it
+        img.Image? originalImage =
+        img.decodeImage(await File(picture.path).readAsBytes());
+
+        if (originalImage != null) {
+          // Get the screen size and calculate the crop area
+          final size = MediaQuery.of(context).size;
+          final cropX = (size.width * (1 - overlayWidthFactor) / 2).toInt();
+          final cropY = (size.height * (1 - overlayHeightFactor) / 2).toInt();
+          final cropWidth = (size.width * overlayWidthFactor).toInt();
+          final cropHeight = (size.height * overlayHeightFactor).toInt();
+
+          // Crop the image to the rectangular overlay area
+          img.Image croppedImage = img.copyCrop(
+              originalImage, cropX, cropY, cropWidth, cropHeight);
+
+          // Save the cropped image to temporary storage
+          final tempDir = await getTemporaryDirectory();
+          final croppedImagePath = '${tempDir.path}/cropped_image.png';
+          File(croppedImagePath).writeAsBytesSync(img.encodePng(croppedImage));
 
           setState(() {
-            isProcessing = false;
+            _lastCapturedImagePath = croppedImagePath; // Save the captured image path
           });
+
+          // Navigate to the new screen with the cropped image
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                DisplayPictureScreen(imagePath: croppedImagePath),
+          ));
+        }
+
+        setState(() {
+          isProcessing = false;
         });
       }
     } catch (e) {
@@ -86,9 +95,6 @@ class _CameraOverlayScreenState extends State<CameraOverlayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Camera with Overlay'),
-      ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
@@ -96,30 +102,47 @@ class _CameraOverlayScreenState extends State<CameraOverlayScreen> {
             return Stack(
               children: [
                 CameraPreview(_controller),
-                if (isCircularOverlay)
-                  CircularOverlayPainter()  // For selfie
-                else
-                  RectangularOverlayPainter(),  // For other objects
+                // Positioned.fill(
+                //   child: Stack(
+                //     children: [
+                //       BackdropFilter(
+                //         filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                //         child: Container(
+                //           color: Colors.black.withOpacity(0.5), // Darken background
+                //         ),
+                //       ),
+                //       RectangularOverlayPainter(), // Draw transparent rectangle
+                //     ],
+                //   ),
+                // ),
+                CustomPaint(
+                  size: Size(double.infinity, double.infinity),
+                  painter: OverlayPainter(),
+                ),
+                if (_lastCapturedImagePath != null)
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              DisplayPictureScreen(imagePath: _lastCapturedImagePath!))),
+                      child: Image.file(
+                        File(_lastCapturedImagePath!),
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 Positioned(
                   bottom: 50,
                   left: 0,
                   right: 0,
                   child: Center(
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => _takePicture(),
-                          child: Text('Capture'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isCircularOverlay = !isCircularOverlay;
-                            });
-                          },
-                          child: Text('Switch to ${isCircularOverlay ? 'Rectangle' : 'Circle'} Overlay'),
-                        ),
-                      ],
+                    child: ElevatedButton(
+                      onPressed: () => _takePicture(),
+                      child: Text('Capture'),
                     ),
                   ),
                 ),
@@ -134,56 +157,107 @@ class _CameraOverlayScreenState extends State<CameraOverlayScreen> {
   }
 }
 
-Future<bool> isBrightEnough(CameraImage cameraImage) async {
-  // Convert the CameraImage to an image from the `image` package
-  final img.Image? image = convertYUV420ToImage(cameraImage);
+class RectangularOverlayPainter extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _RectangularOverlayPainter(),
+      child: Container(),
+    );
+  }
+}
 
-  if (image == null) return false;
+class _RectangularOverlayPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rectWidth = size.width * 0.8;
+    final rectHeight = size.height * 0.6;
 
-  int totalBrightness = 0;
-  for (int x = 0; x < image.width; x++) {
-    for (int y = 0; y < image.height; y++) {
-      final pixel = image.getPixel(x, y);
-      final r = img.getRed(pixel);
-      final g = img.getGreen(pixel);
-      final b = img.getBlue(pixel);
-      totalBrightness += (r + g + b) ~/ 3;
-    }
+    final overlayRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: rectWidth,
+      height: rectHeight,
+    );
+
+    final outerRect = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final innerRect = Path()..addRRect(RRect.fromRectAndRadius(overlayRect, Radius.circular(20)));
+
+    // Subtract the innerRect (transparent) from the outerRect
+    final blurPaint = Paint()..color = Colors.black.withOpacity(0.5);
+    canvas.drawPath(Path.combine(PathOperation.difference, outerRect, innerRect), blurPaint);
+
+    // Draw the border around the transparent rectangle
+    final borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    canvas.drawRRect(RRect.fromRectAndRadius(overlayRect, Radius.circular(20)), borderPaint);
   }
 
-  double averageBrightness = totalBrightness / (image.width * image.height);
-  return averageBrightness > 80; // You can adjust this threshold
-}
-
-// Helper function to convert YUV to RGB
-img.Image? convertYUV420ToImage(CameraImage cameraImage) {
-  // Custom conversion logic (depending on the CameraImage format)
-  // Implement the YUV to RGB conversion
-  return null; // Replace with actual implementation
-}
-
-
-Future<bool> isImageBlurry(img.Image image) async {
-  final laplacian = calculateLaplacian(image);
-  final variance = laplacian.fold<double>(0, (sum, value) => sum + value * value) / laplacian.length;
-  return variance < 100;  // Adjust the threshold as needed
-}
-
-// Implement a function to calculate the Laplacian of the image
-List<int> calculateLaplacian(img.Image image) {
-  final List<int> laplacian = [];
-  for (int x = 1; x < image.width - 1; x++) {
-    for (int y = 1; y < image.height - 1; y++) {
-      final currentPixel = image.getPixel(x, y);
-      final surroundingPixels = [
-        image.getPixel(x - 1, y), image.getPixel(x + 1, y),
-        image.getPixel(x, y - 1), image.getPixel(x, y + 1),
-      ];
-      final laplacianValue = surroundingPixels.fold<int>(
-          0, (sum, pixel) => sum + (currentPixel - pixel).abs());
-      laplacian.add(laplacianValue);
-    }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
-  return laplacian;
+}
+class DisplayPictureScreen extends StatefulWidget {
+  final String imagePath;
+
+  const DisplayPictureScreen({Key? key, required this.imagePath})
+      : super(key: key);
+
+
+  @override
+  State<DisplayPictureScreen> createState() => _DisplayPictureScreenState();
 }
 
+class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
+  String imagePath ="";
+  @override
+  void initState() {
+   WidgetsBinding.instance.addPostFrameCallback((_){
+     setState(() {
+       imagePath =widget.imagePath;
+     });
+   });
+
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Captured Image')),
+      body: Center(
+        child: Image.file(File(imagePath)), // Display the cropped image
+      ),
+    );
+  }
+}
+
+
+class OverlayPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.7) // Grey color with some transparency
+      ..style = PaintingStyle.fill;
+
+    // Draw the grey overlay
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+
+    // Define the transparent rectangle's size and position
+    double rectWidth = 200;
+    double rectHeight = 300;
+    double left = (size.width - rectWidth) / 2;
+    double top = (size.height - rectHeight) / 2;
+
+    // Draw the transparent rectangle by clearing the area
+    paint.blendMode = BlendMode.clear;
+    canvas.drawRect(Rect.fromLTWH(left, top, rectWidth, rectHeight), paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}

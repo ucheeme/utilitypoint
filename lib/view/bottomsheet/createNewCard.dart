@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
@@ -21,8 +22,11 @@ import '../../utils/text_style.dart';
 class CreateNewCardScreen extends StatefulWidget {
   VirtualcardBloc bloc;
   bool isNaira = false;
+  String cardCreationCharge = "";
 
-  CreateNewCardScreen({super.key, required this.bloc, required this.isNaira});
+  CreateNewCardScreen({super.key, required this.bloc,
+    required this.cardCreationCharge,
+    required this.isNaira});
 
   @override
   State<CreateNewCardScreen> createState() => _CreateNewCardScreenState();
@@ -30,11 +34,11 @@ class CreateNewCardScreen extends StatefulWidget {
 
 class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
   void onTextChanged() {
-    final text = widget.bloc.validation.amountController!.text;
+    final text = bloc.validation.amountController!.text;
     final newText = formatWithCommas(text);
     if (newText != text) {
-      widget.bloc.validation.amountController.value =
-          widget.bloc.validation.amountController.value.copyWith(
+      bloc.validation.amountController.value =
+          bloc.validation.amountController.value.copyWith(
         text: newText,
         selection: TextSelection.collapsed(offset: newText.length),
       );
@@ -55,9 +59,11 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
     int value = int.parse(text);
     return formatter.format(value);
   }
+  late VirtualcardBloc bloc;
 
   @override
   Widget build(BuildContext context) {
+    bloc =BlocProvider.of<VirtualcardBloc>(context);
     return BlocBuilder<VirtualcardBloc, VirtualcardState>(
       builder: (context, state) {
         if (state is VirtualcardError) {
@@ -67,14 +73,14 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                   state.errorResponse.message ?? "Error occurred", context);
             });
           });
-          widget.bloc.initial();
+          bloc.initial();
         }
 
         if (state is CardCreationSuccessful) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.pop(context, true);
           });
-          widget.bloc.initial();
+          bloc.initial();
         }
 
         return OverlayLoaderWithAppIcon(
@@ -91,9 +97,9 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Gap(50.h),
+                  Gap(30.h),
                   Text(
-                    "Amount",
+                   "Amount To Fund Card",
                     style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontWeight: FontWeight.w400,
@@ -101,24 +107,27 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                   ),
                   height8,
                   StreamBuilder<Object>(
-                      stream: widget.bloc.validation.amount,
+                      stream: bloc.validation.amount,
                       builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          textEditingController: amountController,
-                          error: snapshot.error?.toString(),
-                          keyboardType: TextInputType.name,
-                          hintTxt: "Enter amount",
-                          isTouched: widget.bloc.validation.isAmountSelected,
-                          onTap: () {
-                            setState(() {
-                              widget.bloc.validation.isAmountSelected =
-                                  !widget.bloc.validation.isAmountSelected;
-                            });
-                          },
-                          onChanged: widget.bloc.validation.setAmount,
+                        return SizedBox(
+                          height: 60.h,
+                          child: CustomizedTextField(
+                            textEditingController: amountController,
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "Enter amount",
+                            isTouched: bloc.validation.isAmountSelected,
+                            onTap: () {
+                              setState(() {
+                                bloc.validation.isAmountSelected =
+                                    !bloc.validation.isAmountSelected;
+                              });
+                            },
+                            onChanged: bloc.validation.setAmount,
+                          ),
                         );
                       }),
-                  height24,
+                  height10,
                   Text(
                     "Currency",
                     style: CustomTextStyle.kTxtBold.copyWith(
@@ -128,12 +137,12 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                   ),
                   height8,
                   StreamBuilder<Object>(
-                      stream: widget.bloc.validation.currency,
+                      stream: bloc.validation.currency,
                       builder: (context, snapshot) {
                         return DropdownButtonFormField<String>(
                           iconEnabledColor: AppColor.black60,
                           isDense: false,
-                          items: widget.bloc.validation.currencies
+                          items: bloc.validation.currencies
                               .map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -146,7 +155,7 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                               ),
                             );
                           }).toList(),
-                          onChanged: widget.bloc.validation.setCurrency,
+                          onChanged: bloc.validation.setCurrency,
                           decoration: InputDecoration(
                               fillColor: AppColor.black0,
                               contentPadding: EdgeInsets.symmetric(
@@ -195,12 +204,12 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                   ),
                   height8,
                   StreamBuilder<Object>(
-                      stream: widget.bloc.validation.cardTypee,
+                      stream: bloc.validation.cardTypee,
                       builder: (context, snapshot) {
                         return DropdownButtonFormField<String>(
                           iconEnabledColor: AppColor.black60,
                           isDense: false,
-                          items: widget.bloc.validation.cardType
+                          items: bloc.validation.cardType
                               .map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -213,7 +222,7 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                               ),
                             );
                           }).toList(),
-                          onChanged: widget.bloc.validation.setCardType,
+                          onChanged: bloc.validation.setCardType,
                           decoration: InputDecoration(
                               fillColor: AppColor.black0,
                               contentPadding: EdgeInsets.symmetric(
@@ -252,28 +261,41 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                                   fontSize: 14.sp)),
                         );
                       }),
-                  height35,
+                  Gap(10.h),
+                  Text(
+                    "You will be charged USD ${widget.cardCreationCharge}",
+                    style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.primary100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.sp),
+                  ),
+                  height24,
                   StreamBuilder<Object>(
-                      stream: widget.bloc.validation.createCardFundComplete,
+                      stream: bloc.validation.createCardFundComplete,
                       builder: (context, snapshot) {
                         return CustomButton(
-                          onTap: () {
+                          onTap: () async {
                             // Navigator.pop(context);
                             if (snapshot.hasData) {
-                              if (widget.isNaira == false &&
-                                  double.parse(userDetails!.dollarWallet) == 0) {
-                                if( (double.parse(userDetails!.nairaWallet) != 0)){
+                              if (widget.isNaira == false && double.parse(userDetails!.dollarWallet) == 0) {
+                                if((double.parse(userDetails!.nairaWallet) != 0))
+                                {
                                   Get.to(() => ConvertScreen(
                                       amountToConvert: amountController.text,
                                       isCreateCard:true
                                   )
                                   );
-                                }else{
+                                }
+                                else{
                                   AppUtils.showInfoSnackFromBottom(
                                       "Insufficient Balance", context);
                                 }
                              } else {
-                                widget.bloc.add(CreateCardEvent(widget.bloc.validation.createCardRequest()));
+                                List<dynamic> response = await Get.to(TransactionPin());
+                                if(response[0]){
+                                  bloc.add(CreateCardEvent(bloc.validation.
+                                  createCardRequest(widget.cardCreationCharge,response[1])));
+                                }
                              }
                             } else {
                               AppUtils.showInfoSnackFromBottom(

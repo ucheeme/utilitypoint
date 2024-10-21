@@ -35,6 +35,13 @@ class ProductAllNetworks extends ProductState{
   List<Object?> get props =>[response];
 }
 
+class GeneralSettings extends ProductState{
+  List<UserGeneralSettings> response;
+  GeneralSettings(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
 class AllProduct extends ProductState{
   List<Products> response;
   AllProduct(this.response);
@@ -107,4 +114,10 @@ class CableRechargeBought extends ProductState{
   const CableRechargeBought(this.response);
   @override
   List<Object?> get props =>[response];
+}
+class ProductExchangeRate extends ProductState{
+  final FetchCurrencyConversionRate response;
+  const ProductExchangeRate(this.response);
+  @override
+  List<Object?> get props => [response];
 }

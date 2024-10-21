@@ -24,12 +24,14 @@ class SlideAnimationManager {
     // Initialize animation controllers
     _slideController = AnimationController(
       vsync: vsync,
-      duration: Duration(milliseconds: 600),
+     // duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 1),
     );
 
     _slideControllerTop = AnimationController(
       vsync: vsync,
-      duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 1),
+     // duration: Duration(milliseconds: 600),
     );
 
     // Slide animation for top

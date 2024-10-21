@@ -14,17 +14,23 @@ import 'package:utilitypoint/view/menuOption/convertFunds/reviewOrder.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
+import '../../../model/response/exchangeRate.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
 import '../../../utils/customAnimation.dart';
 import '../../../utils/reuseableFunctions.dart';
 import '../../../utils/text_style.dart';
 import '../../bottomsheet/currencyOptions.dart';
-
+FetchCurrencyConversionRate? currencyConversionRateFees;
 class ConvertScreen extends StatefulWidget {
   String? amountToConvert;
+  String? cardId;
   bool? isCreateCard;
-   ConvertScreen({super.key, this.amountToConvert, this.isCreateCard});
+  bool? isTopUpCard;
+   ConvertScreen({super.key,
+     this.cardId,
+     this.isTopUpCard,
+     this.amountToConvert, this.isCreateCard});
 
   @override
   State<ConvertScreen> createState() => _ConvertScreenState();
@@ -41,20 +47,30 @@ class _ConvertScreenState extends State<ConvertScreen>
   bool isSelected = false;
   bool isSelectedTo = false;
   String exchangeRate ="";
+  String converting1="";
+  String converted="";
   late VirtualcardBloc bloc;
 
   @override
   void initState() {
     currencyConvertingFrom = "NGN";
     currencyConvertingTo = "USD";
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc.add(GetExchangeRateEvent());
+
+      if(currencyConversionRateFees==null){
+        bloc.add(GetExchangeRateEvent());
+      }else{
+        exchangeRate = currencyConversionRateFees!.nairaRate;
+        amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
+      }
       print("${widget.isCreateCard}");
       amountToConvertController.text = widget.amountToConvert!;
       valueToConvert = widget.amountToConvert!;
       amountToConvertController.addListener(onTextChanged);
       //8 amountConvertedController.addListener(onTextChanged2);
-
+      converting1 = amountToConvertController.text;
+      converted = amountConvertedController.text;
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -108,6 +124,7 @@ class _ConvertScreenState extends State<ConvertScreen>
 
         if (state is ExchangeRate){
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            currencyConversionRateFees =state.response;
            exchangeRate = state.response.nairaRate;
            amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
           });
@@ -200,17 +217,21 @@ class _ConvertScreenState extends State<ConvertScreen>
                                 context: context,
                                 amountController: amountToConvertController,
                                 onChanged: (value) {
+
                                   String cost = value.replaceAll(",", "");
                                   if (value != null) {
                                     if (currencyConvertingFrom == "USD") {
                                       setState(() {
                                         valueToConvert = value;
+                                        converting1 =value;
                                         amountConvertedController.text =
                                             (double.parse(cost) * double.parse(exchangeRate)).toString();
+
                                       });
                                     } else {
                                       setState(() {
                                         valueToConvert = value;
+                                        converted =value;
                                         amountConvertedController.text =
                                             (double.parse(cost) / double.parse(exchangeRate))
                                                 .toString();
@@ -284,14 +305,23 @@ class _ConvertScreenState extends State<ConvertScreen>
                             top: 80.h,
                             left: 147.5.w,
                             child: GestureDetector(
-                              onTap: (){
+                              onTap:(widget.isTopUpCard==true||widget.isTopUpCard!=null)?
+                                  (){}:
+                                  (){
+
                                 setState(() {
                                   if(currencyConvertingFrom=="USD"){
                                     currencyConvertingFrom ="NGN";
                                     currencyConvertingTo ="USD";
+                                    amountToConvertController.text=converting1;
+                                    amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                                  //
                                   }else{
+                                    amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                                    amountToConvertController.text=converted;
                                     currencyConvertingFrom ="USD";
                                     currencyConvertingTo ="NGN";
+
                                   }
                                 });
                               },
@@ -354,7 +384,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
-                                  "10 NGN",
+                                  "${currencyConversionRateFees!.feeRatePerCurrency} per 1 USD",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
                                       color: AppColor.black100,
                                       fontSize: 14.sp,
@@ -369,38 +399,44 @@ class _ConvertScreenState extends State<ConvertScreen>
                     Gap(83.h),
                     CustomButton(
                       onTap: () {
-
+                        print("w000w");
                         converting = ConvertingData(
                             currency: currencyConvertingFrom,
-                            amount: amountToConvertController.text
-                                .replaceAll(",", ""));
+                            amount: amountToConvertController.text.replaceAll(",", ""));
                         receiving = ConvertingData(
                             currency: currencyConvertingTo,
-                            amount: amountConvertedController.text
-                                .replaceAll(",", ""));
+                            amount: amountConvertedController.text.replaceAll(",", ""));
+                        print( converting?.amount);
+                        print( receiving?.amount);
                         if(currencyConvertingFrom=="USD"){
                           if(double.parse(amountToConvertController.text)>double.parse(userDetails!.dollarWallet)){
                             AppUtils.showInfoSnack("Insufficient Balance", context);
                           }else{
                             Get.to(
                               ReviewOrder(
+                                cardId: widget.cardId,
+                                isTopUpCard: widget.isTopUpCard,
                                 exchangeRate: exchangeRate,
                                 isCreateCard: widget.isCreateCard,
                               ),
                             );
                           }
                         }else if(currencyConvertingFrom =="NGN"){
-                         if(double.parse(amountToConvertController.text)>double.parse(userDetails!.nairaWallet)){
+                         if(double.parse(amountToConvertController.text.replaceAll(",", ""))>double.parse(userDetails!.nairaWallet)){
                            AppUtils.showInfoSnack("Insufficient Balance", context);
 
                          }else{
                            Get.to(
                              ReviewOrder(
+                               cardId: widget.cardId,
+                               isTopUpCard: widget.isTopUpCard,
                                exchangeRate: exchangeRate,
                                isCreateCard: widget.isCreateCard,
                              ),
                            );
                          }
+                        }else{
+                          print("wiw");
                         }
 
                       },

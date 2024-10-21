@@ -16,6 +16,11 @@ class GetAllNetworkEvent extends ProductEvent {
   @override
   List<Object?> get props => [];
 }
+class GetUserSettingsEvent extends ProductEvent {
+  const GetUserSettingsEvent();
+  @override
+  List<Object?> get props => [];
+}
 
 class GetAllProductEvent extends ProductEvent {
   const GetAllProductEvent();
@@ -84,3 +89,11 @@ class BuyElectricityEvent extends ProductEvent{
   @override
   List<Object?> get props => [];
 }
+
+class GetExchangeRateEvent extends ProductEvent {
+
+  const GetExchangeRateEvent();
+  @override
+  List<Object?> get props => [];
+}
+

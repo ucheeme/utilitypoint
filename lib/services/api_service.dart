@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 // import 'package:dio_logging_interceptor/dio_logging_interceptor.dart';
 
@@ -123,4 +123,56 @@ class ApiService {
       return NetWorkFailure();
     }
   }
+
+  static Future<Object> uploadDoc(File file, String url, String docType) async {
+    try {
+      var headers =  header(true);
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+      request.headers.addAll(headers);
+      request.fields['DocumentType'] = docType;
+      request.files.add(
+          http.MultipartFile(
+              'Image',
+              file.readAsBytes().asStream(),
+              file.lengthSync(),
+              filename: file.path.split("/").last
+          )
+      );
+      AppUtils.debug("/****rest call request starts****/");
+      AppUtils.debug("url: $url");
+      AppUtils.debug("headers: $headers");
+      var res = await request.send();
+      final response = await res.stream.bytesToString();
+      AppUtils.debug("/****rest call response starts****/");
+      AppUtils.debug("status code: ${res.statusCode}");
+      AppUtils.debug("rest response: "+response);
+      if (ApiResponseCodes.success == res.statusCode){
+        return  Success(res.statusCode,response);
+      }
+      if (ApiResponseCodes.error == res.statusCode || ApiResponseCodes.internalServerError == res.statusCode){
+        return  Failure(res.statusCode,(defaultApiResponseFromJson(response)));
+      }
+      if (ApiResponseCodes.authorizationError == res.statusCode){
+        return ForbiddenAccess();
+      }
+      else{
+        return  Failure(res.statusCode,"Error Occurred");
+      }
+    }on HttpException{
+      return  NetWorkFailure();
+
+    }on FormatException{
+      return  UnExpectedError();
+
+    }catch (e){
+      return NetWorkFailure();
+    }
+  }
+
+  Future<String?> networkImageToBase64(String imageUrl) async {
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    final bytes = response.bodyBytes;
+    return (bytes != null ? base64Encode(bytes) : null);
+  }
+
 }

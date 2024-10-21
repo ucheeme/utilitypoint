@@ -23,6 +23,7 @@ import '../../../utils/text_style.dart';
 import '../../onboarding_screen/signIn/login_screen.dart';
 import '../airtimePurchase/confirmPayment.dart';
 import '../home_screen.dart';
+import 'confirmDataPayment.dart';
 
 class BuySingeDataScreen extends StatefulWidget {
   const BuySingeDataScreen({super.key});
@@ -43,8 +44,11 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
   List<String> firstAmount =["100","200","500","1000"];
   List<String> secondAmount =["1500","2000","5000","10000"];
   int selectedValue =0;
+  int selectedDataPlan =0;
   String networkValidation = "";
-  String airtimeCategotyId ="";
+  String dataCategotyId ="";
+  String productPlanId ="";
+  ProductPlanItemResponse? selectedProductPlan;
   TextEditingController phoneNumberController =TextEditingController();
   TextEditingController airtimeAmountController =TextEditingController();
   List<ProductPlanCategoryItem> productPlanCategoryList=[];
@@ -93,7 +97,14 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
         if (state is AllProductPlanCategories){
           WidgetsBinding.instance.addPostFrameCallback((_) {
             productPlanCategoryList= state.response;
-            airtimeCategotyId =productPlanCategoryList[0].id;
+            dataCategotyId =productPlanCategoryList[0].id;
+            bloc.add(GetAllProductPlanEvent(GetProductRequest(
+                userId: loginResponse!.id,
+                planCategoryId:dataCategotyId,
+               // amount: airtimeAmountController.text.trim(),
+                networkId: networkId,
+                productSlug: "data"
+            )));
           });
           bloc.initial();
         }
@@ -101,14 +112,8 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
         if (state is AllProductPlanSuccess){
           WidgetsBinding.instance.addPostFrameCallback((_) {
             productPlanList= state.response;
-            Get.to(AirtimeConfirmPayment(
-              airtimeRecharge: AirtimeRecharge(
-                  airtimeCategotyId,
-                  networkId,
-                  phoneNumberController.text,
-                  networkName,
-                  airtimeAmountController.text.trim(), getNetworkIcon(networkName)),
-              productPlanList: productPlanList,));
+            productPlanId=productPlanList[0].productPlanId;
+            selectedProductPlan= productPlanList[0];
           });
           bloc.initial();
         }
@@ -119,7 +124,11 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).unfocus();
+                },
+                child: Scaffold(body: appBodyDesign(getBody()))));
       },
     );
   }
@@ -134,7 +143,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Buy data")),
+                  child: CustomAppBar(title: "Buy Data")),
             ),
           ),
           Gap(20.h),
@@ -262,7 +271,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                                   if(item.networkName.toLowerCase() =="9mobile"){
                                     setState(() {
                                       networkId = item.id;
-                                      networkName="9 Mobile";
+                                      networkName="9MOBILE";
                                       isMTN = false;
                                       isAirtel = false;
                                       isGlo = false;
@@ -290,12 +299,13 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                     ),
                     Gap(10.h),
                     Text(
-                      "Airtime Category",
+                      "Data Category",
                       style: CustomTextStyle.kTxtBold.copyWith(
                           color: AppColor.black100,
                           fontWeight: FontWeight.w400,
                           fontSize: 16.sp),
                     ),
+                    Gap(6.h),
                     SizedBox(
                       width: Get.width,
                       child: SingleChildScrollView(
@@ -310,17 +320,18 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                                       title:getTitle(element.productPlanCategoryName,networkName),
                                       icon: getNetworkIcon(networkName),
                                       onTap: () {
-                                        airtimeCategotyId=element.id;
+                                        dataCategotyId=element.id;
+                                        bloc.add(GetAllProductPlanEvent(GetProductRequest(
+                                            userId: loginResponse!.id,
+                                            planCategoryId:dataCategotyId,
+                                            // amount: airtimeAmountController.text.trim(),
+                                            networkId: networkId,
+                                            productSlug: "data"
+                                        )));
                                         setState(() {
                                           selectedValue=index;
                                         });
-
-                                        // for(var item in appAllNetworkList){
-                                        //   if(item.networkName.toLowerCase() =="mtn"){
-                                        //
-                                        //   }
-                                        // }
-
+                                        
                                       },
                                       isSelected:selectedValue==index),
                                 ),
@@ -329,74 +340,62 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                         ),
                       ),
                     ),
-                    Gap(10.h),
-                    SizedBox(
+                    Gap(20.h),
 
-                      height: 84.h,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 25.h,
-                            child: Text(
-                              "Amount",
+                    SizedBox(
+                      height: 180.h,
+                      child:productPlanList.isEmpty?
+                      Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/image/images_png/empty.png",
+                              height: 40.h,
+                              width: 60.w,
+                            ),
+                            Text(
+                              "Nothing here, yet ...",
                               style: CustomTextStyle.kTxtBold.copyWith(
                                   color: AppColor.black100,
                                   fontWeight: FontWeight.w400,
                                   fontSize: 16.sp),
                             ),
+                            SizedBox(
+                              height: 49.h,
+                              width: 269.w,
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "There are no data plan(s) available for this category",
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black80,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp),),
+                            )
+                          ],
+                        ),
+                      ):
+                      GridView.builder(
+                        padding: EdgeInsets.zero,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, // 4 items per row
+                            crossAxisSpacing: 10.h, // Spacing between columns
+                            mainAxisSpacing: 10.w, // Spacing between rows
                           ),
-                          SizedBox(
-                            height: 58.h,
-                            child: CustomizedTextField(
-                                textEditingController: airtimeAmountController,
-                                keyboardType:TextInputType.number,
-                                isTouched: false),
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Gap(.h),
-                    SizedBox(
-                      height: 190.h,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ...firstAmount.mapIndexed((element, index)=>
-                                    GestureDetector(
-                                        onTap:(){
-                                          setState(() {
-                                            airtimeAmountController.text=element;
-                                          });
-
-                                        },
-                                        child: airtimeDataCard(title: element))
-                                )
-                              ],
-                            ),
-                          ),
-                          // Gap(10.h),
-                          SizedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ...secondAmount.mapIndexed((element, index)=>
-                                    GestureDetector(
-                                        onTap:(){
-                                          setState(() {
-                                            airtimeAmountController.text=element;
-                                          });
-                                        },
-                                        child: airtimeDataCard(title: element))
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                          itemCount: productPlanList.length,
+                          itemBuilder: (context, index){
+                            return GestureDetector(
+                                onTap: (){
+                                  setState(() {
+                                    selectedDataPlan=index;
+                                  });
+                                  productPlanId=productPlanList[index].productPlanId;
+                                  selectedProductPlan= productPlanList[index];
+                                },
+                                child: dataCard(productPlanList[index], selectedDataPlan==index)
+                            );
+                          })
                     ),
                     Gap(5.h),
                     SizedBox(
@@ -463,15 +462,21 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                       alignment: Alignment.bottomCenter,
                       child: CustomButton(
                         onTap: () async {
-                          if(airtimeAmountController.text.isNotEmpty&&phoneNumberController.text.isNotEmpty){
-                            bloc.add(GetAllProductPlanEvent(GetProductRequest(
-                                userId: loginResponse!.id,
-                                planCategoryId:airtimeCategotyId,
-                                amount: airtimeAmountController.text.trim(),
-                                networkId: networkId,
-                                productSlug: "data"
-                            )));
-                          }else if(!airtimeAmountController.text.isNumericOnly||!phoneNumberController.text.isNumericOnly){
+                          if(phoneNumberController.text.isNotEmpty){
+                            Get.to(ConfirmDataPayment(
+                              airtimeRecharge:  AirtimeRecharge(
+                                  networkId: networkId,
+                                  number:  phoneNumberController.text,
+                                  productPlanCategoryId: dataCategotyId,
+                                  productPlanId: productPlanId,
+                                  networkName: networkName,
+                                  networkIcon:  getNetworkIcon(networkName),
+                                  amount:   airtimeAmountController.text.trim(),
+                                index: selectedDataPlan,
+                              ),
+                              productPlanList: selectedProductPlan!,
+                            ));
+                          }else if(!phoneNumberController.text.isNumericOnly){
                             AppUtils.showSnack("Please enter only digits", context);
                           }else{
                             AppUtils.showSnack("Please ensure no field is empty", context);
@@ -507,11 +512,6 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
         setState(() {
           // _selectedContactName = contact.displayName ?? '';
           phoneNumberController.text = contact.phones!.isNotEmpty ? contact.phones!.first.value! : '';
-          // contactName.text=_selectedContactName;
-          // bloc.data.whatsappPhoneNumber(_selectedContactName);
-          // bloc.data.setFullName(_selectedContactName);
-          // whatsappNumbe.text =_selectedContactPhoneNumber.replaceAll(" ", "");
-          //  isLoadingContact =false;
         });
       }
     } else {
@@ -545,7 +545,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
       case "MTN": return "mtn_Icon";
       case "Airtel": return "airtel_Icon";
       case "Glo": return "glo_Icon";
-      case "9 Mobile": return "9mobile_Icon";
+      case "9MOBILE": return "9mobile_Icon";
       default: return "mtn_Icon";
     }
   }
@@ -554,8 +554,8 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
     if(title.toLowerCase().contains("virtual top up")){
       return title.replaceAll("(Virtual Top Up)","");
     }else{
-      return    title.replaceAll("AIRTIME", "")
-          .replaceAll(networkName, "")
+      return title.replaceAll("AIRTIME", "")
+          .replaceAll(networkName.toUpperCase(), "")
           .replaceAll("(", "")
           .replaceAll(")", "");
     }

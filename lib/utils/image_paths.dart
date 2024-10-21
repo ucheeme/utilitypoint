@@ -12,6 +12,7 @@ String notification = "assets/image/images_png/Notification.png";
 String ic_eye_close = "assets/image/images_png/eye_close.png";
 String ic_eye_open= "assets/image/images_png/fi_eye.png";
 String closeImage= "assets/image/images_png/fi_x-circle.png";
+String walletIcon= "assets/image/icons/wallet_Icon.png";
 String masterCard= "assets/image/images_png/mastercard-logo.png";
 String visaCard= "assets/image/images_png/visa-logo.png";
 String income_Image= "assets/image/icons/income.png";

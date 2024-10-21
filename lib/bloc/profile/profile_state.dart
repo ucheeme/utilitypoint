@@ -42,3 +42,10 @@ class PasswordChangedSuccefully extends ProfileState{
   @override
   List<Object?> get props => [response];
 }
+
+class UserLogOut extends ProfileState{
+  DefaultApiResponse response;
+  UserLogOut(this.response);
+  @override
+  List<Object?> get props => [response];
+}
