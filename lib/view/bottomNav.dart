@@ -178,23 +178,26 @@ class _MyBottomNavState extends State<MyBottomNav> {
         child: SizedBox(
           height: 47.4.h,
           width: 78.w,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset("assets/image/icons/$image.svg",
-                color: active ?
-                const Color(0xFF134DB0):const Color(0xFF89B5FF),
-                width: 20.h,height: 20.h,fit: BoxFit.contain,),
-              SizedBox(height: 8.h,),
-              Text(title,style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.sp,
-                  color:
-                  active ?
-                  const Color(0xFF134DB0):const Color(0xFF89B5FF)
-              ),)
-            ],
+          child: ColoredBox(
+            color: AppColor.black0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("assets/image/icons/$image.svg",
+                  color: active ?
+                  const Color(0xFF134DB0):const Color(0xFF89B5FF),
+                  width: 20.h,height: 20.h,fit: BoxFit.contain,),
+                SizedBox(height: 8.h,),
+                Text(title,style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12.sp,
+                    color:
+                    active ?
+                    const Color(0xFF134DB0):const Color(0xFF89B5FF)
+                ),)
+              ],
 
+            ),
           ),
         ));
   }

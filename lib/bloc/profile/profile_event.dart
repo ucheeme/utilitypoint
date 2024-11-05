@@ -55,3 +55,21 @@ class UpdateUserAppSettingEvent extends ProfileEvent {
   @override
   List<Object?> get props => [];
 }
+
+class GetFAQsEvent extends ProfileEvent {
+  const GetFAQsEvent();
+  @override
+  List<Object?> get props => [];
+}
+class GetUserDetails extends ProfileEvent{
+  final GetProductRequest request;
+  const GetUserDetails(this.request);
+  @override
+  List<Object?> get props => [];
+}
+class GetAllUserUploadedKYCEvent extends ProfileEvent {
+  final GetProductRequest request;
+  const GetAllUserUploadedKYCEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}

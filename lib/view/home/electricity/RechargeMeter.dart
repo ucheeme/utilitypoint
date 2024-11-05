@@ -70,10 +70,13 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
     bloc = BlocProvider.of<ProductBloc>(context);
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
-        if (state is CableNameConfirm){
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            meterName.text= state.response.name.replaceAll("Defaulted to:", "");
 
+        if (state is MeterNameConfirm){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            meterName.text= state.response.name;
+            setState(() {
+
+            });
           });
           bloc.initial();
         }
@@ -160,11 +163,11 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                               maxLength: 11,
                               onChanged: (value){
                                 if(value.length==11){
-                                  bloc.add(ConfirmCableNameEvent(
+                                  bloc.add(ConfirmMeterNameEvent(
                                       ConfirmMeterOrCableNameRequest(
                                           userId: loginResponse!.id,
                                           pin:userDetails!.pin,
-                                          smartCardNumber: value,
+                                          metreNumber: value,
                                           productPlanId:widget.productPlanId
                                       )
                                   ));
@@ -253,6 +256,11 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                           child: CustomizedTextField(
                               textEditingController: amount,
                               keyboardType: TextInputType.number,
+                              onChanged: (value){
+                                setState(() {
+
+                                });
+                              },
                               readOnly: false,
                               isTouched: false),
                         ),
@@ -262,7 +270,7 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                   ),
                   CustomButton(
                     onTap: () async {
-                      if(phoneNumberController.text.isNotEmpty&&meterNumber.text.isNotEmpty){
+                      if(phoneNumberController.text.isNotEmpty&&meterNumber.text.isNotEmpty&&amount.text.isNotEmpty){
                         AirtimeRecharge firstValue=   AirtimeRecharge(
                           networkId: phoneNumberController.text,
                           number: meterNumber.text,
@@ -280,7 +288,7 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
 
                     },
                     buttonText: "Next",
-                    buttonColor: AppColor.primary100,
+                    buttonColor: (phoneNumberController.text.isNotEmpty&&meterNumber.text.isNotEmpty&&amount.text.isNotEmpty)?AppColor.primary100:AppColor.primary40,
                     textColor: AppColor.black0,
                     borderRadius: 8.r,
                     height: 58.h,

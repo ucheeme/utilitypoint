@@ -51,6 +51,7 @@ class AppUrls{
   static const uploadKYCDocumentC="${baseUrl}kyc/upload_user_kyc_document";
   static const uploadBVNDocumentC="${baseUrl}kyc/user_bvn_verification";
   static const updateAppSetting="${baseUrl}user/update_appside_setting";
+  static const getFAQ="${baseUrl}faqs";
  // static const completeTwoFactorAuthentication=
  // "${baseUrl}auth/complete_two_factor_authentication";
 }

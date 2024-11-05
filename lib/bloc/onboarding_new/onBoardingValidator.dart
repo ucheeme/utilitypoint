@@ -31,7 +31,7 @@ class OnboardingFormValidation {
   TextEditingController transactionPinController = TextEditingController();
   TextEditingController twoFactorController = TextEditingController();
   List<Map<String, String>> moreOptionTitle = [
-    {"title": "My Cards", "icon": "myAccount_icon"},
+    {"title": "My Accounts", "icon": "myAccount_icon"},
     {"title": "Profile", "icon": "profile_icon"},
     {"title": "Transaction History", "icon": "transaction_history"},
     {"title": "Notifications", "icon": "notification_icon"},

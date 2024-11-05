@@ -17,6 +17,7 @@ import '../model/response/buyAirtimeDataResponse.dart';
 import '../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../model/response/dataPlanCategory.dart';
 import '../model/response/dataPlanResponse.dart';
+import '../model/response/electricResponse.dart';
 import '../model/response/exchangeRate.dart';
 import '../model/response/kycValidated.dart';
 import '../model/response/nairaDollarTransactionList.dart';
@@ -211,8 +212,8 @@ class Productsrepository extends DefaultRepository {
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        BuyAirtimeDataResponse res =
-        buyAirtimeResponseFromJson(json.encode(r));
+        ElectricBoughtResponse res =
+        electricBoughtResponseFromJson(json.encode(r.data));
         return res;
       } else {
         return r;

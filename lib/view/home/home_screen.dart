@@ -19,6 +19,7 @@ import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/home/moreOptions.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
+import 'package:utilitypoint/view/profile/personalInformation.dart';
 
 import '../../model/response/networksList.dart';
 import '../../model/response/products.dart';
@@ -58,13 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
       if (appAllNetworkList.isEmpty) {
         bloc.add(GetAllNetworkEvent());
       }
       if (appAllProductList.isEmpty) {
         bloc.add(GetAllProductEvent());
       }
-      bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+
       bloc.add(GetUserSettingsEvent());
       if (currencyConversionRateFees == null) {
         bloc.add(GetExchangeRateEvent());
@@ -134,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             userDetails!.profilePic= state.response.profilePicture;
+            userImage.value=state.response.profilePicture!;
           });
           bloc.initial();
         }

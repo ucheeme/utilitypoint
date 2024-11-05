@@ -76,9 +76,11 @@ dependencies:
   flutter_slidable: ^3.1.1
   image_picker:
   image_cropper:
-
-
+  file_picker: ^5.2.2
+  flutter_flip_card: ^0.0.6
   envied: ^0.3.0+3
+  screenshot: ^3.0.0
+  image_gallery_saver: ^1.7.1
   path_provider:
   gap:
   flutter_screenutil:

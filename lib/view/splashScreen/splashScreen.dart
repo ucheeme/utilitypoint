@@ -15,6 +15,7 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:flutter/src/painting/text_style.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
+import 'package:utilitypoint/view/menuOption/notifications.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
@@ -138,6 +139,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
   }
 
   Future<UserInfoUpdated?> hasLoggedIn = MySharedPreference.getUserLogin();
+  String number = MySharedPreference.getNumOfNotification();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserInfoUpdated?>(
@@ -145,6 +147,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
         builder: (context,snapshot){
       if(snapshot.data!=null){
         WidgetsBinding.instance.addPostFrameCallback((_){
+          numOfNotification = int.parse(number);
           accessToken = snapshot.data!.token;
           loginResponse = snapshot.data;
           MySharedPreference.saveUserLoginResponse(jsonEncode(snapshot.data));

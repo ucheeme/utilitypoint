@@ -474,7 +474,7 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageContainer(transactionList.transactionCategory),
+          imageContainer(transactionType()),
           Gap(10.w),
           SizedBox(
             height: 59.h,
@@ -483,12 +483,17 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description,
-                  style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400
-                  ),),
+                SizedBox(
+                  height:35.h,
+                  child: Text(transactionList.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400
+                    ),),
+                ),
                 Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
@@ -507,11 +512,11 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
                   symbol: '\₦',
                   name: 'NGN',
                   decimalDigits: 0)
-                  .format(double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter)),
+                  .format(amountGotten()),
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
-                  color:transactionList.transactionCategory.toLowerCase().contains("purchase")?AppColor.Error100:
+                  color:transactionList.description.toLowerCase().contains("purchase")?AppColor.Error100:
                   AppColor.success100
               ),
             ),
@@ -520,6 +525,22 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
       ),
     );
   }
+
+  double amountGotten() {
+    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+      return  double.parse(transactionList.balanceAfter)-double.parse(transactionList.balanceBefore);
+    }else{
+      return double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter);
+    }
+  }
+  String transactionType() {
+    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+      return "added";
+    }else{
+      return "purchase";
+    }
+  }
+
   Widget imageContainer(String transactionType){
     return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
       height: 48.h,width: 48.w,);
@@ -617,7 +638,7 @@ class TransactionWidgetDesgin extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          imageContainer(transactionList.transactionCategory),
+          imageContainer(transactionType()),
           Gap(10.w),
           SizedBox(
             height: 58.h,
@@ -626,12 +647,17 @@ class TransactionWidgetDesgin extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description,
-                  style: CustomTextStyle.kTxtBold.copyWith(
-                      color: AppColor.black100,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400
-                  ),),
+                SizedBox(
+                  height:35.h,
+                  child: Text(transactionList.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400
+                    ),),
+                ),
                 Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
@@ -647,13 +673,14 @@ class TransactionWidgetDesgin extends StatelessWidget {
             child: Text(
               textAlign: TextAlign.end,
               NumberFormat.currency(
-                  symbol: transactionList.walletCategory=="naira_wallet"?'\₦' : '\$',
+                  symbol: (transactionList.walletCategory=="naira_wallet"||
+                  transactionList.description.toLowerCase().contains("from naira wallet"))?'\₦' : '\$',
                   decimalDigits: 0)
-                  .format(getAmount()),
+                  .format(amountGotten()),
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
-                  color:transactionList.transactionCategory.toLowerCase().contains("topup")?AppColor.success100:
+                  color:transactionList.description.toLowerCase().contains("topup")?AppColor.success100:
                   AppColor.Error100
               ),
             ),
@@ -663,13 +690,112 @@ class TransactionWidgetDesgin extends StatelessWidget {
     );
   }
 
-  double getAmount() {
-    return double.parse(transactionList.amount??(
-                double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceBefore)
-            ).toString().replaceAll("-", ""));
+  double amountGotten() {
+    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+      return  double.parse(transactionList.balanceAfter)-double.parse(transactionList.balanceBefore);
+    }else{
+      return double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter);
+    }
   }
+  String transactionType() {
+    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+      return "added";
+    }else{
+      return "purchase";
+    }
+  }
+
   Widget imageContainer(String transactionType){
-    return Image.asset(transactionType.toLowerCase().contains("topup")?income_Image:expenses_Image,
+    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
       height: 48.h,width: 48.w,);
+  }
+}
+
+
+class ReusableTextFormField extends StatefulWidget {
+  final TextEditingController controller;
+  final String? label;
+  final bool isPassword;
+  final bool? issearch;
+  final int? maxlines;
+  final validator;
+  final Color? fillColor;
+  final TextInputType textInputType;
+  final Function(String data)? onchangedFunction;
+  final Function()? ontapFunction;
+  final bool? readOnlyBool;
+  final FocusNode? focusNode;
+  final void Function(String)? onFieldSubmitted;
+
+  const ReusableTextFormField(
+      {super.key,
+        required this.controller,
+        required this.isPassword,
+        required this.validator,
+        required this.textInputType,
+        this.label,
+        this.issearch,
+        this.onchangedFunction,
+        this.readOnlyBool,
+        this.ontapFunction,
+        this.focusNode,
+        this.maxlines,
+        this.fillColor,
+        this.onFieldSubmitted});
+  @override
+  _ReusableTextFormFieldState createState() => _ReusableTextFormFieldState();
+}
+
+class _ReusableTextFormFieldState extends State<ReusableTextFormField> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  bool hidepassword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TextFormField(
+        focusNode: widget.focusNode,
+        validator: widget.validator,
+        keyboardType: widget.textInputType,
+        onChanged: widget.onchangedFunction,
+        controller: widget.controller,
+        obscureText: widget.isPassword == true ? hidepassword : false,
+        onTap: widget.ontapFunction,
+        maxLines: widget.isPassword == true ? 1 : widget.maxlines,
+        style: TextStyle(
+          color: Colors.black,
+        ),
+        readOnly: widget.readOnlyBool != null ? widget.readOnlyBool! : false,
+        onFieldSubmitted: widget.onFieldSubmitted,
+        decoration: InputDecoration(
+            label: Text(widget.label != null ? widget.label! : ''),
+            filled: false,
+            // errorText: widget.validator,
+
+            contentPadding: EdgeInsets.all(9),
+            errorStyle: TextStyle(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColor.primary100),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color:  AppColor.primary100),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            disabledBorder: InputBorder.none,
+        ),
+      ),
+    );
   }
 }

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/model/response/buy_electricity_response.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 
 import '../../../bloc/product/product_bloc.dart';
@@ -21,6 +22,7 @@ import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 import '../../onboarding_screen/signIn/login_screen.dart';
 import '../airtimePurchase/confirmPayment.dart';
+import 'electricityToken.dart';
 
 class ConfirmElectricPayment extends StatefulWidget {
   AirtimeRecharge airtimeRecharge;
@@ -77,11 +79,15 @@ class _ConfirmElectricPaymentState extends State<ConfirmElectricPayment>
         //
         if (state is ElectricityBought) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Get.back();
-            Get.back();
-            showSuccessSlidingModal(context,
-                successMessage:state.response.message);
-
+            // Get.back();
+            // Get.back();
+            // showSuccessSlidingModal(context,
+            //     successMessage:state.response.message);
+            ElectricityAdminMessage response=  adminMessageFromJson(state.response.the1.adminMessage);
+            Get.to(ElectricTokenScreen(airtimeRecharge: widget.airtimeRecharge,
+              productPlanList: widget.productPlanList,
+              electricityAdminMessage: response,
+            ));
           });
           bloc.initial();
         }

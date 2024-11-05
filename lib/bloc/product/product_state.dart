@@ -125,7 +125,7 @@ class MeterNameConfirm extends ProductState{
 }
 
 class ElectricityBought extends ProductState{
-  final BuyAirtimeDataResponse response;
+  final ElectricBoughtResponse response;
   const ElectricityBought(this.response);
   @override
   List<Object?> get props =>[response];

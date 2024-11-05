@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/view/menuOption/settingOptions/alertNotification.dart';
+import 'package:utilitypoint/view/menuOption/settingOptions/deactivateAccount.dart';
 import 'package:utilitypoint/view/menuOption/settingOptions/securitySetting.dart';
 import 'package:utilitypoint/view/menuOption/settingOptions/supportAndHelp.dart';
 import '../../bloc/profile/profile_bloc.dart';
@@ -122,8 +123,7 @@ class _SettingsScreensState extends State<SettingsScreens>  with TickerProviderS
       case 1: return Get.to(Securitysetting());
       case 2: return Get.to(SupportAndHelpScreen());
       case 3: return Get.to(SupportAndHelpScreen());
-      case 4: return Get.to(SupportAndHelpScreen());
-      case 5: return Get.to(SupportAndHelpScreen());
+      case 4: return Get.to(DeactivateAcctScreen());
     }
   }
 

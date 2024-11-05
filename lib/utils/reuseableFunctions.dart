@@ -157,3 +157,17 @@ Future<dynamic> openBottomSheet(BuildContext context,Widget bottomScreen,{backgr
       )
   );
 }
+
+String formatText(String input) {
+  // Remove any existing spaces from the input
+  String sanitizedInput = input.replaceAll(' ', '');
+
+  // Break the sanitized input into groups of 4 characters
+  String formattedText = sanitizedInput.replaceAllMapped(
+    RegExp(r'.{1,4}'), // Match up to 4 characters
+        (match) => '${match.group(0)} ',
+  );
+
+  // Trim any trailing space and return the formatted text
+  return formattedText.trim();
+}

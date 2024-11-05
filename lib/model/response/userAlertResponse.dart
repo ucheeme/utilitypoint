@@ -16,7 +16,7 @@ class UserAlertResponse {
   String email;
   String bvn;
   String bvnVerificationStatus;
-  BvnJson bvnJson;
+  BvnJson? bvnJson;
   String dollarWallet;
   String nairaWallet;
   String kycVerificationStatus;
@@ -36,7 +36,7 @@ class UserAlertResponse {
     required this.email,
     required this.bvn,
     required this.bvnVerificationStatus,
-    required this.bvnJson,
+     this.bvnJson,
     required this.dollarWallet,
     required this.nairaWallet,
     required this.kycVerificationStatus,
@@ -78,7 +78,7 @@ class UserAlertResponse {
     "email": email,
     "bvn": bvn,
     "bvn_verification_status": bvnVerificationStatus,
-    "bvn_json": bvnJson.toJson(),
+    "bvn_json": bvnJson?.toJson(),
     "dollar_wallet": dollarWallet,
     "naira_wallet": nairaWallet,
     "kyc_verification_status": kycVerificationStatus,

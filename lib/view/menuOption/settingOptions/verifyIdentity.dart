@@ -14,7 +14,7 @@ import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
-import '../../../bloc/profile/profile_bloc.dart';
+// import '../../../bloc/profile/profile_bloc.dart';
 import '../../../model/response/userKYCResponse.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';

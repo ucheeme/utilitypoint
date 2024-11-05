@@ -9,16 +9,20 @@ import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/bottomNav.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
+import 'package:utilitypoint/view/menuOption/notifications.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../bloc/profile/profile_bloc.dart';
+import '../../model/request/getProduct.dart';
 import '../../model/request/logOutRequest.dart';
+import '../../model/response/allUserNotification.dart';
 import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
 import '../../utils/pages.dart';
 import '../../utils/reuseable_widget.dart';
 import '../../utils/route.dart';
+import '../profile/personalInformation.dart';
 
 class Moreoptions extends StatefulWidget {
   const Moreoptions({super.key});
@@ -35,27 +39,42 @@ class _MoreoptionsState extends State<Moreoptions>
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.add(GetAllUserUploadedKYCEvent(GetProductRequest(userId: loginResponse!.id)));
+
+   //   bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
   }
-
+  DateTime currentDateTime = DateTime.now();
   @override
   void dispose() {
     // Dispose the animation manager to avoid memory leaks
     _animationManager.dispose();
     super.dispose();
   }
+  AllUserNotification? userNotification;
+  int _getLastDayOfTheMonth(){
+    DateTime firstDayOfNextMonth = (currentDateTime.month < 12)
+        ? DateTime(currentDateTime.year, currentDateTime.month + 1, 1)
+        : DateTime(currentDateTime.year + 1, 1, 1);
 
+    // Subtract one day to get the last day of the current month
+    DateTime lastDayOfCurrentMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    return lastDayOfCurrentMonth.day;
+  }
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProfileBloc>(context);
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
+
         if (state is ProfileError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Future.delayed(Duration.zero, () {
-              AppUtils.showSnack("${state.errorResponse.message}", context);
+              AppUtils.showSnack(state.errorResponse.message, context);
             });
           });
           bloc.initial();
@@ -66,6 +85,22 @@ class _MoreoptionsState extends State<Moreoptions>
           });
           bloc.initial();
         }
+
+        if (state is AllUserDetails) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            userDetails = state.response;
+          });
+          bloc.initial();
+        }
+
+        if (state is UserKYCs) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            userDetails!.profilePic= state.response.profilePicture;
+            userImage.value=state.response.profilePicture!;
+          });
+          bloc.initial();
+        }
+
         return OverlayLoaderWithAppIcon(
           isLoading: state is ProfileIsLoading,
           overlayBackgroundColor: AppColor.black40,
@@ -105,7 +140,7 @@ class _MoreoptionsState extends State<Moreoptions>
                                 Gap(60.h),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     GestureDetector(
                                       onTap: () {
@@ -122,7 +157,7 @@ class _MoreoptionsState extends State<Moreoptions>
                                         decoration: BoxDecoration(
                                             color: Colors.transparent,
                                             borderRadius:
-                                                BorderRadius.circular(8.r),
+                                            BorderRadius.circular(8.r),
                                             border: Border.all(
                                               color: AppColor.black0,
                                             )),
@@ -133,29 +168,27 @@ class _MoreoptionsState extends State<Moreoptions>
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      child: Container(
-                                          height: 70.h,
-                                          width: 70.w,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(image: userDetails!.profilePic==null?Image.asset(
-                                                  "assets/image/images_png/tempImage.png").image:
-                                              Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image ),
-                                              border: Border.all(
-                                                  color: AppColor.black0,
-                                                  width: 1.5.w)),
-                                      )
+                                    Container(
+                                      height: 70.h,
+                                      width: 70.w,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(image: userDetails!.profilePic==null?Image.asset(
+                                              "assets/image/images_png/tempImage.png").image:
+                                          Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image ),
+                                          border: Border.all(
+                                              color: AppColor.black0,
+                                              width: 1.5.w)
+                                      ),
+
                                     ),
                                     SizedBox(width: 50.w,)
                                   ],
                                 ),
                                 Gap(9.h),
                                 Text(
-                                  "${loginResponse?.firstName} ${loginResponse?.lastName}",
+                                  "${loginResponse?.firstName} ${loginResponse
+                                      ?.lastName}",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
                                       color: AppColor.black0,
                                       fontWeight: FontWeight.w400,
@@ -191,18 +224,18 @@ class _MoreoptionsState extends State<Moreoptions>
                                     topLeft: Radius.circular(32.r))),
                             child: ListView.builder(
                                 padding:
-                                    EdgeInsets.only(top: 20.h, bottom: 10.h),
+                                EdgeInsets.only(top: 20.h, bottom: 10.h),
                                 itemCount: validation.moreOptionTitle.length,
                                 itemBuilder: (context, index) {
                                   Map<String, String> item =
-                                      validation.moreOptionTitle[index];
+                                  validation.moreOptionTitle[index];
                                   return Column(
                                     children: [
                                       GestureDetector(
                                           onTap: () async {
                                             if (index == 6) {
                                               showSlidingModalLogOut(
-                                                      context);
+                                                  context);
 
                                               if (isLogOut.value) {
 
@@ -210,11 +243,12 @@ class _MoreoptionsState extends State<Moreoptions>
                                             } else {
                                               navigateToNewScreen(index);
                                             }
-
                                           },
                                           child: listButtons(
-                                            isNotification: index==3,
-                                              notifications: index==3?"600":"",
+                                              isNotification: index == 3,
+                                              notifications: index == 3
+                                                  ? numOfNotification.toString()
+                                                  : "",
                                               title: item["title"]!,
                                               icons: item["icon"]!)),
                                     ],

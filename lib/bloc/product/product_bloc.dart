@@ -15,6 +15,7 @@ import '../../model/response/buy_electricity_response.dart';
 import '../../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../../model/response/dataPlanCategory.dart';
 import '../../model/response/dataPlanResponse.dart';
+import '../../model/response/electricResponse.dart';
 import '../../model/response/exchangeRate.dart';
 import '../../model/response/kycValidated.dart';
 import '../../model/response/nairaDollarTransactionList.dart';
@@ -56,6 +57,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<GetUserKYCStatusEvent>((event,emit){handleGetUserKYCStatusEvent(event.request);});
     on<UploadUserKYCEvent>((event,emit){handleUploadUserKYCEvent(event.request);});
     on<VerifyBVNEvent>((event,emit){handleVerifyBVNEvent(event.request);});
+   // on<GetAllUserUploadedKYCEvent>((event,emit){handleGetAllUserUploadedKYCEvent(event.request);});
   }
   void handleGetTransactionHistory(GetProductRequest event)async{
     emit(ProductIsLoading());
@@ -223,7 +225,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductIsLoading());
     try {
       final   response = await productRepository.buyElectric(event);
-      if (response is BuyAirtimeDataResponse) {
+      if (response is ElectricBoughtResponse) {
         emit(ElectricityBought(response));
        AppUtils.debug("success");
       }else{

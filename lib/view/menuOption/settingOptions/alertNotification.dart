@@ -117,9 +117,7 @@ class _AlertnotificationState extends State<Alertnotification>  with TickerProvi
                       listButtons(title: element, hasSwitch: true,
                         onChanged: (value){
 
-                        setState(() {
-                          toogleState[index]=value;
-                        });
+
                         if(index==0){
                           String res = value==true?"1":"0";
                           bloc.add(UpdateUserAppSettingEvent(
@@ -151,6 +149,9 @@ class _AlertnotificationState extends State<Alertnotification>  with TickerProvi
                                 accountDeactivation: '0',
                               )));
                         }
+                        setState(() {
+                          toogleState[index]=value;
+                        });
 
                         },switchValue: toogleState[index]
                       )

@@ -13,7 +13,8 @@ import 'package:utilitypoint/utils/text_style.dart';
 import '../../bloc/profile/profile_bloc.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/customAnimation.dart';
-import '../../utils/reuseable_widget.dart';class ContactusScreen extends StatefulWidget {
+import '../../utils/reuseable_widget.dart';
+class ContactusScreen extends StatefulWidget {
   const ContactusScreen({super.key});
 
   @override

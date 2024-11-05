@@ -70,9 +70,31 @@ class MarkedAsUnRead extends ProfileState{
   @override
   List<Object?> get props => [response];
 }
+
 class UserAppSettingUpdated extends ProfileState{
   UserAlertResponse response;
   UserAppSettingUpdated(this.response);
   @override
   List<Object?> get props => [response];
+}
+
+class UserFAQs extends ProfileState{
+  List<FaqResponse> response;
+  UserFAQs(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class AllUserDetails extends ProfileState{
+  UserDetails response;
+  AllUserDetails(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class UserKYCs extends ProfileState{
+  UserKycResponse response;
+  UserKYCs(this.response);
+  @override
+  List<Object?> get props =>[response];
 }

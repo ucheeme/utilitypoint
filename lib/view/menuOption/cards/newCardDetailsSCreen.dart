@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
+import 'package:flutter_flip_card/flipcard/gesture_flip_card.dart';
+import 'package:flutter_flip_card/modal/flip_side.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -53,6 +56,7 @@ class _NewCardInformationState extends State<NewCardInformation>
   late VirtualcardBloc bloc;
   late ProductBloc productBloc;
   bool isLoading = false;
+  final con = GestureFlipCardController();
   DateTime currentDateTime = DateTime.now();
   List<NairaTransactionList> transactionList =[];
   @override
@@ -248,7 +252,6 @@ class _NewCardInformationState extends State<NewCardInformation>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Gap(16.h),
                     GestureDetector(
                       onTap: () async {
                         setState(() {
@@ -260,29 +263,39 @@ class _NewCardInformationState extends State<NewCardInformation>
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Container(
-                          height: 46.h,
-                          width: 125.w,
+                          height: 30.h,
+                          width: 90.w,
                           //padding: EdgeInsets.symmetric(vertical: 12.h,horizontal: 22.w),
                           decoration: BoxDecoration(
-                            color: AppColor.primary100,
-                            borderRadius: BorderRadius.circular(8.r)
+                              color: AppColor.primary100,
+                              borderRadius: BorderRadius.circular(8.r)
                           ),
                           child: Center(
                             child: Text(
                               "Top Up Card",
                               style: CustomTextStyle.kTxtBold.copyWith(
                                   color: AppColor.black0,
-                                  fontSize: 16.sp,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
                         ),
                       ),
                     ),
+                GestureFlipCard(
+                animationDuration: const Duration(milliseconds: 300),
+                axis: FlipAxis.horizontal,
+                controller:con, // used to ccontrol the Gesture flip programmatically
+                enableController : false ,// if [True] if you need flip the card using programmatically
+              frontWidget:  CardInfoDesign(cardDetail: widget.userVirtualCards),
+            backWidget:  Container(
+              margin: EdgeInsets.only(top: 20.h),
+                height: 164.h,
+                child: CardBackView(cardDetail: widget.userVirtualCards)),
+          ),
+
                     Gap(24.h),
-                    SizedBox(
-                        height: 164.h,
-                        child: CardBackView(cardDetail: widget.userVirtualCards)),
+
                     Gap(24.h),
                     GestureDetector(
                       onTap: () async {

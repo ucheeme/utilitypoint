@@ -8,6 +8,7 @@ import 'package:utilitypoint/model/request/resetPin.dart';
 import 'package:utilitypoint/model/request/updateUserRequest.dart';
 import 'package:utilitypoint/model/request/userAlertRequest.dart';
 import 'package:utilitypoint/model/response/allUserNotification.dart';
+import 'package:utilitypoint/model/response/faqResponse.dart';
 import 'package:utilitypoint/model/response/markReadUnReadesponse.dart';
 import 'package:utilitypoint/repository/apiRepository.dart';
 
@@ -15,7 +16,9 @@ import '../model/defaultModel.dart';
 import '../model/request/logOutRequest.dart';
 import '../model/response/updateUserResponse.dart';
 import '../model/response/userAlertResponse.dart';
+import '../model/response/userDetails.dart';
 import '../model/response/userInfoUpdated.dart';
+import '../model/response/userKYCResponse.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
 
@@ -147,6 +150,59 @@ class ProfileRepository extends DefaultRepository{
        if (r.status == true) {
          AllUserNotification res =
          allUserNotificationFromJson(json.encode(r.data));
+         return res;
+       } else {
+         return r;
+       }
+     } else {
+       handleErrorResponse(response);
+       return errorResponse!;
+     }
+   }
+   Future<Object> getFAQ( ) async {
+     var response = await postRequest(null, AppUrls.getFAQ, true, HttpMethods.get);
+     var r = handleSuccessResponse(response);
+     if (r is DefaultApiResponse) {
+       if (r.status == true) {
+         List<FaqResponse> res = faqResponseFromJson(json.encode(r.data));
+         return res;
+       } else {
+         return r;
+       }
+     } else {
+       handleErrorResponse(response);
+       return errorResponse!;
+     }
+   }
+
+   Future<Object> getUserDetails(GetProductRequest request) async {
+     var response = await postRequest(
+         null,
+         "${AppUrls.getUserDetails}?user_id=${request.userId}",
+         true,
+         HttpMethods.get);
+     var r = handleSuccessResponse(response);
+     if (r is DefaultApiResponse) {
+       if (r.status == true) {
+         UserDetails res =
+         userDetailsFromJson(json.encode(r.data));
+         return res;
+       } else {
+         return r;
+       }
+     } else {
+       handleErrorResponse(response);
+       return errorResponse!;
+     }
+   }
+   Future<Object> getUserKYCUploads(GetProductRequest request) async {
+     var response = await postRequest(
+         null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
+     var r = handleSuccessResponse(response);
+     if (r is DefaultApiResponse) {
+       if (r.status == true) {
+         UserKycResponse res =
+         userKycResponseFromJson(json.encode(r.data));
          return res;
        } else {
          return r;
