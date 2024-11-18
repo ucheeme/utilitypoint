@@ -17,9 +17,11 @@ import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../main.dart';
 import '../../../model/defaultModel.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -47,7 +49,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   bool activateKeyboard = false;
   @override
   void initState() {
-
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
     errorController = StreamController<ErrorAnimationType>();
     startTimer();
     super.initState();
@@ -118,6 +120,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   builder: (context, state) {
     if (state is EmailVerified){
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        MySharedPreference.saveCreateAccountStep(key: isCreateAccountThirdStep,value: true);
         Get.toNamed(Pages.personalInformation);
       });
       bloc.initial();

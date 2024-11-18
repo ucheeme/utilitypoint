@@ -17,9 +17,11 @@ import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../main.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
 import '../../../utils/custom_keypad.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
@@ -43,6 +45,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountThirdStep,value: false);
     super.initState();
 
     // Slide Animation
@@ -110,6 +113,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration.zero, (){
           // Get.toNamed(Pages.personalInformation);
+          MySharedPreference.saveCreateAccountStep(key: isCreateAccountFourthStep,value: true);
           Get.toNamed(Pages.accountCreated);
         });
       });
@@ -119,6 +123,7 @@ class _SetTransactionPinState extends State<SetTransactionPin> with TickerProvid
 
     if (state is TransactionPinSet){
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        state.response.data;
         Future.delayed(Duration.zero, (){
           Get.toNamed(Pages.accountCreated);
         });

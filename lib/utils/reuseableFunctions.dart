@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/reusable_widget_two.dart';
 
+import '../view/home/home_screen.dart';
 import 'app_color_constant.dart';
 import 'app_util.dart';
 
@@ -170,4 +172,25 @@ String formatText(String input) {
 
   // Trim any trailing space and return the formatted text
   return formattedText.trim();
+}
+
+
+Future<void> placeCall(String phoneNumber) async {
+  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+
+  if (await canLaunchUrl(telUri)) {
+    await launchUrl(telUri);
+  } else {
+    throw 'Could not launch $telUri';
+  }
+}
+ImageProvider<Object> getProfileImage() {
+  if(userDetails == null){
+    return Image.asset(
+        "assets/image/images_png/tempImage.png").image;
+  }else{
+    return userDetails!.profilePic==null?Image.asset(
+        "assets/image/images_png/tempImage.png").image:
+    Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image;
+  }
 }

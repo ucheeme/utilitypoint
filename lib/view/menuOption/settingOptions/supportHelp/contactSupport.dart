@@ -24,10 +24,10 @@ class ContactsupportScreen extends StatefulWidget {
 class _ContactsupportScreenState extends State<ContactsupportScreen> {
   late ProfileBloc bloc;
   List<Map<String,String>> contactUs =[
-    {"title":"07004005000",
+    {"title":"08103615718",
       "subTitle":"Call our 24/7 customer support",
       "icon":"callUs_Icon"},
-    {"title":"info@utilitypoint.ng",
+    {"title":"utilitypointsolution@gmail.com",
       "subTitle":"Email us for any concerns or inquiries ",
       "icon":"email_Icon"},
     {"title":"Whatsapp Us",
@@ -80,7 +80,7 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
                 ...contactUs.mapIndexed((element,index)=>
                     GestureDetector(
                         onTap: (){
-
+                          cTA(index, element["title"]!);
                         },
                         child: contactUsListingDesign(title: element["title"]!,
                             subtext: element["subTitle"]!,icon: element["icon"]!
@@ -93,7 +93,23 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
       ),
     );
   }
+  cTA(int index, String title){
+    switch(index){
+      case 0: return callNumber(title);
+      case 1: return sendEmail(emailAddress: title,);
+      case 2: return openWhatsApp(title);
+    }
+  }
+  Future<void> callNumber(String phoneNumber) async {
+    final Uri callUri = Uri(scheme: 'tel', path: phoneNumber);
 
+    // Check if the phone can make a call
+    if (await canLaunchUrl(callUri)) {
+      await launchUrl(callUri);
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
+  }
   Future<void> openSocialMedia(String url) async {
     final Uri uri = Uri.parse(url);
 
@@ -104,7 +120,15 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
       throw 'Could not launch $url';
     }
   }
+  Future<void> openWhatsApp(String phoneNumber, {String message = ''}) async {
+    final Uri whatsappUri = Uri.parse("https://wa.me/234=8103615718?text=${Uri.encodeComponent(message)}");
 
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not open WhatsApp';
+    }
+  }
   Future<void> sendEmail({
     required String emailAddress,
     String subject = '',
@@ -118,22 +142,11 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
         'body': body,
       },
     );
-
     // Check if the device can send an email
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
       throw 'Could not send email to $emailAddress';
-    }
-  }
-  Future<void> callNumber(String phoneNumber) async {
-    final Uri callUri = Uri(scheme: 'tel', path: phoneNumber);
-
-    // Check if the phone can make a call
-    if (await canLaunchUrl(callUri)) {
-      await launchUrl(callUri);
-    } else {
-      throw 'Could not launch $phoneNumber';
     }
   }
 }

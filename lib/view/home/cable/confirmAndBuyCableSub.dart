@@ -79,7 +79,7 @@ class _ConfirmBillsPaymentState extends State<ConfirmBillsPayment>
             Get.back();
             Get.back();
             showSuccessSlidingModal(context,
-                successMessage:state.response.message);
+                successMessage:state.response.data[0].message);
 
           });
           bloc.initial();
@@ -156,12 +156,16 @@ class _ConfirmBillsPaymentState extends State<ConfirmBillsPayment>
                                     fit: BoxFit.contain,
                                   ),
                                   Gap(8.w),
-                                  Text(
-                                    widget.airtimeRecharge.networkName,
-                                    style: CustomTextStyle.kTxtBold.copyWith(
-                                        color: AppColor.black100,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w400),
+                                  SizedBox(
+                                    width: 70.w,
+                                    child: Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      widget.airtimeRecharge.networkName,
+                                      style: CustomTextStyle.kTxtBold.copyWith(
+                                          color: AppColor.black100,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w400),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -222,12 +226,16 @@ class _ConfirmBillsPaymentState extends State<ConfirmBillsPayment>
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400),
                               ),
-                              Text(
-                                widget.productPlanList.productPlanName,
-                                style: CustomTextStyle.kTxtBold.copyWith(
-                                    color: AppColor.black100,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w400),
+                              SizedBox(
+                                width: 200.w,
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  widget.productPlanList.productPlanName,
+                                  style: CustomTextStyle.kTxtBold.copyWith(
+                                      color: AppColor.black100,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w400),
+                                ),
                               ),
                             ],
                           ),

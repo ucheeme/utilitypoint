@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:proste_bezier_curve/proste_bezier_curve.dart';
 import 'package:utilitypoint/bloc/product/product_bloc.dart';
+import 'package:utilitypoint/main.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/model/response/airtimeDatatransactionHistory.dart';
 import 'package:utilitypoint/model/response/nairaDollarTransactionList.dart';
@@ -33,7 +34,7 @@ import '../../utils/route.dart';
 import '../bottomNav.dart';
 import '../fundWallet/fund_wallet.dart';
 import '../menuOption/cards/virtualCardScreens.dart';
-import 'airtimePurchase/productListScreen.dart';
+import 'airtimePurchase/airtimeProductListScreen.dart';
 import 'cable/cableListView.dart';
 import 'dataPurchase/dataScreen.dart';
 import 'electricity/electricityListView.dart';
@@ -44,6 +45,7 @@ List<Products> appAllProductList = [];
 List<ProductTransactionList> airtimeDataTransactionHistory = [];
 UserDetails? userDetails;
 int? verificationStatus;
+bool isHomePageWallet = false;
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
@@ -54,43 +56,76 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentWallet = 0;
   late ProductBloc bloc;
+
   DateTime currentDateTime = DateTime.now();
-  List<NairaTransactionList> transactionList =[];
+  List<NairaTransactionList> transactionList = [];
+  List<NairaTransactionList> dollarTransactionList = [];
+bool isLoading=false;
   @override
   void initState() {
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+      if(isNewAccount){
+        openBottomSheet(
+            context,
+            NoticeBottomSheet(
+              image:
+              "assets/image/icons/attentionAlert.png-removebg-preview.png",
+              title: "Update your Profile Details",
+              body:
+              "Finish Setting up your profile",
+              onTap: (){
+                Get.to(const PersonInformation());
+              },
+            )
+        );
+      }
+      //if (userDetails == null) {
+      //  isLoading=true;
+        bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+      //}
+
       if (appAllNetworkList.isEmpty) {
         bloc.add(GetAllNetworkEvent());
       }
+
       if (appAllProductList.isEmpty) {
         bloc.add(GetAllProductEvent());
       }
 
-      bloc.add(GetUserSettingsEvent());
+      if (appAllSettingsList.isEmpty) {
+        bloc.add(GetUserSettingsEvent());
+      }
+
       if (currencyConversionRateFees == null) {
         bloc.add(GetExchangeRateEvent());
       }
-      bloc.add(GetUserKYCStatusEvent(GetProductRequest(userId: loginResponse!.id)));
-      bloc.add(GetAllUserUploadedKYCEvent(GetProductRequest(userId: loginResponse!.id)));
+      bloc.add(
+          GetUserKYCStatusEvent(GetProductRequest(userId: loginResponse!.id)));
+      bloc.add(GetAllUserUploadedKYCEvent(
+          GetProductRequest(userId: loginResponse!.id)));
       bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
         userId: loginResponse!.id,
         startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-        endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+        endDate:
+            "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
       )));
     });
     super.initState();
   }
 
-  int _getLastDayOfTheMonth(){
+  int _getLastDayOfTheMonth() {
     DateTime firstDayOfNextMonth = (currentDateTime.month < 12)
         ? DateTime(currentDateTime.year, currentDateTime.month + 1, 1)
         : DateTime(currentDateTime.year + 1, 1, 1);
 
     // Subtract one day to get the last day of the current month
-    DateTime lastDayOfCurrentMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    DateTime lastDayOfCurrentMonth =
+        firstDayOfNextMonth.subtract(Duration(days: 1));
     return lastDayOfCurrentMonth.day;
   }
+
+  bool isVisibleAmount = false;
 
   @override
   Widget build(BuildContext context) {
@@ -98,87 +133,142 @@ class _HomeScreenState extends State<HomeScreen> {
     bloc = BlocProvider.of<ProductBloc>(context);
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
-
         if (state is ProductError) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration.zero, () {
-              AppUtils.showSnack(state.errorResponse.message, context);
-            });
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (state.errorResponse.message.toLowerCase() ==
+                "kyc data not found") {
+              print("I am herre");
+              var result = await openBottomSheet(
+                  context,
+                  NoticeBottomSheet(
+                    image:
+                        "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                    title: "Update your KYC information",
+                    body:
+                        "Validate your KYC information and perform transaction",
+                  ));
+            } else {
+              Future.delayed(Duration.zero, () async {
+                AppUtils.showSnack(state.errorResponse.message, context);
+              });
+            }
           });
           bloc.initial();
         }
         if (state is ProductAllNetworks) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             appAllNetworkList = state.response;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
           });
           bloc.initial();
         }
         if (state is AllUserDetails) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             userDetails = state.response;
+            setState(() {
+              isLoading= false;
+            });
           });
           bloc.initial();
         }
         if (state is UserKYCVerificationStatus) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            verificationStatus= state.response.verificationStatus;
-            if(verificationStatus==0){
-              var result= await openBottomSheet(
+
+            verificationStatus = state.response.verificationStatus;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
+            if (verificationStatus == 0) {
+              var result = await openBottomSheet(
                   context,
                   NoticeBottomSheet(
-                image: "assets/image/icons/attentionAlert.png-removebg-preview.png",
-                title: "Update your KYC information",
-                body: "Validate your KYC information and perform transaction",));
+                    image:
+                        "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                    title: "Update your KYC information",
+                    body:
+                        "Validate your KYC information and perform transaction",
+                  ));
             }
           });
           bloc.initial();
         }
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            userDetails!.profilePic= state.response.profilePicture;
-            userImage.value=state.response.profilePicture!;
+
+            userDetails?.profilePic = state.response?.profilePicture;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
+            // userImage.value=state.response?.profilePicture!;
           });
           bloc.initial();
         }
         if (state is AllProduct) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+
             appAllProductList = state.response;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
           });
           bloc.initial();
         }
 
-        if (state is AllUserDetails) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            userDetails = state.response;
-          });
-          bloc.initial();
-        }
         if (state is GeneralSettings) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             appAllSettingsList = state.response;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
           });
           bloc.initial();
         }
 
-        if(state is AllNairaTransactions){
-          WidgetsBinding.instance.addPostFrameCallback((_){
-            for(var item in state.response){
+        if (state is AllNairaTransactions) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            for (var item in state.response) {
               transactionList.add(item);
+            }
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
+          });
+          bloc.initial();
+        }
+        if (state is AllDollarTransactions) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            for (var item in state.response) {
+              dollarTransactionList.add(item);
+            }
+            if(isHomePageWallet){
+              Get.back();
+              _showDollarWalletBottomSheet(context);
             }
 
           });
           bloc.initial();
         }
-
         if (state is ProductExchangeRate) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             currencyConversionRateFees = state.response;
+            if (userDetails == null) {
+              isLoading=true;
+              bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+            }
           });
           bloc.initial();
         }
 
         return OverlayLoaderWithAppIcon(
-          isLoading: state is ProductIsLoading,
+          isLoading: isLoading||state is ProductIsLoading,
           overlayBackgroundColor: AppColor.black40,
           circularProgressColor: AppColor.primary100,
           appIconSize: 60.h,
@@ -195,12 +285,55 @@ class _HomeScreenState extends State<HomeScreen> {
                         _currentWallet = integer;
                       });
                     },
+                    withdrawOnTap: (){
+                      setState(() {
+                        isHomePageWallet=true;
+                      });
+                      bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
+                        userId: loginResponse!.id,
+                        startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+                        endDate:
+                        "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+                      )));
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                        ),
+                        builder: (context) => DraggableScrollableSheet(
+                          expand: false,
+                          initialChildSize: 0.5,
+                          maxChildSize: 1.0,
+                          minChildSize: 0.3,
+                          builder: (context, scrollController) {
+                            return SizedBox(
+                              height: 300.h,
+                              child: Container(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor.primary100,
+                                ),
+                              ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    onPressed: () {
+                      setState(() {
+                        isVisibleAmount = !isVisibleAmount;
+                      });
+                    },
+                    isVisibleAmount: isVisibleAmount,
                     depositOnTap: depositOnTap(),
                     accountBalance: accountBalance(),
                     isNaira: _currentWallet == 0 ? true : false,
                     sideBarOnTap: () {
                       //Navigator.of(context).push(createFlipRoute(Moreoptions()));
-                      Get.to(Moreoptions(), curve: Curves.easeIn);
+                     // Get.to(Moreoptions(), curve: Curves.easeIn);
+                      Get.to(PersonInformation(), curve: Curves.easeIn);
                     }),
                 Center(
                   child: CarouselIndicator(
@@ -232,20 +365,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             dashboardIcons(
                                 horizontal: 0,
+                                title: "Fund Dollar Wallet",
                                 onTap: () async {
-                                  if(verificationStatus==0){
-                                    var result= await openBottomSheet( context,  NoticeBottomSheet(
-                                      image: "assets/image/icons/attentionAlert.png-removebg-preview.png",
-                                      title: "Update your KYC information",
-                                      body: "Validate your KYC information and perform transaction",));
-                                  }else{   Get.to(
-                                      FundWalletScreen(
-                                        isFundDollarWallet: true,
-                                      ),
-                                      curve: Curves.easeIn);
-
+                                  if (verificationStatus == 0) {
+                                    var result = await openBottomSheet(
+                                        context,
+                                        NoticeBottomSheet(
+                                          image:
+                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                          title: "Update your KYC information",
+                                          body:
+                                              "Validate your KYC information and perform transaction",
+                                        ));
+                                  } else {
+                                    Get.to(
+                                        FundWalletScreen(
+                                          isFundDollarWallet: true,
+                                        ),
+                                        curve: Curves.easeIn);
                                   }
-
                                 }),
                             dashboardIcons(
                                 title: "Buy Data",
@@ -256,33 +394,61 @@ class _HomeScreenState extends State<HomeScreen> {
                             dashboardIcons(
                                 title: "Dollar Card",
                                 icon: "dollardCard",
-                                onTap:  () async {
-                                  if(verificationStatus==0){
-                                    var result= await openBottomSheet( context,  NoticeBottomSheet(
-                                      image: "assets/image/icons/alertAttention.png",
-                                      title: "Update your KYC information",
-                                      body: "Validate your KYC information and perform transaction",));
-                                  }else{
-                                    Get.to(VirtualCards(isNaira: false,),curve: Curves.easeIn);
+                                onTap: () async {
+                                  if (verificationStatus == 0) {
+                                    var result = await openBottomSheet(
+                                        context,
+                                        NoticeBottomSheet(
+                                          image:
+                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                          title: "Update your KYC information",
+                                          body:
+                                              "Validate your KYC information and perform transaction",
+                                        ));
+                                  } else {
+                                    Get.to(
+                                        VirtualCards(
+                                          isNaira: false,
+                                        ),
+                                        curve: Curves.easeIn);
                                   }
-
                                 }),
                             dashboardIcons(
                                 title: "Convert",
                                 icon: "convert",
-                                onTap:  () async {
-                                  if(verificationStatus==0){
-                                    var result= await openBottomSheet( context,  NoticeBottomSheet(
-                                      image: "assets/image/icons/alertAttention.png",
-                                      title: "Update your KYC information",
-                                      body: "Validate your KYC information and perform transaction",));
-                                  }else{
-                                    Get.to(ConvertScreen(
-                                      isTopUpCard: false,
-                                      isCreateCard: false,
-                                    ));
-                                  }
+                                onTap: () async {
+                                  if (verificationStatus == 0) {
+                                    var result = await openBottomSheet(
+                                        context,
+                                        NoticeBottomSheet(
+                                          image:
+                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                          title: "Update your KYC information",
+                                          body:
+                                              "Validate your KYC information and perform transaction",
+                                        ));
+                                  } else {
 
+                                    if (userDetails == null) {
+                                      openBottomSheet(
+                                          context,
+                                          Container(
+                                            height: 300.h,
+                                            child: const Center(
+                                              child: CircularProgressIndicator(color: AppColor.primary100,),
+                                            ),
+                                          )
+                                      );
+                                      bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+                                    }
+                                    if(userDetails!=null){
+                                      Get.to(ConvertScreen(
+                                        isTopUpCard: false,
+                                        isCreateCard: false,
+                                      ));
+                                    }
+
+                                  }
                                 }),
                           ],
                         ),
@@ -316,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 title: "More",
                                 icon: "more_Icon",
                                 onTap: () {
-                                  Get.to(const Moreoptions(),curve: Curves.easeIn);
+                                  Get.to(const Moreoptions(),
+                                      curve: Curves.easeIn);
                                 }),
                           ],
                         ),
@@ -325,55 +492,64 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Gap(28.h),
-                transactionList.isEmpty?
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Image.asset("assets/image/images_png/Card.png"),
-                ):
-                    Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 14.w),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Transaction History",
-                                style: CustomTextStyle.kTxtMedium.copyWith(
-                                  color: AppColor.black100,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 16.sp
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Get.offAll(MyBottomNav(position: 1,), predicate: (route) => false);
-                                },
-                                child: Text("View all",
+                transactionList.isEmpty
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Image.asset("assets/image/images_png/Card.png"),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Transaction History",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
-                                      color: AppColor.primary100,
+                                      color: AppColor.black100,
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 16.sp
+                                      fontSize: 16.sp),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.offAll(
+                                        MyBottomNav(
+                                          position: 1,
+                                        ),
+                                        predicate: (route) => false);
+                                  },
+                                  child: Text(
+                                    "View all",
+                                    style: CustomTextStyle.kTxtMedium.copyWith(
+                                        color: AppColor.primary100,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 16.sp),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 500.h,
-                            child:  ListView.builder(
-                                padding: EdgeInsets.only(top: 10.h),
-                                itemCount:transactionList.length>10?10:transactionList.length,
-                                itemBuilder: (context,index){
-                                  NairaTransactionList element=transactionList[index];
-                                  return Padding(
-                                    padding:  EdgeInsets.only(bottom:12.h),
-                                    child: NairaTransactionWidgetDesgin(transactionList: element,),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 500.h,
+                              child: ListView.builder(
+                                  padding: EdgeInsets.only(top: 10.h),
+                                  itemCount: transactionList.length > 10
+                                      ? 10
+                                      : transactionList.length,
+                                  itemBuilder: (context, index) {
+                                    NairaTransactionList element =
+                                        transactionList[index];
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: 12.h),
+                                      child: NairaTransactionWidgetDesgin(
+                                        transactionList: element,
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        ),
+                      )
               ],
             ),
           ),
@@ -384,29 +560,102 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double accountBalance() {
     return _currentWallet == 0
-                      ? double.parse(userDetails == null
-                          ? "0"
-                          : userDetails!.nairaWallet)
-                      : double.parse(userDetails == null
-                          ? "0"
-                          : userDetails!.dollarWallet);
+        ? double.parse(userDetails == null ? "0" : userDetails!.nairaWallet)
+        : double.parse(userDetails == null ? "0" : userDetails!.dollarWallet);
   }
 
   Function() depositOnTap() {
     return _currentWallet == 0
-                      ? () {
-                          Get.to(
-                              FundWalletScreen(
-                                isFundDollarWallet: false,
-                              ),
-                              curve: Curves.easeIn);
-                        }
-                      : () {
-                          Get.to(
-                              FundWalletScreen(
-                                isFundDollarWallet: true,
-                              ),
-                              curve: Curves.easeIn);
-                        };
+        ? () {
+            Get.to(
+                FundWalletScreen(
+                  isFundDollarWallet: false,
+                ),
+                curve: Curves.easeIn);
+          }
+        : () {
+            Get.to(
+                FundWalletScreen(
+                  isFundDollarWallet: true,
+                ),
+                curve: Curves.easeIn);
+          };
+  }
+  void _showDollarWalletBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        maxChildSize: 1.0,
+        minChildSize: 0.3,
+        builder: (context, scrollController) {
+          return SizedBox(
+            height: Get.height,
+            child: DollarWalletHistory(
+              transactionList: dollarTransactionList,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DollarWalletHistory extends StatefulWidget {
+  List< NairaTransactionList> transactionList;
+  ScrollController? controller;
+   DollarWalletHistory({super.key,required this.transactionList, this.controller});
+
+  @override
+  State<DollarWalletHistory> createState() => _DollarWalletHistoryState();
+}
+
+class _DollarWalletHistoryState extends State<DollarWalletHistory> {
+  ScrollController? scrollController;
+  @override
+  void initState() {
+    scrollController = widget.controller;
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return   Padding(
+      padding: EdgeInsets.all(16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Gap(10.h),
+          Text(
+            "RESULT",
+            style: CustomTextStyle.kTxtBold.copyWith(
+                color: AppColor.primary100,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600),
+          ),
+          Gap(10.h),
+          Expanded(
+            child: ListView.builder(
+              controller: scrollController,
+                padding: EdgeInsets.only(top: 10.h),
+                itemCount: widget.transactionList.length,
+                itemBuilder: (context, index) {
+                  NairaTransactionList element =
+                  widget.transactionList[index];
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 12.h),
+                    child: DollarTransactionWidgetDesgin(
+                      transactionList: element,
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
   }
 }

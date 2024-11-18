@@ -59,6 +59,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<VerifyBVNEvent>((event,emit){handleVerifyBVNEvent(event.request);});
    // on<GetAllUserUploadedKYCEvent>((event,emit){handleGetAllUserUploadedKYCEvent(event.request);});
   }
+
   void handleGetTransactionHistory(GetProductRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -75,6 +76,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllNetwork()async{
     emit(ProductIsLoading());
     try {
@@ -91,6 +93,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetUserSetting()async{
  //   emit(ProductIsLoading());
     try {
@@ -107,6 +110,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllProducts()async{
     emit(ProductIsLoading());
     try {
@@ -123,6 +127,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllDataProductPlanCategoryEvent(GetProductRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -139,6 +144,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllDataProductPlanEvent(GetProductRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -155,6 +161,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetProductTransactionHistoryEvent(GetProductRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -171,6 +178,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetUserDetails(GetProductRequest event)async{
     //emit(ProductIsLoading());
     print("Year");
@@ -188,6 +196,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleBuyAirtimeEvent(BuyAirtimeDataRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -204,6 +213,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleBuyDataEvent(BuyAirtimeDataRequest event)async{
     emit(ProductIsLoading());
 
@@ -221,6 +231,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleElectricityEvent(BuyElectricityRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -237,6 +248,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleBuyCableSubscriptionEvent(BuyCableSubscriptionRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -250,9 +262,11 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
+      print(e);
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleConfirmCableNameEvent(ConfirmMeterOrCableNameRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -269,6 +283,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleConfirmMeterNameEvent(ConfirmMeterOrCableNameRequest event)async{
     emit(ProductIsLoading());
     try {
@@ -302,6 +317,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllNairaWalletTransactionsEvent(event)async{
     emit(ProductIsLoading());
     try {
@@ -324,6 +340,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetAllDollarWalletTransactionsEvent(event)async{
     emit(ProductIsLoading());
     try {
@@ -362,11 +379,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleGetUserKYCStatusEvent(event)async{
     emit(ProductIsLoading());
     try {
-      final response = await productRepository.getUserKYCStatus(event);
-      if (response is UserKycResponse) {
+      final  response = await productRepository.getUserKYCStatus(event);
+      if ((response is UserKycResponse) ) {
         emit(UserKYCVerificationStatus(response) );
         AppUtils.debug("success");
       }else{
@@ -378,6 +396,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleUploadUserKYCEvent(event)async{
     emit(ProductIsLoading());
     try {
@@ -394,6 +413,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+
   void handleVerifyBVNEvent(event)async{
     emit(ProductIsLoading());
     try {

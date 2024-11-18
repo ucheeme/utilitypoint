@@ -214,7 +214,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     //emit(ProductIsLoading());
     try {
       final response = await profileRepository.getUserKYCUploads(event);
-      if (response is UserKycResponse) {
+      if (response is UserKycResponse?) {
         emit(UserKYCs(response) );
         AppUtils.debug("success");
       }

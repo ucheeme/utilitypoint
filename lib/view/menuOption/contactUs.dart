@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
@@ -30,22 +31,22 @@ class _ContactusScreenState extends State<ContactusScreen>with TickerProviderSta
   TextEditingController phoneNumber = TextEditingController();
   late ProfileBloc bloc;
   List<Map<String,String>> contactUs =[
-    {"title":"07004005000",
+    {"title":"08103615718",
     "subTitle":"Call our 24/7 customer support",
     "icon":"callUs_Icon"},
-    {"title":"info@utilitypoint.ng",
+    {"title":"utilitypointsolution@gmail.com",
       "subTitle":"Email us for any concerns or inquiries ",
       "icon":"email_Icon"},
     {"title":"Live Chat",
       "subTitle":"Start live chat with our customer support",
       "icon":"live_chat_Icon"},
-    {"title":"Utilitypointng",
+    {"title":"Utility Point",
       "subTitle":"Connect with us on facebook",
       "icon":"facebook_Icon"},
-    {"title":"Utilitypointng",
+    {"title":"utilitypointng",
       "subTitle":"Connect with us on X",
       "icon":"X_Icon"},
-    {"title":"Utilitypointng",
+    {"title":"utility_point",
       "subTitle":"Connect with us on instagram",
       "icon":"instagram_Icon"},
   ];
@@ -116,7 +117,7 @@ class _ContactusScreenState extends State<ContactusScreen>with TickerProviderSta
                   ...contactUs.mapIndexed((element,index)=>
                   GestureDetector(
                       onTap: (){
-
+                        cTA(index, element["title"]!);
                       },
                       child: contactUsListingDesign(title: element["title"]!,
                         subtext: element["subTitle"]!,icon: element["icon"]!
@@ -130,7 +131,16 @@ class _ContactusScreenState extends State<ContactusScreen>with TickerProviderSta
       ),
     );
   }
-
+cTA(int index, String title){
+    switch(index){
+      case 0: return callNumber(title);
+      case 1: return sendEmail(emailAddress: title,);
+      case 2: return AppUtils.showInfoSnack("COMING SOON", context);
+      case 3: return openSocialMedia("https://www.facebook.com/$title/");
+      case 4: return openSocialMedia("https://www.x.com/$title/");
+      case 5: return openSocialMedia("https://www.instagram.com/$title/");
+    }
+}
   Future<void> openSocialMedia(String url) async {
     final Uri uri = Uri.parse(url);
 

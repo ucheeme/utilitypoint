@@ -83,7 +83,7 @@ class _ConfirmElectricPaymentState extends State<ConfirmElectricPayment>
             // Get.back();
             // showSuccessSlidingModal(context,
             //     successMessage:state.response.message);
-            ElectricityAdminMessage response=  adminMessageFromJson(state.response.the1.adminMessage);
+            ElectricityAdminMessage response=  adminMessageFromJson(state.response.data[0].adminMessage);
             Get.to(ElectricTokenScreen(airtimeRecharge: widget.airtimeRecharge,
               productPlanList: widget.productPlanList,
               electricityAdminMessage: response,

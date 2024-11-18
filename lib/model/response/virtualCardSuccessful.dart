@@ -64,7 +64,7 @@ class Card {
   String number;
   String expiry;
   String ccv;
-  List<dynamic> billing;
+  Billing billing;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -97,7 +97,7 @@ class Card {
     number: json["number"],
     expiry: json["expiry"],
     ccv: json["ccv"],
-    billing: List<dynamic>.from(json["billing"].map((x) => x)),
+    billing: Billing.fromJson(json["billing"]),
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );
@@ -114,9 +114,41 @@ class Card {
     "number": number,
     "expiry": expiry,
     "ccv": ccv,
-    "billing": List<dynamic>.from(billing.map((x) => x)),
+    "billing": billing.toJson(),
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
+  };
+}
+
+class Billing {
+  String street;
+  String city;
+  String state;
+  String country;
+  String postalCode;
+
+  Billing({
+    required this.street,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.postalCode,
+  });
+
+  factory Billing.fromJson(Map<String, dynamic> json) => Billing(
+    street: json["street"],
+    city: json["city"],
+    state: json["state"],
+    country: json["country"],
+    postalCode: json["postal_code"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "street": street,
+    "city": city,
+    "state": state,
+    "country": country,
+    "postal_code": postalCode,
   };
 }
 

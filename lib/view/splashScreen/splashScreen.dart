@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_utils/get_utils.dart';
+import 'package:utilitypoint/main.dart';
 import 'package:utilitypoint/model/request/loginRequest.dart';
 import 'package:utilitypoint/services/api_service.dart';
 import 'package:utilitypoint/utils/height.dart';
@@ -19,11 +20,15 @@ import 'package:utilitypoint/view/menuOption/notifications.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
+import '../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../model/response/userInfoUpdated.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/mySharedPreference.dart';
 import '../../utils/pages.dart';
 import '../bottomNav.dart';
+import '../onboarding_screen/signUp/personal_information.dart';
+import '../onboarding_screen/signUp/set_transaction_pin.dart';
+import '../onboarding_screen/signUp/verifyemail.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -47,6 +52,9 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+
+    });
     super.initState();
     _slideControllerB = AnimationController(
       vsync: this,
@@ -140,6 +148,12 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
 
   Future<UserInfoUpdated?> hasLoggedIn = MySharedPreference.getUserLogin();
   String number = MySharedPreference.getNumOfNotification();
+  String setUpAccessToken = MySharedPreference.getAccessToken();
+  String userIdSet = MySharedPreference.getUserId();
+  bool isFirst = MySharedPreference.getCreateAccountStep(isCreateAccountFirstStep);
+  bool isSecond = MySharedPreference.getCreateAccountStep(isCreateAccountSecondStep);
+  bool isThird = MySharedPreference.getCreateAccountStep(isCreateAccountThirdStep);
+  bool isFourth = MySharedPreference.getCreateAccountStep(isCreateAccountFourthStep);
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserInfoUpdated?>(
@@ -154,6 +168,13 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
         });
         return MyBottomNav();
       }else{
+        accessToken=setUpAccessToken;
+        userId=userIdSet;
+        print("this is ${isFirst}");
+        if(isFirst) return const SignUpCreateAccountScreen();
+        if(isSecond) return const VerifyEmail();
+        if(isThird) return const PersonalInformation();
+        if(isFourth) return const SetTransactionPin();
         return   Scaffold(
           body: Container(
             width: Get.width,

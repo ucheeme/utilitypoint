@@ -12,6 +12,7 @@ import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/bloc/product/product_bloc.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 // import '../../../bloc/profile/profile_bloc.dart';
@@ -117,19 +118,17 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
         if(state is BVNVerified){
           WidgetsBinding.instance.addPostFrameCallback((_){
             showSuccessSlidingModal(context,successMessage: state.response.message,
+            headerText: "Sent for Verification",
             onTap: (){
               Get.back();
              // Get.back();
             });
           });
+          bloc.initial();
         }
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             response = state.response;
-            print("this is VC: ${response!.votersCard}");
-            print("this is IP: ${response!.internationalPassport}");
-            print("this is NIN: ${response!.nin}");
-            print("this is DL: ${response!.driversLicense}");
             setState(() {
               if(response!.votersCard!.isNotEmpty){
                 isVoterCard=true;
@@ -210,9 +209,11 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
                       child: identityVerification(docImage: response?.profilePicture,title: "Profile Picture")),
                   BVNVerification(),
                       identityVerification(),
-                  CustomButton(onTap: (){},
+                  CustomButton(onTap: (){
+                    bloc.add(GetAllUserUploadedKYCEvent(GetProductRequest(userId: loginResponse!.id)));
+                  },
                     height: 58.h,
-                    buttonText: "Verify my identity",
+                    buttonText: "Get uploaded document(s)",
                     textColor: AppColor.black0,
                     borderRadius: 8.r,
                     buttonColor: AppColor.primary100,
@@ -384,6 +385,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
   Widget BVNVerification() {
     return GestureDetector(
       onTap: () async {
+
       List<dynamic> result=  await showCupertinoModalBottomSheet(
         topRadius:
         Radius.circular(20.r),
@@ -393,7 +395,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
         ),
         builder: (context) => SizedBox(
-            height: 250.h,
+            height: 400.h,
             child: VerifyBVN())
         );
       if(result[0]){
@@ -414,14 +416,14 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           padding: EdgeInsets.symmetric(horizontal: 9.5.w, vertical: 10.h),
           child: Column(
             children: [
-              Gap(15.h),
+              Gap(10.h),
               Text("BVN Verification",
                 style: CustomTextStyle.kTxtBold.copyWith(
                     color: AppColor.black100,
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp),
               ),
-              Gap(16.h),
+              Gap(10.h),
               SizedBox(
                 height:36.h,
                 width: 252.w,
@@ -433,6 +435,43 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
                       fontSize: 12.sp),
                 ),
               ),
+              userDetails!.bvnVerificationStatus.toLowerCase()=="pending"?
+              SizedBox(
+                height: 17.h,
+                width: 95.w,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                   Icon(Icons.pending,color: AppColor.secondary100,size: 18,),
+                    Gap(8.w),
+                    Text("Pending",
+                      textAlign: TextAlign.center,
+                      style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.secondary100,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              ):
+              SizedBox(
+                height: 17.h,
+                width: 95.w,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/image/icons/checked_Icon.png",height: 14.h,width: 14.w,),
+                    Gap(8.w),
+                    Text("Done",
+                      textAlign: TextAlign.center,
+                      style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.success100,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              )
             ],
           )),
     );
@@ -709,69 +748,84 @@ class DocumentTypeBottomSheet extends StatelessWidget {
     );
   }
 }
+class VerifyBVN extends StatefulWidget {
+  const VerifyBVN({super.key});
 
-class VerifyBVN extends StatelessWidget {
-  VerifyBVN({super.key,});
- TextEditingController bvnController= TextEditingController();
+  @override
+  State<VerifyBVN> createState() => _VerifyBVNState();
+}
+
+class _VerifyBVNState extends State<VerifyBVN> {
+  TextEditingController bvnController= TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:Container(
-        height: 250.h,
-        width: Get.width,
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        decoration: BoxDecoration(
-          color: AppColor.black0,
-          borderRadius: BorderRadius.only(topRight: Radius.circular(18.r),topLeft:  Radius.circular(18.r)),
-        ),
-        child: Column(
-          children: [
-            Gap(8.h),
-            Container(
-              height: 6.h,
-              width: 48.w,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3.r),
-                  color: AppColor.black40
-              ),
-            ),
-            Gap(15.h),
-            Text("Verify Your BVN?",
-              style: CustomTextStyle.kTxtMedium.copyWith(
-                color: AppColor.black80,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Gap(10.h),
-            CustomizedTextField(
-              textEditingController: bvnController,
-              keyboardType: TextInputType.number,
-              maxLength: 11,
-            ),
+    return GestureDetector(
+      onTap: (){
+         FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body:Container(
+          height: 400.h,
+          width: Get.width,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          decoration: BoxDecoration(
+            color: AppColor.black0,
+            borderRadius: BorderRadius.only(topRight: Radius.circular(18.r),topLeft:  Radius.circular(18.r)),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Gap(8.h),
+                Container(
+                  height: 6.h,
+                  width: 48.w,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3.r),
+                      color: AppColor.black40
+                  ),
+                ),
+                Gap(15.h),
+                Text("Verify Your BVN?",
+                  style: CustomTextStyle.kTxtMedium.copyWith(
+                    color: AppColor.black80,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                Gap(10.h),
+                CustomizedTextField(
+                  textEditingController: bvnController,
+                  keyboardType: TextInputType.number,
+                  readOnly: false,
+                  hintTxt: "Enter bvn",
+                  maxLength: 11,
+                ),
 
-        CustomButton(onTap: (){
-          Get.back(result:[true, bvnController.text]);
-        },
-          buttonText: "Done",
-          borderRadius: 8.r,
-          height: 48.h,
-          textColor: AppColor.black0,
-          buttonColor: AppColor.primary100,),
-            Gap(5.h),
-            CustomButton(onTap: (){
-              Get.back( result:[false, ""]);
-            },
-              buttonText: "Cancel",
-              borderRadius: 8.r,
-              textColor:AppColor.secondary100 ,
-              height: 28.h,
-              buttonColor: Colors.transparent,)
-          ],
-        ),
-      ) ,
+                CustomButton(onTap: (){
+                  Get.back(result:[true, bvnController.text]);
+                },
+                  buttonText: "Done",
+                  borderRadius: 8.r,
+                  height: 48.h,
+                  textColor: AppColor.black0,
+                  buttonColor: AppColor.primary100,),
+                Gap(5.h),
+                CustomButton(onTap: (){
+                  Get.back( result:[false, ""]);
+                },
+                  buttonText: "Cancel",
+                  borderRadius: 8.r,
+                  textColor:AppColor.secondary100 ,
+                  height: 28.h,
+                  buttonColor: Colors.transparent,)
+              ],
+            ),
+          ),
+        ) ,
+      ),
     );
   }
 }
+
 
 

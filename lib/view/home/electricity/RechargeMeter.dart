@@ -86,12 +86,12 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(state))));
       },
     );
   }
 
-  Widget getBody() {
+  Widget getBody(ProductState state) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -197,6 +197,15 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                           child: CustomizedTextField(
                               textEditingController: meterName,
                               keyboardType: TextInputType.text,
+                              surffixWidget: Visibility(
+                                  visible: state is ProductIsLoading ,
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(right: 8.w),
+                                    child: SizedBox(
+                                        height: 20.h,
+                                        width: 20.w,
+                                        child: CircularProgressIndicator(color: AppColor.primary100,)),
+                                  )),
                               readOnly: true,
                               isTouched: true),
                         ),

@@ -40,6 +40,9 @@ class _MoreoptionsState extends State<Moreoptions>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(userDetails==null){
+        bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
+      }
       bloc.add(GetAllUserUploadedKYCEvent(GetProductRequest(userId: loginResponse!.id)));
 
    //   bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
@@ -79,6 +82,12 @@ class _MoreoptionsState extends State<Moreoptions>
           });
           bloc.initial();
         }
+        if (state is AllUserDetails) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            userDetails = state.response;
+          });
+          bloc.initial();
+        }
         if (state is UserLogOut) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.offAll(SignInPage(), predicate: (route) => false);
@@ -95,8 +104,8 @@ class _MoreoptionsState extends State<Moreoptions>
 
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            userDetails!.profilePic= state.response.profilePicture;
-            userImage.value=state.response.profilePicture!;
+            userDetails!.profilePic= state.response?.profilePicture;
+           // userImage.value=state.response?.profilePicture!;
           });
           bloc.initial();
         }
@@ -173,9 +182,7 @@ class _MoreoptionsState extends State<Moreoptions>
                                       width: 70.w,
                                       decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          image: DecorationImage(image: userDetails!.profilePic==null?Image.asset(
-                                              "assets/image/images_png/tempImage.png").image:
-                                          Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image ),
+                                          image: DecorationImage(image: getProfileImage() ),
                                           border: Border.all(
                                               color: AppColor.black0,
                                               width: 1.5.w)
@@ -262,6 +269,17 @@ class _MoreoptionsState extends State<Moreoptions>
         );
       },
     );
+  }
+
+  ImageProvider<Object> getProfileImage() {
+    if(userDetails == null){
+      return Image.asset(
+          "assets/image/images_png/tempImage.png").image;
+    }else{
+      return userDetails!.profilePic==null?Image.asset(
+          "assets/image/images_png/tempImage.png").image:
+      Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image;
+    }
   }
 
   navigateToNewScreen(int position) {

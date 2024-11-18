@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
@@ -84,7 +85,7 @@ class _ConfirmBulkPaymentDataState extends State<ConfirmBulkPaymentData>
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.back();
             showSuccessSlidingModal(context,
-                successMessage:state.response.message);
+                successMessage:state.response.data[0].message);
 
           });
           bloc.initial();
@@ -93,7 +94,7 @@ class _ConfirmBulkPaymentDataState extends State<ConfirmBulkPaymentData>
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.back();
             showSuccessSlidingModal(context,
-                successMessage:state.response.message);
+                successMessage:state.response.data[0].message);
           });
           bloc.initial();
         }
@@ -174,7 +175,7 @@ class _ConfirmBulkPaymentDataState extends State<ConfirmBulkPaymentData>
                           ),
                           Text(
                             widget.productPlanList.productPlanName.replaceAll(widget.airtimeRecharge.networkName.toUpperCase(), ""),
-                            style: CustomTextStyle.kTxtBold.copyWith(
+                            style:  GoogleFonts.inter(
                                 color: AppColor.black100,
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w400),
@@ -203,7 +204,7 @@ class _ConfirmBulkPaymentDataState extends State<ConfirmBulkPaymentData>
                                 symbol: '\₦', decimalDigits: 1)
                                 .format(
                                 ( double.parse(widget.productPlanList.sellingPrice.toString())*widget.phonenumbers.length)),
-                            style: CustomTextStyle.kTxtBold.copyWith(
+                            style: GoogleFonts.inter(
                                 color: AppColor.black100,
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w400),
@@ -225,11 +226,11 @@ class _ConfirmBulkPaymentDataState extends State<ConfirmBulkPaymentData>
                                   userId: loginResponse!.id,
                                   productPlanId: widget.productPlanList.productPlanId,
                                   phoneNumber:widget.phonenumbers.toString().replaceAll("[", "")
-                                      .replaceAll("]", ""),
+                                      .replaceAll("]", "").replaceAll(" ", ""),
                                   productPlanCategoryId: widget.airtimeRecharge.productPlanCategoryId,
                                   pin: response[1],
                                   amount:
-                                  widget.productPlanList.sellingPrice.toString()
+                                  widget.productPlanList.amount
                                   , walletCategory:"naira_wallet",
                                   validatephonenetwork: 0
                               )));

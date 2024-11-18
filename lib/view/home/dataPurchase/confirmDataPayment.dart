@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
@@ -72,7 +73,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.back();
             showSuccessSlidingModal(context,
-                successMessage:state.response.message);
+                successMessage:state.response.data[0].message);
 
           });
           bloc.initial();
@@ -81,7 +82,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.back();
             showSuccessSlidingModal(context,
-                successMessage:state.response.message);
+                successMessage:state.response.data[0].message);
           });
           bloc.initial();
         }
@@ -227,7 +228,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
                                     symbol: '\₦', decimalDigits: 0)
                                     .format(double.parse(
                                    widget.productPlanList.sellingPrice.toString())),
-                                style: CustomTextStyle.kTxtBold.copyWith(
+                                style:  GoogleFonts.inter(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400),
@@ -294,7 +295,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
                                     symbol: '\₦', decimalDigits: 1)
                                     .format(double.parse(
                                     widget.productPlanList.sellingPrice.toString())),
-                                style: CustomTextStyle.kTxtBold.copyWith(
+                                style: GoogleFonts.inter(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400),

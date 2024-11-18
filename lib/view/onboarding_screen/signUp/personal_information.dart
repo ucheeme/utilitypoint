@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/main.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 
@@ -44,7 +45,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
   late OnboardNewBloc bloc;
   @override
   void initState() {
-
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountSecondStep,value: false);
     super.initState();
 
     // Slide Animation
@@ -99,6 +100,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
 
     if (state is UserInfoUpdatedState){
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        loginResponse =state.response;
         loginResponse?.email =state.response.email;
         loginResponse?.firstName =state.response.firstName;
         loginResponse?.lastName =state.response.lastName;
@@ -109,6 +111,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
         loginResponse?.token = state.response.token;
         accessToken =state.response.token;
         userId = state.response.id;
+        MySharedPreference.saveCreateAccountStep(key: isCreateAccountFourthStep,value: true);
         MySharedPreference.saveUserLoginResponse(jsonEncode(loginResponse));
         Get.toNamed(Pages.transactionPin);
       });
@@ -284,6 +287,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
                         }
                     ),
                     height16,
+
                     Text("Referral Code (Optional)", style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontWeight: FontWeight.w400,

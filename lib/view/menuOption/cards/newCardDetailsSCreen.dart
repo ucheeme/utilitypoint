@@ -27,6 +27,7 @@ import '../../../model/request/getProduct.dart';
 import '../../../model/request/getUserRequest.dart';
 import '../../../model/request/unfreezeCard.dart';
 import '../../../model/response/airtimeDatatransactionHistory.dart';
+import '../../../model/response/cardDetailInformation.dart';
 import '../../../model/response/cardTransactions.dart';
 import '../../../model/response/listofVirtualCard.dart';
 import '../../../utils/app_color_constant.dart';
@@ -42,8 +43,8 @@ import 'CardDesign.dart';
 
 class NewCardInformation extends StatefulWidget {
   UserVirtualCards? userVirtualCards;
-
-  NewCardInformation({super.key, this.userVirtualCards});
+  SingleCardInformation? singeCardDetails;
+  NewCardInformation({super.key, this.userVirtualCards,this.singeCardDetails});
 
   @override
   State<NewCardInformation> createState() => _NewCardInformationState();
@@ -54,6 +55,7 @@ class _NewCardInformationState extends State<NewCardInformation>
   late SlideAnimationManager _animationManager;
   List<UserVirtualCards> userCards = [];
   late VirtualcardBloc bloc;
+  SingleCardInformation? singeCardDetails;
   late ProductBloc productBloc;
   bool isLoading = false;
   final con = GestureFlipCardController();
@@ -62,6 +64,7 @@ class _NewCardInformationState extends State<NewCardInformation>
   @override
   void initState() {
   WidgetsBinding.instance.addPostFrameCallback((_){
+    singeCardDetails = widget.singeCardDetails;
     setState(() {
       isLoading=true;
     });
@@ -154,6 +157,16 @@ class _NewCardInformationState extends State<NewCardInformation>
           });
           bloc.initial();
         }
+        if (state is SingleCardDetail) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              isLoading = false;
+              singeCardDetails=state.response;
+            });
+
+          });
+          bloc.initial();
+        }
 
         return OverlayLoaderWithAppIcon(
           isLoading: isLoading,
@@ -198,12 +211,17 @@ class _NewCardInformationState extends State<NewCardInformation>
                     setState(() {
                       isLoading = true;
                     });
-                    bloc.add(GetUserCardEvent(
-                        GetUserIdRequest(userId: loginResponse!.id)));
+                    // bloc.add(GetUserCardEvent(
+                    //     GetUserIdRequest(userId: loginResponse!.id)));
+                    bloc.add(GetSingleCardDetailsEvent(
+                        GetProductRequest(userId: loginResponse!.id,
+                            cardId:widget.singeCardDetails!.message.details.id)));
                   }
                 });
                 productBloc.initial();
               }
+
+
               if(state is AllDollarTransactions){
                 WidgetsBinding.instance.addPostFrameCallback((_){
                     transactionList=state.response;
@@ -287,11 +305,14 @@ class _NewCardInformationState extends State<NewCardInformation>
                 axis: FlipAxis.horizontal,
                 controller:con, // used to ccontrol the Gesture flip programmatically
                 enableController : false ,// if [True] if you need flip the card using programmatically
-              frontWidget:  CardInfoDesign(cardDetail: widget.userVirtualCards),
+              frontWidget:  CardInfoDesign(cardDetail: widget.userVirtualCards,
+                  information:singeCardDetails),
             backWidget:  Container(
               margin: EdgeInsets.only(top: 20.h),
                 height: 164.h,
-                child: CardBackView(cardDetail: widget.userVirtualCards)),
+                child: CardBackView(
+                  cardDetail: widget.userVirtualCards,
+                  information: singeCardDetails,)),
           ),
 
                     Gap(24.h),
@@ -702,6 +723,7 @@ class _TopUpCardOptionState extends State<TopUpCardOption> {
                       SizedBox(
                           height: 58.h,
                           child: CustomizedTextField(
+                            keyboardType: TextInputType.number,
                             onChanged: isFromNaira
                                 ? (value) {
                               if (double.parse(value) >

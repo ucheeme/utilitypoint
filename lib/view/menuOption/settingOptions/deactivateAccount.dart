@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -16,6 +17,7 @@ import '../../../model/request/userAlertRequest.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/app_util.dart';
 import '../../../utils/customAnimation.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/reOccurringWidgets/transactionPin.dart';
 import '../../../utils/reuseable_widget.dart';
 
@@ -39,9 +41,9 @@ class _DeactivateAcctScreenState extends State<DeactivateAcctScreen>  with Ticke
   @override
   void initState() {
     if(userDetails!.accountDeactivation =="1"){
-      isActivateAcct = true;
+      isActivateAcct = false;
     }else{
-      isActivateAcct= false;
+      isActivateAcct= true;
     }
     super.initState();
     // Initialize the SlideAnimationManager
@@ -73,6 +75,7 @@ class _DeactivateAcctScreenState extends State<DeactivateAcctScreen>  with Ticke
            showSuccessSlidingModal(context,successMessage: "You account has been successfully ${isActivateAcct?"deactivated":"activated"}",
            onTap: (){
              Get.back();
+             Get.offAll(SignInPage(), predicate: (route) => false);
            }
            );
           });
@@ -153,21 +156,23 @@ class _DeactivateAcctScreenState extends State<DeactivateAcctScreen>  with Ticke
                   ),
                   Spacer(),
                   CustomButton(onTap:  () async {
-                    List<dynamic> response =
-                    await Get.to(() => TransactionPin());
-                    if (response[0]) {
-                      if(userDetails?.pin == response[1]){
-                        bloc.add(UpdateUserAppSettingEvent(
-                            UserAlertNotificationRequest(
-                              userId: loginResponse!.id,
-                              emailNotification:userDetails!.emailNotification,
-                              pushNotification: userDetails!.emailNotification,
-                              smsAlert: userDetails!.smsAlert,
-                              accountDeactivation:isActivateAcct?"0":"1" ,
-                            )));
-                      }
-                    }
-
+                  // bool answer = await showSlidingModalDeactivateAccount(context);
+                  // if(answer){
+                     List<dynamic> response =
+                     await Get.to(() => TransactionPin());
+                     if (response[0]) {
+                       if(userDetails?.pin == response[1]){
+                         bloc.add(UpdateUserAppSettingEvent(
+                             UserAlertNotificationRequest(
+                               userId: loginResponse!.id,
+                               emailNotification:userDetails!.emailNotification,
+                               pushNotification: userDetails!.emailNotification,
+                               smsAlert: userDetails!.smsAlert,
+                               accountDeactivation:isActivateAcct?"1":"0" ,
+                             )));
+                       }
+                     }
+                  // }
                   },
                     height: 58.h,
                     buttonText:isActivateAcct? "Deactivate Account":"Activate Account",
@@ -222,3 +227,111 @@ class BulletPoint extends StatelessWidget {
   }
 }
 
+class DeactivateaccountQ extends StatelessWidget {
+  DeactivateaccountQ({super.key});
+  late ProfileBloc bloc;
+  @override
+  Widget build(BuildContext context) {
+    bloc= BlocProvider.of<ProfileBloc>(context);
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration.zero, () {
+              AppUtils.showSnack(state.errorResponse.message, context);
+            });
+          });
+          bloc.initial();
+        }
+        if (state is UserLogOut) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            MySharedPreference.deleteAllSharedPref();
+            Get.offAll(SignInPage(), predicate: (route) => false);
+          });
+          bloc.initial();
+        }
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body:Animate(
+            effects: [SlideEffect()],
+            child: Container(
+              margin: EdgeInsets.only(top: Get.height/2,left: 12.w,right: 12.w),
+              height: 262.h,
+              width: Get.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.r),
+                  color: AppColor.black0
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Gap(24.h),
+                  Text(
+                    "Account Deactivation",
+                    style: CustomTextStyle.kTxtBold.copyWith(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.black100
+                    ),
+                  ),
+                  Gap(15.h),
+                  Text(
+                    "Are you sure you want to deactivate your account?",
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.black100
+                    ),
+                  ),
+                  Text(
+                    textAlign: TextAlign.center,
+                    "You will be unable to access it again until you contact support",
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.black100
+                    ),
+                  ),
+                  Gap(22.h),
+                  CustomButton(
+                    height: 58.h,
+                    onTap: (){
+                      // isLogOut = true.obs;
+                      Get.back(result: true);
+                      Get.back(result: true);
+                    },
+                    width: 222.w,
+                    buttonText: "Deactivate my account",
+                    buttonColor: AppColor.primary100,
+                    textColor: AppColor.black0,
+                    borderRadius: 8.r,
+                  ),
+                  TextButton(onPressed: (){
+                    Get.back(result: false);
+                  },
+                      child: Text(
+                        "Cancel",
+                        style: CustomTextStyle.kTxtMedium.copyWith(
+                            color: AppColor.secondary100,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400
+                        ),
+                      ))
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+showSlidingModalDeactivateAccount(BuildContext context,) {
+  showDialog(
+    context: context,
+    // Makes the background transparent
+    builder: (BuildContext context) {
+      return DeactivateaccountQ();
+    },
+  );
+}

@@ -192,7 +192,8 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
                 children: [
                   GestureDetector(
                     onTap: (){
-                      bloc.add(GetUserVirtualAccountEvent(GetProductRequest(userId: userId,pin: userDetails!.pin)));
+                      bloc.add(GetUserVirtualAccountEvent(GetProductRequest(
+                          userId: loginResponse!.id,pin: userDetails!.pin)));
                     },
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -215,9 +216,15 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
                           setState(() {
                           });
                         },
-                        child: listButtons(title: element.fundingOptionName)
+                        child: index==0?listButtons(title: element.fundingOptionName):
+                            SizedBox()
                       )
                   )
+                  // GestureDetector(
+                  //     onTap: (){
+                  //       Get.to(FundNairaWalletSection(bankCodes:nairaFundingOptions[0].bankCodes));
+                  //     },
+                  //     child: listButtons(title:nairaFundingOptions[0].fundingOptionName))
                 ],
               ):
               Column(
@@ -239,10 +246,10 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
                   ...userVirtualAccounts.mapIndexed((element,index)=>
                       GestureDetector(
                           onTap: (){
-
+                           // 4601904919
                           },
                           child:  Container(
-                            height: 90.h,
+                            height: 96.h,
                             padding: EdgeInsets.symmetric(horizontal: 12.w,vertical: 5.h),
                             margin: EdgeInsets.symmetric(vertical: 14.h),
                             decoration: BoxDecoration(

@@ -7,6 +7,7 @@ String noTransaction = "assets/image/images_png/no_transaction.png";
 String profile = "assets/image/images_png/profile_unselected.png";
 String registrationComplete = "assets/image/images_png/registrationComplete.png";
 String success = "assets/image/images_png/successful.png";
+String error = "assets/image/icons/error_Icon.png";
 String transactionIconUnselected = "assets/image/images_png/transaction_icon_unselected.png";
 String notification = "assets/image/images_png/Notification.png";
 String ic_eye_close = "assets/image/images_png/eye_close.png";

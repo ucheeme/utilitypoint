@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,12 +8,16 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
+import 'package:utilitypoint/main.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
+import 'package:utilitypoint/utils/mySharedPreference.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
 
 
@@ -82,9 +87,10 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
   late OnboardNewBloc bloc;
+  late TapGestureRecognizer _tapGestureRecognizer =TapGestureRecognizer();
   @override
   void initState() {
-
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: true);
     super.initState();
 
     // Slide Animation
@@ -122,6 +128,8 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
     ));
     _slideController.forward();
     _slideControllerTop.forward();
+    _tapGestureRecognizer = TapGestureRecognizer()
+      ..onTap = _handlePress;
   }
 
 
@@ -129,7 +137,9 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
   bool isWrongOTP = false;
   bool isCompleteOTP=false;
   CreateAccountRequest? request;
-
+_handlePress(){
+  openUrl("https://app.zennalfinance.com/vdc/terms_conditions");
+}
   @override
   void dispose() {
     _slideControllerTop.dispose();
@@ -148,6 +158,9 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
         await GlobalData().setUserId(state.response.id);
         accessToken= state.response.token;
         userId=state.response.id;
+        MySharedPreference.saveCreateAccountStep(key: isCreateAccountSecondStep,value: true);
+        MySharedPreference.saveAccessToken(accessToken);
+        MySharedPreference.saveUserId(value: state.response.id);
         Get.toNamed(Pages.otpVerification,);
       });
       bloc.initial();
@@ -245,8 +258,8 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                       CustomizedTextField(
                         textEditingController: controller.passwordController,
                         onChanged: (value){isValidString(value);
-                          tempPassword = value;
-                          },
+                        tempPassword = value;
+                        },
                         hintTxt: "Enter password",
                         surffixWidget: GestureDetector(
                           onTap: (){
@@ -360,9 +373,9 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                               height: 70.h,
                               child: CustomizedTextField(
                                 onEditingComplete: (){controller.validatePasswords();
-                                  setState(() {});
+                                setState(() {});
                                 FocusScope.of(context).unfocus();
-                                  },
+                                },
                                 hintTxt: "Re-enter password",
                                 error:(snapshot.error!=null)?snapshot.error?.toString():null,
                                 onChanged:controller.setConfirmPassword,
@@ -406,7 +419,7 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                       Visibility(
                         visible: controller.isPasswordMatch,
                         child: Text("Password matches",style: CustomTextStyle.kTxtMedium.copyWith(
-                          color: AppColor.success100,fontSize: 10.sp
+                            color: AppColor.success100,fontSize: 10.sp
                         ),),
                       ),
                       height22,
@@ -437,7 +450,8 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                                         fontSize: 14.sp
                                     ),
                                     children: [
-                                      TextSpan(
+                                     TextSpan(
+                                       recognizer: _tapGestureRecognizer,
                                         text: "User Agreement and Privacy Policy",
                                         style: CustomTextStyle.kTxtMedium.copyWith(
                                             color: AppColor.primary100,
@@ -452,20 +466,44 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
                           ],
                         ),
                       ),
-                      height67,
+                      height45,
                       StreamBuilder<Object>(
-                        stream: controller.completeRegistrationFormValidation,
-                        builder: (context, snapshot) {
-                          return CustomButton(
-                            height:58.h,
-                            onTap: (){
-                              (snapshot.hasData == true && snapshot.data != null)?
-                              validateUserPassword(isAgreedPolicy, context):null;
-                            }, buttonText: "Next",
-                            textColor:AppColor.black0 ,
-                            buttonColor:  (snapshot.hasData == true && snapshot.data != null)?AppColor.primary100:
-                            AppColor.primary40,borderRadius: 8.r,);
-                        }
+                          stream: controller.completeRegistrationFormValidation,
+                          builder: (context, snapshot) {
+                            return CustomButton(
+                              height:58.h,
+                              onTap: (){
+                                (snapshot.hasData == true && snapshot.data != null)?
+                                validateUserPassword(isAgreedPolicy, context):null;
+                              }, buttonText: "Next",
+                              textColor:AppColor.black0 ,
+                              buttonColor:  (snapshot.hasData == true && snapshot.data != null)?AppColor.primary100:
+                              AppColor.primary40,borderRadius: 8.r,);
+                          }
+                      ),
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Already have an account?",
+                              style: CustomTextStyle.kTxtMedium.copyWith(
+                                  color: AppColor.black100,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13.sp
+                              ),
+                            ),
+                            Gap(4.w),
+                            CustomButton(
+                              height:58.h,
+                              onTap: (){
+                                Get.to(const SignInPage());
+                              }, buttonText:"SignIn",
+                              textfontSize: 13.sp,
+                              textColor:AppColor.primary100 ,
+                              buttonColor: Colors.transparent,borderRadius: 8.r,),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -476,6 +514,16 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
         ],
       ),
     );
+  }
+  Future<void> openUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    // Check if the URL can be launched
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
   validateUserPassword(bool response, BuildContext context){
     if(response){

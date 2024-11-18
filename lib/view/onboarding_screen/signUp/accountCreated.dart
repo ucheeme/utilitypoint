@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
+import '../../../main.dart';
 import '../../../utils/app_color_constant.dart';
 import '../../../utils/custom_keypad.dart';
 import '../../../utils/height.dart';
+import '../../../utils/mySharedPreference.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../bottomNav.dart';
@@ -30,6 +32,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>with TickerProviderStateMi
 
   @override
   void initState() {
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountFourthStep,value: false);
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountThirdStep,value: false);
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountSecondStep,value: false);
+    MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
     super.initState();
 
     // Animation controller
@@ -135,7 +141,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>with TickerProviderStateMi
                       child: CustomButton(
                         buttonColor:AppColor.primary100,
                         textColor: AppColor.black0,
-                        onTap: () { Get.offAll(MyBottomNav(), predicate: (route) => false); },
+                        onTap: () {
+                          isNewAccount=true;
+                          Get.offAll(MyBottomNav(), predicate: (route) => false); },
                         buttonText: "Continue to Home",
                         height: 58.h,
                         borderRadius: 8.r,

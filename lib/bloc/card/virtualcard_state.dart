@@ -96,3 +96,10 @@ class UserVirtualAccountGenerated extends VirtualcardState{
   @override
   List<Object?> get props => [response];
 }
+
+class SingleCardDetail extends VirtualcardState{
+  final SingleCardInformation response;
+  const SingleCardDetail(this.response);
+  @override
+  List<Object?> get props => [response];
+}
