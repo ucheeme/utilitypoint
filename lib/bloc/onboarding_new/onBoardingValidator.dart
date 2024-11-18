@@ -322,7 +322,20 @@ class OnboardingFormValidation {
         lastName: _lastNameSubject.value.trim(),
         otherNames: "",
         userName: _userNameSubject.value.trim(),
-        phoneNumber: _phoneSubject.value.trim());
+        phoneNumber: "0${_phoneSubject.value.trim()}",
+        addressStreet: "Lagos Nigeria",
+        identificationNumber: "22222222222",
+        identificationType: "NIN",
+        identityType: "BVN",
+        state: "Lagos",
+        city: "Lagos",
+        country: "Lagos",
+        identityNumber: "22222222222",
+        identityImage:"https://default_image.png",
+        photo:"https://default_image.png",
+        postalCode: "10000",
+        dob: "1990-01-01"
+    );
   }
 
   SetTransactionPinRequest setTransactionPinRequest() {

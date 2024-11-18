@@ -2,12 +2,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 
@@ -28,7 +30,9 @@ class ReportanissueScreen extends StatefulWidget {
 class _ReportanissueScreenState extends State<ReportanissueScreen> {
   late ProfileBloc bloc;
   TextEditingController subjectController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
 String fileName ="";
+  FilePickerResult? resultValue;
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProfileBloc>(context);
@@ -97,7 +101,7 @@ String fileName ="";
                   ),
                   Gap(16.h),
                   Text(
-                   "Subject",
+                   "Body",
                     style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontWeight: FontWeight.w400,
@@ -105,7 +109,7 @@ String fileName ="";
                   ),
                   height8,
                   ReusableTextFormField(
-                    controller: subjectController,
+                    controller: bodyController,
                     isPassword: false,
                     validator: null,
                     maxlines: 8,
@@ -150,6 +154,7 @@ String fileName ="";
                           ),
                         ),
                       ),
+                      Gap(10.w),
                       Visibility(
                         visible: fileName.isNotEmpty,
                         child: Container(
@@ -180,7 +185,20 @@ String fileName ="";
                         fontSize: 12.sp),
                   ),
                   Gap(32.h),
-                  CustomButton(onTap: (){}, 
+                  CustomButton(onTap: (){
+                    if(subjectController.text.isNotEmpty&&bodyController.text.isNotEmpty){
+                      sendEmail(
+                          emailAddress: "utilitypointsolution@gmail.com",
+                          //  emailAddress: "ucheemekavictor@gmail.com",
+                          body: bodyController.text,
+                          subject: subjectController.text,
+                          result: resultValue
+                      );
+                    }else{
+                      AppUtils.showInfoSnack("No field should be empty", context);
+                    }
+
+                  },
                       buttonColor: AppColor.primary100,
                       textColor: AppColor.black0,
                       borderRadius: 8.r,
@@ -206,6 +224,7 @@ String fileName ="";
 
     if (result != null) {
       // Get the picked file
+      resultValue = result;
       PlatformFile file = result.files.first;
 
       // Check file size (should not be larger than 10MB)
@@ -221,6 +240,34 @@ String fileName ="";
     } else {
       // User canceled the picker
       AppUtils.showInfoSnack('File selection canceled.',context);
+    }
+  }
+
+  Future<void> sendEmail({
+    required String emailAddress,
+    String subject = '',
+    String body = '',
+    FilePickerResult? result
+  }) async {
+    String? attachmentPath;
+    if (result != null && result.files.single.path != null) {
+      attachmentPath = result.files.single.path;
+    }
+
+    // Construct the email with attachment
+    final Email email = Email(
+      body: body,
+      subject: subject,
+      recipients: [emailAddress],
+      attachmentPaths: attachmentPath != null ? [attachmentPath] : [],
+      isHTML: false,
+    );
+
+    // Send the email
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (error) {
+      print('Could not send email: $error');
     }
   }
 

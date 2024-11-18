@@ -11,6 +11,7 @@ import 'package:utilitypoint/bloc/card/virtualcard_bloc.dart';
 import 'package:utilitypoint/model/request/generateBankAcct.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../model/response/nairaFundingOptions.dart';
@@ -62,6 +63,16 @@ class _FundWalletScreeState extends State<FundNairaWalletSection>  with TickerPr
             Future.delayed(Duration.zero, (){
               AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
             });
+          });
+          bloc.initial();
+        }
+        if (state is UserVirtualAccountGenerated){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSuccessSlidingModal(context,
+            successMessage: "Your virtual account details is:"
+                " ${state.response.data.accountNumber}/n"
+                " ${state.response.data.accountName}/n ${state.response.data.bankName}"
+            );
           });
           bloc.initial();
         }
@@ -158,8 +169,9 @@ class _FundWalletScreeState extends State<FundNairaWalletSection>  with TickerPr
                   CustomButton(onTap: () async {
                     List<dynamic>response = await Get.to(TransactionPin());
                     if(response[0]){
+
                       bloc.add(CreateUserVirtualAccountEvent(GenerateBankAccountRequest(
-                        userId: userId!,
+                        userId: loginResponse!.id,
                         bankCode: selectedOption!.bankCode,
                         pin: response[1],
                         fundingOptionId: selectedOption!.fundingOptionId,

@@ -159,7 +159,7 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
                               padding: EdgeInsets.zero,
                               itemCount: 2,
                               itemBuilder:(cntxt,index){
-                                String cardRef =generateRandomNumberString(9);
+
                             return cardDesign(
                                 accountBalance: double.parse(index==0?userDetails!.nairaWallet:userDetails!.dollarWallet),
                                 balanceRemaining: 0.00,

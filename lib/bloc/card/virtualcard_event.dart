@@ -76,3 +76,9 @@ class BuyDollarEvent extends VirtualcardEvent {
   @override
   List<Object?> get props => [];
 }
+class GetSingleCardDetailsEvent extends VirtualcardEvent {
+  final GetProductRequest request;
+  const GetSingleCardDetailsEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}

@@ -73,10 +73,19 @@ class _ReviewOrderState extends State<ReviewOrder>
       builder: (context, state) {
         if (state is VirtualcardError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration.zero, () {
-              AppUtils.showSnack(
-                  state.errorResponse.message ?? "Error occurred", context);
-            });
+            if(state.errorResponse.message.toLowerCase().contains("insufficient")){
+              showFailureSlidingModal(headerText: "Failed",
+                  onTap: (){
+                Get.back();
+                  },
+                  successMessage:  state.errorResponse.message,
+                  context);
+            }else{
+              Future.delayed(Duration.zero, () {
+                AppUtils.showSnack(
+                    state.errorResponse.message ?? "Error occurred", context);
+              });
+            }
           });
           bloc.initial();
         }
@@ -125,11 +134,17 @@ class _ReviewOrderState extends State<ReviewOrder>
                 pin:userPin,
               )));
             } else {
-              Get.back();
-              Get.back();
-              showSuccessSlidingModal(context,
-                  successMessage: state.response.message);
-            }
+              if(state.response.message.toLowerCase().contains("insufficient")){
+                showFailureSlidingModal(headerText: "Failed",
+                    successMessage:state.response.message,
+                    context);
+              }else{
+                Get.back();
+                Get.back();
+                showSuccessSlidingModal(context,
+                    successMessage: state.response.message);
+              }
+          }
           });
           bloc.initial();
         }

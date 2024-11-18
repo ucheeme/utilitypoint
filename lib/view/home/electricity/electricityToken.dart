@@ -14,11 +14,11 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '../../../bloc/product/product_bloc.dart';
@@ -100,13 +100,13 @@ class _ElectricTokenScreenState extends State<ElectricTokenScreen> with TickerPr
       final imageBytes = await screenshotController.capture();
       if (imageBytes != null) {
         // Save the image to the gallery using image_gallery_saver
-        final result = await ImageGallerySaver.saveImage(
+        final SaveResult result = await SaverGallery.saveImage(
           Uint8List.fromList(imageBytes),
           quality: 80,
-          name: "screenshot",
+          fileName: "screenshot", skipIfExists: false,
         );
 
-        if (result['isSuccess']) {
+        if (result.isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Screenshot saved to gallery!')),
           );
@@ -437,20 +437,20 @@ class _ElectricTokenScreenState extends State<ElectricTokenScreen> with TickerPr
                         ),
                       ),
                       Gap(32.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: CustomButton(
-                          onTap: () async {
-                            captureAndSaveScreenshot(context);
-                          },
-                          buttonText: "Download",
-                          height: 58.h,
-                          textColor: AppColor.black0,
-                          borderRadius: 8.r,
-                          buttonColor: AppColor.primary100,
-                        ),
-                      ),
-                      Gap(10.h),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      //   child: CustomButton(
+                      //     onTap: () async {
+                      //       captureAndSaveScreenshot(context);
+                      //     },
+                      //     buttonText: "Download",
+                      //     height: 58.h,
+                      //     textColor: AppColor.black0,
+                      //     borderRadius: 8.r,
+                      //     buttonColor: AppColor.primary100,
+                      //   ),
+                      // ),
+                      // Gap(10.h),
                       GestureDetector(
                         onTap: (){
                           Get.offAll(MyBottomNav(), predicate: (route) => false);

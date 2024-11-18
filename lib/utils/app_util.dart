@@ -26,6 +26,7 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/menuOption/notifications.dart';
+import 'package:utilitypoint/view/onboarding_screen/verifyForgotPasswordOtp.dart';
 
 import '../bloc/onboarding_new/onBoardingValidator.dart';
 import '../bloc/profile/profile_bloc.dart';
@@ -47,7 +48,7 @@ class AppUtils{
     }
   }
   static void showSnack(String msg, BuildContext? context){
-    CherryToast.error(
+    CherryToast.error(toastDuration: const Duration(seconds: 2),
         animationType: AnimationType.fromTop,
         title:   Text(msg)
     ).show(context!);
@@ -449,6 +450,103 @@ void showSuccessSlidingModal(BuildContext context,{String successMessage="",Stri
     },
   );
 }
+void showFailureSlidingModal(BuildContext context,{String successMessage="",String headerText ="Successful!",
+  Function()? onTap
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent, // Makes the background transparent
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.7, // This is 60% of the screen height
+        minChildSize: 0.4, // Minimum height when you drag down
+        maxChildSize: 0.7, // Maximum height
+        builder: (_, controller) {
+          return Container(
+            padding: EdgeInsets.all(16.w),
+            margin: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 42.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30.r),
+            ),
+            child: ListView(
+
+              controller: controller, // For scrollable content
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: SizedBox(
+                        height: 24.h,
+                        width: 24.w,
+                        child: Image.asset(closeImage)),
+                  ),
+                ),
+                height50,
+                SizedBox(
+                  height: 98.h,
+                  width: 98.w,
+                  child: Image.asset(error),
+                ),
+                Gap(28.h),
+                Text(
+                  headerText,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 24.sp, fontWeight: FontWeight.w400),
+                ),
+                height12,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40.w),
+                  child: Text(
+                    successMessage,
+                    textAlign: TextAlign.center,
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        color: AppColor.black100,
+                        fontSize: 14.sp, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                Gap(56.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 34.w),
+                  child: CustomButton(
+                    onTap:onTap?? () async {
+                      // Navigator.pop(context);
+                      },
+                    buttonText: 'Retry',
+                    buttonColor: AppColor.primary100,
+                    textColor: AppColor.black0,
+                    borderRadius: 8.r,
+                    height: 46.h,
+                    width: 222.w,
+                  ),
+                ),
+                height10,
+                TextButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: Text(
+                    'Go Back',
+                    style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.secondary100,
+                        fontSize: 12.sp, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 void showNewPasswordSuccessfulSlidingModal(BuildContext context,{String successMessage="",String headerText ="Successful!"}) {
   showModalBottomSheet(
     context: context,
@@ -637,7 +735,7 @@ class LogOut extends StatelessWidget {
         effects: [SlideEffect()],
         child: Container(
           margin: EdgeInsets.only(top: Get.height/2,left: 12.w,right: 12.w),
-          height: 220.h,
+          height: 222.h,
           width: Get.width,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30.r),
@@ -671,7 +769,7 @@ class LogOut extends StatelessWidget {
                   Get.back(result: true);
                   bloc.add(LogOutUserEvent(
                       LogOutRequest(
-                        userId: userId!,
+                        userId: loginResponse!.id,
                       )));
                 },
                 width: 222.w,

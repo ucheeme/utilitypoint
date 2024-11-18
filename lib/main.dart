@@ -29,6 +29,11 @@ import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import 'flavour/flavour.dart';
 import 'flavour/locator.dart';
+bool isNewAccount =false;
+String isCreateAccountFirstStep ="isCreateAccountFirstStep";
+String isCreateAccountSecondStep ="isCreateAccountSecondStep";
+String isCreateAccountThirdStep ="isCreateAccountThirdStep";
+String isCreateAccountFourthStep ="isCreateAccountFourthStep";
 ThemeMode themeMode = ThemeMode.system;
 void mainCommon(AppFlavorConfig config) async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,19 +87,19 @@ class MyApp extends StatelessWidget {
         initialRoute: Pages.initial,
         // onGenerateRoute: onGenerateRoute,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          scaffoldBackgroundColor: AppColor.primary100,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          useMaterial3: true,
-          brightness:Brightness.light,
-        ),
-        darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          //primarySwatch: Colors.blue,
-        //  scaffoldBackgroundColor: Colors.black,
-          // Customize other theme properties for dark mode
-        ),
-        themeMode:themeMode ,
+        // theme: ThemeData(
+        //   scaffoldBackgroundColor: AppColor.primary100,
+        //   visualDensity: VisualDensity.adaptivePlatformDensity,
+        //   useMaterial3: true,
+        //   brightness:Brightness.light,
+        // ),
+        // darkTheme: ThemeData(
+        //   brightness: Brightness.dark,
+        //   //primarySwatch: Colors.blue,
+        // //  scaffoldBackgroundColor: Colors.black,
+        //   // Customize other theme properties for dark mode
+        // ),
+        // themeMode:themeMode ,
         builder: (context, widget) {
           return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
         },

@@ -14,6 +14,7 @@ import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/profile/profile_bloc.dart';
+import '../../model/request/getProduct.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
 import '../../utils/custom_keypad.dart';
@@ -104,17 +105,17 @@ class _ConfirmTransactionPinState extends State<ConfirmTransactionPin>with Ticke
           });
           bloc.initial();
         }
-
         if (state is PinReset){
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            bloc.add(GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
             userDetails!.pin = pinValue;
             Get.back();
             Get.back();
             Get.back();
             showSuccessSlidingModal(
                 context,
-                headerText: "Detail Updated!",
-                successMessage:"User Update was successful!");
+                headerText: "PIN Updated!",
+                successMessage:"User Pin Update was successful!");
           });
           bloc.initial();
         }

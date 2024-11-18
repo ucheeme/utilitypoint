@@ -24,6 +24,7 @@ import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
 import '../../utils/reusable_widget_two.dart';
 import '../../utils/reuseable_widget.dart';
+import '../home/home_screen.dart';
 import '../menuOption/notifications.dart';
 
 List<UserTransactions> tempUserTransactionList = [];
@@ -64,6 +65,9 @@ class _TransactionScreenState extends State<TransactionScreen>
             "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
       )));
       //}
+      setState(() {
+        isHomePageWallet=false;
+      });
       //   bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
       //     userId: loginResponse!.id,
       //     startDate: "${currentDateTime.year}-${currentDateTime.month}-01",

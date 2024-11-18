@@ -2,8 +2,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-
-
 import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +12,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:utilitypoint/model/response/buy_electricity_response.dart';
 import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 
@@ -59,7 +58,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
 
   @override
   void initState() {
-    print(widget.userTransactions!.amount ?? "0");
+    print(widget.userTransactions!.userScreenMessage);
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
@@ -71,8 +70,10 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
     _animationManager.dispose();
     super.dispose();
   }
+
   ScreenshotController screenshotController = ScreenshotController();
   String userPin = "";
+
   Future<void> captureAndSaveScreenshot(context) async {
     // Request permissions for Android
     if (Platform.isAndroid) {
@@ -84,13 +85,14 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
       final imageBytes = await screenshotController.capture();
       if (imageBytes != null) {
         // Save the image to the gallery using image_gallery_saver
-        final result = await ImageGallerySaver.saveImage(
+        final SaveResult result = await SaverGallery.saveImage(
           Uint8List.fromList(imageBytes),
           quality: 80,
-          name: "screenshot",
+          fileName: "screenshot",
+          skipIfExists: false,
         );
 
-        if (result['isSuccess']) {
+        if (result.isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Screenshot saved to gallery!')),
           );
@@ -107,6 +109,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProductBloc>(context);
@@ -231,7 +234,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.h),
                   child: SizedBox(
-                    height: 28.h,
+                    height: 35.h,
                     // width: 295.w,
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,6 +278,50 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                   padding: EdgeInsets.symmetric(vertical: 5.h),
                   child: SizedBox(
                     height: 28.h,
+                    // width: 295.w,
+                    child: Row(
+                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 114.w,
+                          child: Text(
+                            "Actual Amount:",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.primary100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        Gap(12.w),
+                        SizedBox(
+                          width: 200.w,
+                          child: Text(
+                            NumberFormat.currency(
+                                    symbol: (widget.userTransactions!
+                                                    .walletCategory ==
+                                                "naira_wallet" ||
+                                            widget.userTransactions!.description
+                                                .toLowerCase()
+                                                .contains("from naira wallet"))
+                                        ? '\₦'
+                                        : '\$',
+                                    decimalDigits: 0)
+                                .format(double.parse(
+                                    widget.userTransactions?.amount?? "0")),
+                            style: GoogleFonts.inter(
+                                color: AppColor.black100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.h),
+                  child: SizedBox(
+                    height: 28.h,
                     //   width: 295.w,
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.start,
@@ -299,6 +346,44 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: widget.userTransactions?.transactionCategory
+                              .toLowerCase() ==
+                          "data" ||
+                      widget.userTransactions?.transactionCategory
+                              .toLowerCase() ==
+                          "airtime",
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                    child: SizedBox(
+                      height: 28.h,
+                      //   width: 295.w,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Network:",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.primary100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Gap(12.w),
+                          SizedBox(
+                            width: 190.w,
+                            child: Text(
+                              "",
+                              style: CustomTextStyle.kTxtMedium.copyWith(
+                                  color: AppColor.black100,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -359,7 +444,8 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                           width: 200.w,
                           child: Text(
                             maxLines: 2,
-                            widget.userTransactions!.status ?? "No Value",
+                            widget.userTransactions!.userScreenMessage ??
+                                "No Value",
                             style: CustomTextStyle.kTxtMedium.copyWith(
                                 color: AppColor.black100,
                                 fontSize: 14.sp,
@@ -404,11 +490,11 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                     ),
                   ),
                 ),
-                Gap(12.h),
+                Gap(10.h),
                 Divider(
                   color: AppColor.black40,
                 ),
-                Gap(14.h),
+                Gap(8.h),
                 Padding(
                   padding: EdgeInsets.only(bottom: 5.h),
                   child: SizedBox(
@@ -478,20 +564,20 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                   ),
                 ),
                 Gap(20.h),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: CustomButton(
-                    onTap: () async {
-                      captureAndSaveScreenshot(context);
-                    },
-                    buttonText: "Download Receipt",
-                    height: 58.h,
-                    textColor: AppColor.black0,
-                    borderRadius: 8.r,
-                    buttonColor: AppColor.primary100,
-                  ),
-                ),
-                Gap(10.h),
+                // Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 16.w),
+                //   child: CustomButton(
+                //     onTap: () async {
+                //       captureAndSaveScreenshot(context);
+                //     },
+                //     buttonText: "Download Receipt",
+                //     height: 58.h,
+                //     textColor: AppColor.black0,
+                //     borderRadius: 8.r,
+                //     buttonColor: AppColor.primary100,
+                //   ),
+                // ),
+                // Gap(10.h),
                 GestureDetector(
                   onTap: () {
                     Get.offAll(MyBottomNav(), predicate: (route) => false);

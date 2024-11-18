@@ -13,6 +13,7 @@ import '../../model/request/generateBankAcct.dart';
 import '../../model/request/getProduct.dart';
 import '../../model/request/topUpCard.dart';
 import '../../model/request/unfreezeCard.dart';
+import '../../model/response/cardDetailInformation.dart';
 import '../../model/response/cardTransactions.dart';
 import '../../model/response/createVirtualAcctNum.dart';
 import '../../model/response/exchangeRate.dart';
@@ -47,6 +48,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
     on<BuyDollarEvent>((event,emit){handleBuyDollarEvent(event.request);});
     on<GetUserVirtualAccountEvent>((event,emit){handleGetUserVirtualAccountEvent(event.request);});
     on<CreateUserVirtualAccountEvent>((event,emit){handleCreateUserVirtualAccountEvent(event.request);});
+    on<GetSingleCardDetailsEvent>((event,emit){handleGetSingleCardDetailsEvent(event.request);});
   }
 
   void handleGetCardTransactionHistoryEvent(GetProductRequest event)async{
@@ -215,6 +217,23 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       final   response = await cardRepository.createVirtualAccount(event);
       if (response is CreateVirtualAccountNumberSuccess) {
         emit(UserVirtualAccountGenerated(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+  void handleGetSingleCardDetailsEvent( event)async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.getUserSingleCardDetails(event);
+      if (response is SingleCardInformation) {
+        emit(SingleCardDetail(response));
         AppUtils.debug("success");
       }else{
         emit(VirtualcardError(response as DefaultApiResponse));

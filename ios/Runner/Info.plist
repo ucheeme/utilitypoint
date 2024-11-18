@@ -62,5 +62,7 @@
     <true/>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need to save screenshots to your photo library.</string>
+    <key>MFMailComposeViewController</key>
+    <string> we need permission for you to be able to mail us directly</string>
 </dict>
 </plist>

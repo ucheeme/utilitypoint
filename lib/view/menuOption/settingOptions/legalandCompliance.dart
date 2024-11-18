@@ -6,41 +6,24 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:utilitypoint/utils/constant.dart';
-import 'package:utilitypoint/view/menuOption/settingOptions/alertNotification.dart';
-import 'package:utilitypoint/view/menuOption/settingOptions/deactivateAccount.dart';
-import 'package:utilitypoint/view/menuOption/settingOptions/legalandCompliance.dart';
-import 'package:utilitypoint/view/menuOption/settingOptions/securitySetting.dart';
-import 'package:utilitypoint/view/menuOption/settingOptions/supportAndHelp.dart';
-import '../../bloc/profile/profile_bloc.dart';
-import '../../utils/app_color_constant.dart';
-import '../../utils/customAnimation.dart';
-import '../../utils/pages.dart';
-import '../../utils/reuseable_widget.dart';
 
-class SettingsScreens extends StatefulWidget {
-  const SettingsScreens({super.key});
+import '../../../bloc/profile/profile_bloc.dart';
+import '../../../utils/app_color_constant.dart';
+import '../../../utils/customAnimation.dart';
+import '../../../utils/reuseable_widget.dart';
+
+class LegalAndComplianceScreen extends StatefulWidget {
+  const LegalAndComplianceScreen({super.key});
 
   @override
-  State<SettingsScreens> createState() => _SettingsScreensState();
+  State<LegalAndComplianceScreen> createState() => _LegalAndComplianceScreenState();
 }
 
-class _SettingsScreensState extends State<SettingsScreens>  with TickerProviderStateMixin {
+class _LegalAndComplianceScreenState extends State<LegalAndComplianceScreen>  with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
 
-  TextEditingController firstName = TextEditingController();
-  TextEditingController lastName = TextEditingController();
-
-  TextEditingController phoneNumber = TextEditingController();
   late ProfileBloc bloc;
-  List<String> settings =[
-    "Alerts & Notifications",
-    "Security Settings",
-    "Support & Help",
-    "Legal & Compliance",
-    "Deactivate Account"
-  ];
+
 
   @override
   void initState() {
@@ -85,7 +68,7 @@ class _SettingsScreensState extends State<SettingsScreens>  with TickerProviderS
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Settings")),
+                  child: CustomAppBar(title: "Legal and Compliance")),
             ),
           ),
           Gap(20.h),
@@ -103,14 +86,7 @@ class _SettingsScreensState extends State<SettingsScreens>  with TickerProviderS
               ),
               child: Column(
                 children: [
-                  ...settings.mapIndexed((element,index)=>
-                  GestureDetector(
-                    onTap: (){
-                      navigateToNewScreen(index);
-                    },
-                    child: listButtons(title: element),
-                  )
-                  )
+
                 ],
               ),
             ),
@@ -119,24 +95,6 @@ class _SettingsScreensState extends State<SettingsScreens>  with TickerProviderS
       ),
     );
   }
-  navigateToNewScreen(int position){
-    switch(position){
-      case 0: return Get.to(Alertnotification());
-      case 1: return Get.to(Securitysetting());
-      case 2: return Get.to(SupportAndHelpScreen());
-      //case 3: return Get.to(LegalAndComplianceScreen());
-      case 3: return openUrl("https://app.zennalfinance.com/vdc/privacy_policy");
-      case 4: return Get.to(DeactivateAcctScreen());
-    }
-  }
-  Future<void> openUrl(String url) async {
-    final Uri uri = Uri.parse(url);
 
-    // Check if the URL can be launched
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 }

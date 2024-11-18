@@ -2,17 +2,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/menuOption/settings.dart';
+
+import '../view/menuOption/settingOptions/verifyIdentity.dart';
 
 class NoticeBottomSheet extends StatefulWidget {
   final String title;
   final String body;
   double? size = 376.h;
   String? image;
-  NoticeBottomSheet({required this.title, required this.body,this.image,super.key, this.size,});
+  Function()? onTap;
+  NoticeBottomSheet({required this.title,this.onTap, required this.body,this.image,super.key, this.size,});
 
 
 
@@ -52,8 +58,9 @@ class _NoticeBottomSheetState extends State<NoticeBottomSheet> {
           CustomButton(buttonText: "Proceed",
             height: 58.h,
             buttonColor: AppColor.primary100,
-            onTap: (){
+            onTap:widget.onTap?? (){
             Navigator.pop(context,1);
+              Get.to(UserIdentityVerification());
           },textColor: AppColor.black0,borderRadius: 8.r, ),
          Gap(12.h),
         ],),

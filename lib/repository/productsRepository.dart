@@ -8,6 +8,8 @@ import 'package:utilitypoint/model/response/airtimeDatatransactionHistory.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
 import 'package:utilitypoint/model/response/userSetting.dart';
 import 'package:utilitypoint/repository/apiRepository.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../model/request/buyCableSubscriptionRequest.dart';
 import '../model/request/buyElectricity.dart';
@@ -162,7 +164,7 @@ class Productsrepository extends DefaultRepository {
     if (r is DefaultApiResponse) {
       if (r.status == true) {
         BuyAirtimeDataResponse res =
-        buyAirtimeResponseFromJson(json.encode(r));
+        buyAirtimeDataResponseFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -179,7 +181,7 @@ class Productsrepository extends DefaultRepository {
     if (r is DefaultApiResponse) {
       if (r.status == true) {
         BuyAirtimeDataResponse res =
-        buyAirtimeResponseFromJson(json.encode(r));
+        buyAirtimeDataResponseFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -196,7 +198,7 @@ class Productsrepository extends DefaultRepository {
     if (r is DefaultApiResponse) {
       if (r.status == true) {
         BuyAirtimeDataResponse res =
-        buyAirtimeResponseFromJson(json.encode(r));
+        buyAirtimeDataResponseFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -310,14 +312,27 @@ class Productsrepository extends DefaultRepository {
       return errorResponse!;
     }
   }
+
   Future<Object> getUserKYCUploads(GetProductRequest request) async {
     var response = await postRequest(
         null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        UserKycResponse res =
-        userKycResponseFromJson(json.encode(r.data));
+        UserKycResponse? res;
+        if(r.data==null){
+          res = UserKycResponse(id: "",
+              userId: loginResponse!.id,
+              nin: null, driversLicense: null,
+              votersCard: null,
+              profilePicture:userDetails==null? "assets/image/images_png/tempImage.png": userDetails!.profilePic,
+              internationalPassport: null,
+              verificationStatus: 0,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now());
+        }else{
+        res= userKycResponseFromJson(json.encode(r.data));
+        }
         return res;
       } else {
         return r;
@@ -327,14 +342,27 @@ class Productsrepository extends DefaultRepository {
       return errorResponse!;
     }
   }
-  Future<Object> getUserKYCStatus(GetProductRequest request) async {
+
+  Future<Object?> getUserKYCStatus(GetProductRequest request) async {
     var response = await postRequest(
         null, "${AppUrls.getUSerKYCVerificationStatus}?user_id=${request.userId}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        UserKycResponse res =
-        userKycResponseFromJson(json.encode(r.data));
+        UserKycResponse? res;
+        if(r.data==null){
+          res = UserKycResponse(id: "",
+              userId: loginResponse!.id,
+              nin: null, driversLicense: null,
+              votersCard: null,
+              profilePicture:userDetails==null? "assets/image/images_png/tempImage.png":userDetails!.profilePic,
+              internationalPassport: null,
+              verificationStatus: 0,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now());
+        }else{
+          res= userKycResponseFromJson(json.encode(r.data));
+        }
         return res;
       } else {
         return r;

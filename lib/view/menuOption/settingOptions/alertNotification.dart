@@ -71,6 +71,7 @@ class _AlertnotificationState extends State<Alertnotification>  with TickerProvi
         if (state is UserAppSettingUpdated){
           WidgetsBinding.instance.addPostFrameCallback((_) {
             state.response;
+            AppUtils.showSuccessSnack("Successful", context);
           });
           bloc.initial();
         }

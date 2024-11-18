@@ -117,7 +117,17 @@ class _CardInformationState extends State<CardInformation>
           });
           bloc.initial();
         }
-
+        if (state is SingleCardDetail) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              isLoading = false;
+            });
+            Get.to(NewCardInformation(userVirtualCards: widget.userVirtualCards,
+            singeCardDetails:state.response
+            ));
+          });
+          bloc.initial();
+        }
         return OverlayLoaderWithAppIcon(
           isLoading: isLoading,
           overlayBackgroundColor: AppColor.black40,
@@ -181,7 +191,14 @@ class _CardInformationState extends State<CardInformation>
                     Gap(51.h),
 
                    CustomButton(onTap: (){
-                     Get.to(NewCardInformation(userVirtualCards: widget.userVirtualCards,));
+                     setState(() {
+                       isLoading =true;
+                     });
+                     bloc.add(GetSingleCardDetailsEvent(GetProductRequest(
+                       userId: loginResponse!.id,
+                       cardId: widget.userVirtualCards!.cardId
+                     )));
+
                    }, buttonText: "Card Details",
                    textColor: AppColor.black0,
                      buttonColor: AppColor.primary100,

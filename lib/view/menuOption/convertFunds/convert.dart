@@ -58,19 +58,27 @@ class _ConvertScreenState extends State<ConvertScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
-      if(currencyConversionRateFees==null){
+      //if(currencyConversionRateFees==null){
         bloc.add(GetExchangeRateEvent());
-      }else{
-        exchangeRate = currencyConversionRateFees!.nairaRate;
-        amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
-      }
-      print("${widget.isCreateCard}");
-      amountToConvertController.text = widget.amountToConvert!;
-      valueToConvert = widget.amountToConvert!;
-      amountToConvertController.addListener(onTextChanged);
-      //8 amountConvertedController.addListener(onTextChanged2);
-      converting1 = amountToConvertController.text;
-      converted = amountConvertedController.text;
+      // }else{
+      //   exchangeRate = currencyConversionRateFees?.nairaRate??"1700";
+      //   amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
+      // }
+        if(widget.isTopUpCard==false){
+          amountToConvertController.text="0";
+          valueToConvert="0";
+          converting1="0";
+          amountConvertedController.text="0";
+          converted="0";
+        }else{
+          amountToConvertController.text = widget.amountToConvert!;
+          valueToConvert = widget.amountToConvert!;
+          amountToConvertController.addListener(onTextChanged);
+          //8 amountConvertedController.addListener(onTextChanged2);
+          converting1 = amountToConvertController.text;
+          converted = amountConvertedController.text;
+        }
+
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -138,8 +146,14 @@ class _ConvertScreenState extends State<ConvertScreen>
           circularProgressColor: AppColor.primary100,
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-          child: Scaffold(
-            body: appBodyDesign(getBody()),
+          child: GestureDetector(
+            onTap: (){
+              FocusScope.of(context).unfocus();
+
+            },
+            child: Scaffold(
+              body: appBodyDesign(getBody()),
+            ),
           ),
         );
       },
@@ -305,8 +319,26 @@ class _ConvertScreenState extends State<ConvertScreen>
                             top: 80.h,
                             left: 147.5.w,
                             child: GestureDetector(
-                              onTap:(widget.isTopUpCard==true||widget.isTopUpCard!=null)?
-                                  (){}:
+                              onTap:
+                              (widget.isTopUpCard==false)?
+                                  (){
+                                    print("Hi Dear");
+                                    setState(() {
+                                      if(currencyConvertingFrom=="USD"){
+                                        currencyConvertingFrom ="NGN";
+                                        currencyConvertingTo ="USD";
+                                        amountToConvertController.text=converting1;
+                                        amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                                        //
+                                      }else{
+                                        amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                                        amountToConvertController.text=converted;
+                                        currencyConvertingFrom ="USD";
+                                        currencyConvertingTo ="NGN";
+
+                                      }
+                                    });
+                                  }:
                                   (){
 
                                 setState(() {
@@ -384,7 +416,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                                       fontWeight: FontWeight.w400),
                                 ),
                                 Text(
-                                  "${currencyConversionRateFees!.feeRatePerCurrency} per 1 USD",
+                                  "${currencyConversionRateFees?.feeRatePerCurrency} per 1 USD",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
                                       color: AppColor.black100,
                                       fontSize: 14.sp,
@@ -409,7 +441,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                         print( converting?.amount);
                         print( receiving?.amount);
                         if(currencyConvertingFrom=="USD"){
-                          if(double.parse(amountToConvertController.text)>double.parse(userDetails!.dollarWallet)){
+                          if(double.parse(amountToConvertController.text)>double.parse(userDetails?.dollarWallet??"0")){
                             AppUtils.showInfoSnack("Insufficient Balance", context);
                           }else{
                             Get.to(
@@ -422,7 +454,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                             );
                           }
                         }else if(currencyConvertingFrom =="NGN"){
-                         if(double.parse(amountToConvertController.text.replaceAll(",", ""))>double.parse(userDetails!.nairaWallet)){
+                         if(double.parse(amountToConvertController.text.replaceAll(",", ""))>double.parse(userDetails?.nairaWallet??"0")){
                            AppUtils.showInfoSnack("Insufficient Balance", context);
 
                          }else{

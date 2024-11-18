@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:utilitypoint/model/response/cardDetailInformation.dart';
 import 'package:utilitypoint/utils/image_paths.dart';
 
 import '../../../model/response/listofVirtualCard.dart';
@@ -155,7 +156,10 @@ class _CardDesignState extends State<CardDesign> {
 class CardInfoDesign extends StatelessWidget {
   UserVirtualCards? cardDetail;
   bool? isVirtualCardScreen;
-   CardInfoDesign({super.key, this.cardDetail, this.isVirtualCardScreen});
+  SingleCardInformation? information;
+   CardInfoDesign({super.key, this.cardDetail, this.isVirtualCardScreen,
+   this.information
+   });
 
   @override
   Widget build(BuildContext context) {
@@ -187,25 +191,28 @@ class CardInfoDesign extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset("assets/image/icons/appSmallLogo.png"),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: NumberFormat.currency(
-                                symbol:  '\$', decimalDigits: 0)
-                                .format(double.parse(cardDetail!.amount)),
-                            style: GoogleFonts.inter(
-                                color: AppColor.black0,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.sp)),
-                        TextSpan(
-                            text:
-                            '.${double.parse(cardDetail!.amount).toString().split(".")[1]}',
-                            style: GoogleFonts.inter(
-                                color: AppColor.black10,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.sp)),
-                      ],
+                  Visibility(
+                    visible: information!=null,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: NumberFormat.currency(
+                                  symbol:  '\$', decimalDigits: 0)
+                                  .format(information==null?0:information!.message.details.balance.toDouble()),
+                              style: GoogleFonts.inter(
+                                  color: AppColor.black0,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.sp)),
+                          TextSpan(
+                              text:
+                              '.${double.parse(cardDetail!.amount).toString().split(".")[1]}',
+                              style: GoogleFonts.inter(
+                                  color: AppColor.black10,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.sp)),
+                        ],
+                      ),
                     ),
                   ),
                  //
@@ -281,7 +288,8 @@ class CardInfoDesign extends StatelessWidget {
 
 class CardBackView extends StatelessWidget {
   UserVirtualCards? cardDetail;
-   CardBackView({super.key,required this.cardDetail});
+  SingleCardInformation? information;
+   CardBackView({super.key, this.cardDetail, this.information});
 
   @override
   Widget build(BuildContext context) {
@@ -313,7 +321,7 @@ class CardBackView extends StatelessWidget {
                   ),
                Row(
                  children: [
-                   Text(cardDetail!.country??"no country",
+                   Text(information!.message.details.billing.country??"no country",
                      style: CustomTextStyle.kTxtMedium.copyWith(
                          color: AppColor.black0,
                          fontSize: 14.sp,
@@ -324,7 +332,7 @@ class CardBackView extends StatelessWidget {
                    GestureDetector(
                      onTap: (){
                        copyToClipboard(
-                           context, cardDetail!.country??"");
+                           context,information!.message.details.billing.country??"");
                      },
                      child: Image.asset(
                        "assets/image/icons/fi_copy.png",
@@ -365,7 +373,7 @@ class CardBackView extends StatelessWidget {
                               ),
                               Row(
                                 children: [
-                                  Text(cardDetail!.city??"no city",
+                                  Text(information!.message.details.billing.city??"no city",
                                     style: CustomTextStyle.kTxtMedium.copyWith(
                                         color: AppColor.black0,
                                         fontSize: 14.sp,
@@ -376,7 +384,7 @@ class CardBackView extends StatelessWidget {
                                   GestureDetector(
                                     onTap: (){
                                       copyToClipboard(
-                                          context, cardDetail!.city??"");
+                                          context, information!.message.details.billing.city??"");
                                     },
                                     child: Image.asset(
                                       "assets/image/icons/fi_copy.png",
@@ -406,7 +414,7 @@ class CardBackView extends StatelessWidget {
                               ),
                               Row(
                                 children: [
-                                  Text(cardDetail!.state??"no state",
+                                  Text(information!.message.details.billing.state??"no state",
                                     style: CustomTextStyle.kTxtMedium.copyWith(
                                         color: AppColor.black0,
                                         fontSize: 14.sp,
@@ -417,7 +425,7 @@ class CardBackView extends StatelessWidget {
                                   GestureDetector(
                                     onTap: (){
                                       copyToClipboard(
-                                          context, cardDetail!.state??"");
+                                          context, information!.message.details.billing.state??"");
                                     },
                                     child: Image.asset(
                                       "assets/image/icons/fi_copy.png",
@@ -447,7 +455,7 @@ class CardBackView extends StatelessWidget {
                               ),
                               Row(
                                 children: [
-                                  Text(cardDetail!.postalCode??"no postal code",
+                                  Text(information!.message.details.billing.postalCode??"no postal code",
                                     style: CustomTextStyle.kTxtMedium.copyWith(
                                         color: AppColor.black0,
                                         fontSize: 14.sp,
@@ -458,7 +466,7 @@ class CardBackView extends StatelessWidget {
                                   GestureDetector(
                                     onTap: (){
                                       copyToClipboard(
-                                          context, cardDetail!.postalCode??"");
+                                          context,information!.message.details.billing.postalCode??"");
                                     },
                                     child: Image.asset(
                                       "assets/image/icons/fi_copy.png",

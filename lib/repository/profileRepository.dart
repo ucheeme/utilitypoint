@@ -21,6 +21,8 @@ import '../model/response/userInfoUpdated.dart';
 import '../model/response/userKYCResponse.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
+import '../view/home/home_screen.dart';
+import '../view/onboarding_screen/signIn/login_screen.dart';
 
 class ProfileRepository extends DefaultRepository{
    Future<Object> resetUserPassword(ChangeUserPasswordRequest request) async {
@@ -195,14 +197,26 @@ class ProfileRepository extends DefaultRepository{
        return errorResponse!;
      }
    }
-   Future<Object> getUserKYCUploads(GetProductRequest request) async {
+   Future<Object?> getUserKYCUploads(GetProductRequest request) async {
      var response = await postRequest(
          null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
      var r = handleSuccessResponse(response);
      if (r is DefaultApiResponse) {
        if (r.status == true) {
-         UserKycResponse res =
-         userKycResponseFromJson(json.encode(r.data));
+         UserKycResponse? res;
+         if(r.data==null){
+           res = UserKycResponse(id: "",
+               userId: loginResponse!.id,
+               nin: null, driversLicense: null,
+               votersCard: null,
+               verificationStatus: 0,
+               profilePicture:userDetails==null? "assets/image/images_png/tempImage.png": userDetails!.profilePic,
+               internationalPassport: null,
+               createdAt: DateTime.now(),
+               updatedAt: DateTime.now());
+         }else{
+           res= userKycResponseFromJson(json.encode(r.data));
+         }
          return res;
        } else {
          return r;

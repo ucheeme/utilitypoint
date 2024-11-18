@@ -11,6 +11,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/model/request/unfreezeCard.dart';
 import 'package:utilitypoint/view/menuOption/cards/CardDesign.dart';
+import 'package:utilitypoint/view/menuOption/cards/createCustomerDetails.dart';
 
 import '../../../bloc/card/virtualcard_bloc.dart';
 import '../../../model/request/getUserRequest.dart';
@@ -212,9 +213,9 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
                         bloc.add(GetExchangeRateEvent());
                       }else{
                         cardCreationCharge = currencyConversionRateFees!.cardCreationFeeInCurrency;
+                      //  bool response = await Get.to(CreateCustomerDetails(isNaira: true));
                         bool response=  await showCupertinoModalBottomSheet(
-                            topRadius:
-                            Radius.circular(10.r),
+                            topRadius: Radius.circular(10.r),
                             backgroundColor: Colors.white,
                             context: context,
                             builder: (context) {
@@ -228,6 +229,7 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
                                 );
                             });
                         if(response){
+                          //Get.back(result: true);
                           bloc.add(GetUserCardEvent(GetUserIdRequest(userId: loginResponse!.id)));
                           showSuccessSlidingModal(
                               context,

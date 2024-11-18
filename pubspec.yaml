@@ -80,9 +80,12 @@ dependencies:
   flutter_flip_card: ^0.0.6
   envied: ^0.3.0+3
   screenshot: ^3.0.0
-  image_gallery_saver: ^1.7.1
+#  image_gallery_saver:
+  saver_gallery: ^4.0.0
   path_provider:
   gap:
+  flutter_email_sender:
+  country: ^4.1.9
   flutter_screenutil:
   modal_bottom_sheet:
     git:

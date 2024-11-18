@@ -92,6 +92,7 @@ class UserTransactions{
   String? cableTvSlots;
   String? utilitySlots;
   String? amount;
+  String? userScreenMessage;
   dynamic referralCommissionValue;
   String? discountedAmount;
   UserTransactions({
@@ -101,6 +102,7 @@ class UserTransactions{
      required this.userId,
      required this.actionBy,
      this.productPlanId,
+    this.userScreenMessage,
      required this.transactionCategory,
      this.status,
      this.walletCategory,

@@ -93,7 +93,8 @@ class CustomButton extends StatelessWidget {
 class CustomAppBar extends StatelessWidget {
   String title;
   bool? isBottomNav;
-  CustomAppBar({super.key, required this.title,this.isBottomNav});
+
+  CustomAppBar({super.key, required this.title, this.isBottomNav});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +107,7 @@ class CustomAppBar extends StatelessWidget {
             }
           },
           child: Visibility(
-            visible: isBottomNav==true?false:true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,
+            visible: isBottomNav == true ? false : true,
             child: Container(
               height: 40.h,
               width: 40.w,
@@ -254,7 +255,7 @@ class CustomizedTextField extends StatelessWidget {
 
   CustomizedTextField(
       {super.key,
-        this.isProfile,
+      this.isProfile,
       this.prefix,
       this.prefixWidget,
       this.prefixIconConstraints,
@@ -277,7 +278,7 @@ class CustomizedTextField extends StatelessWidget {
       this.suffixIconConstraints,
       this.maxLength,
       this.suffixText,
-       this.isTouched,
+      this.isTouched,
       this.isPasswordVisible});
 
   @override
@@ -331,7 +332,11 @@ class CustomizedTextField extends StatelessWidget {
                 suffixIconConstraints: suffixIconConstraints ??
                     BoxConstraints(minWidth: 19.w, minHeight: 19.h),
                 suffixIcon: surffixWidget ?? const SizedBox.shrink(),
-                fillColor:(isProfile==true)?AppColor.primary30: isTouched==true ? AppColor.primary20 : AppColor.black0,
+                fillColor: (isProfile == true)
+                    ? AppColor.primary30
+                    : isTouched == true
+                        ? AppColor.primary20
+                        : AppColor.black0,
                 filled: true,
                 // errorText: error,
                 // errorStyle: CustomTextStyle.kTxtMedium.copyWith(
@@ -341,7 +346,8 @@ class CustomizedTextField extends StatelessWidget {
                 //         : AppColor.Error100,
                 //     fontSize: 10.sp),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
+                  borderSide:
+                      BorderSide(color: AppColor.primary100, width: 0.5.w),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 enabledBorder: OutlineInputBorder(
@@ -360,7 +366,8 @@ class CustomizedTextField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColor.primary100, width: 0.5.w),
+                  borderSide:
+                      BorderSide(color: AppColor.primary100, width: 0.5.w),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 hintStyle: CustomTextStyle.kTxtRegular.copyWith(
@@ -369,10 +376,11 @@ class CustomizedTextField extends StatelessWidget {
                     fontSize: 13.sp)),
           ),
           Gap(4.h),
-          Text(error??"",
+          Text(
+            error ?? "",
             style: CustomTextStyle.kTxtMedium.copyWith(
                 color: (isConfirmPasswordMatch != null &&
-                    isConfirmPasswordMatch == false)
+                        isConfirmPasswordMatch == false)
                     ? AppColor.success100
                     : AppColor.Error100,
                 fontSize: 10.sp),
@@ -532,122 +540,148 @@ Future<dynamic> openBottomSheet(BuildContext context, Widget bottomScreen,
 Widget dashboardHeader(
     {double accountBalance = 0,
     Function()? sideBarOnTap,
-      int initialPage=0,
-   Function(int, CarouselPageChangedReason)? onPageChanged,
+    int initialPage = 0,
+    bool isVisibleAmount = false,
+    Function()? onPressed,
+    Function(int, CarouselPageChangedReason)? onPageChanged,
     Function()? depositOnTap,
     Function()? withdrawOnTap,
     double accountBalanceFractions = .00,
     bool isNaira = true}) {
   return Container(
-    height: 266.h,
-    width: Get.width,
-    padding: EdgeInsets.symmetric(horizontal: 20.h),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(40.r),
-          bottomLeft: Radius.circular(40.r)),
-      gradient: LinearGradient(
-        colors: [AppColor.primary100, AppColor.primary10],
-        stops: [
-          0.5,
-          1.0,
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-    ),
-    child:
-    CarouselSlider.builder(
-      itemCount:2,
-      options: CarouselOptions(
-        //pageSnapping: false,
-        //scrollPhysics: BouncingScrollPhysics(),
-        height: 266.h,
-        padEnds: false,
-        disableCenter: false,
-        enlargeCenterPage: true,
-        enlargeFactor: 0.3,
-        enlargeStrategy: CenterPageEnlargeStrategy.scale,
-        //height: 400,
-        // aspectRatio: 16/19,
-        viewportFraction: 1.0,
-        initialPage: initialPage,
-        enableInfiniteScroll: true,
-        reverse: false,
-        autoPlay: false,
-        onPageChanged: onPageChanged,
-        scrollDirection: Axis.horizontal,
-      ),
-        itemBuilder: (BuildContext context, int index, int realIndex){
-        return   Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Gap(72.h),
-            SizedBox(
-              height: 40.h,
-              width: Get.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Account balance",
-                    style: CustomTextStyle.kTxtMedium.copyWith(
-                        color: AppColor.black0,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  GestureDetector(
-                      onTap: sideBarOnTap,
-                      child: Image.asset("assets/image/icons/sideBar.png")),
-                ],
-              ),
-            ),
-            Gap(8.h),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                      text: NumberFormat.currency(
-                          symbol: isNaira ? '\₦' : '\$', decimalDigits: 0)
-                          .format(accountBalance),
-                      style: GoogleFonts.inter(
-                          color: AppColor.black0,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 32.sp)),
-                  TextSpan(
-                      text:
-                      '.${accountBalanceFractions.toStringAsFixed(2).split(".")[1]}',
-                      style: GoogleFonts.inter(
-                          color: AppColor.black10,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 32.sp)),
-                ],
-              ),
-            ),
-            Gap(28.h),
-            SizedBox(
-              height: 48.h,
-              width: Get.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  completelyCurvedButton(depositOnTap,title: isNaira?"Deposit NGN":"Deposit USD"),
-                  Visibility(
-                    visible: !isNaira,
-                    child: completelyCurvedButton(withdrawOnTap,
-                        icon: 'arrowDiagonalUp',
-                        title: 'Wallet History',
-                        buttonColor: AppColor.primary90),
-                  ),
-                ],
-              ),
-            )
+      height: 266.h,
+      width: Get.width,
+      padding: EdgeInsets.symmetric(horizontal: 20.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(40.r),
+            bottomLeft: Radius.circular(40.r)),
+        gradient: LinearGradient(
+          colors: [AppColor.primary100, AppColor.primary10],
+          stops: [
+            0.5,
+            1.0,
           ],
-        );
-        }
-    )
-
-  );
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: CarouselSlider.builder(
+          itemCount: 2,
+          options: CarouselOptions(
+            //pageSnapping: false,
+            //scrollPhysics: BouncingScrollPhysics(),
+            height: 266.h,
+            padEnds: false,
+            disableCenter: false,
+            enlargeCenterPage: true,
+            enlargeFactor: 0.3,
+            enlargeStrategy: CenterPageEnlargeStrategy.scale,
+            //height: 400,
+            // aspectRatio: 16/19,
+            viewportFraction: 1.0,
+            initialPage: initialPage,
+            enableInfiniteScroll: true,
+            reverse: false,
+            autoPlay: false,
+            onPageChanged: onPageChanged,
+            scrollDirection: Axis.horizontal,
+          ),
+          itemBuilder: (BuildContext context, int index, int realIndex) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gap(72.h),
+                SizedBox(
+                  height: 40.h,
+                  width: Get.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Account balance",
+                        style: CustomTextStyle.kTxtMedium.copyWith(
+                            color: AppColor.black0,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      GestureDetector(
+                          onTap: sideBarOnTap,
+                         child: Image.asset("assets/image/icons/sideBar.png")
+                         //  child:  Container(
+                         //    height: 50.h,
+                         //    width: 50.w,
+                         //    decoration: BoxDecoration(
+                         //        shape: BoxShape.circle,
+                         //        image: DecorationImage(image: getProfileImage() ),
+                         //        // border: Border.all(
+                         //        //    // color: AppColor.primary40,
+                         //        //     width: 1.5.w)
+                         //    ),
+                         //
+                         //  ),
+                      ),
+                    ],
+                  ),
+                ),
+                Gap(8.h),
+                Row(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text:isVisibleAmount? NumberFormat.currency(
+                                      symbol: isNaira ? '\₦' : '\$',
+                                      decimalDigits: 0)
+                                  .format(accountBalance):
+                              "...",
+                              style: GoogleFonts.inter(
+                                  color: AppColor.black0,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 32.sp)),
+                          TextSpan(
+                              text:isVisibleAmount?
+                                  '.${accountBalanceFractions.toStringAsFixed(2).split(".")[1]}':'...',
+                              style: GoogleFonts.inter(
+                                  color: AppColor.black10,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 32.sp)),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(top: 2.h),
+                      child: IconButton(
+                          onPressed: onPressed,
+                          icon: isVisibleAmount
+                              ?  const Icon(Icons.visibility_off_outlined,color: AppColor.black0,)
+                              : const Icon(Icons.visibility_outlined,color: AppColor.black0,)),
+                    )
+                  ],
+                ),
+                Gap(28.h),
+                SizedBox(
+                  height: 48.h,
+                  width: Get.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      completelyCurvedButton(depositOnTap,
+                          title: isNaira ? "Deposit NGN" : "Deposit USD"),
+                      Visibility(
+                        visible: !isNaira,
+                        child: completelyCurvedButton(withdrawOnTap,
+                            icon: 'arrowDiagonalUp',
+                            title: 'Wallet History',
+                            buttonColor: AppColor.primary90),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            );
+          }));
 }
 
 Widget completelyCurvedButton(Function()? onTap,
@@ -686,7 +720,7 @@ Widget dashboardIcons(
     {String title = "Fund Wallet",
     String icon = 'fund_wallet',
     Function()? onTap,
-      bool isSelected =false,
+    bool isSelected = false,
     double horizontal = 5}) {
   return GestureDetector(
     onTap: onTap,
@@ -700,7 +734,8 @@ Widget dashboardIcons(
             width: 56.w,
             padding: EdgeInsets.all(16.h),
             decoration: BoxDecoration(
-              border: Border.all(color: isSelected?AppColor.primary100:AppColor.black0),
+                border: Border.all(
+                    color: isSelected ? AppColor.primary100 : AppColor.black0),
                 borderRadius: BorderRadius.circular(10.r),
                 color: AppColor.black0),
             child: Image.asset(
@@ -722,27 +757,29 @@ Widget dashboardIcons(
   );
 }
 
-Widget dataCard(ProductPlanItemResponse response,bool selectedOption){
+Widget dataCard(ProductPlanItemResponse response, bool selectedOption) {
   return Container(
     height: 100.h,
     width: 90.w,
     //margin: EdgeInsets.symmetric(vertical: 16.h),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12.r),
-      border:Border.all(color: selectedOption?AppColor.secondary100:AppColor.black0) ,
+      border: Border.all(
+          color: selectedOption ? AppColor.secondary100 : AppColor.black0),
       boxShadow: [
         BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
       ],
       color: AppColor.black0,
     ),
     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-    child:  Column(
+    child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Center(
           child: Text(
-            response.dataSizeInMb==null?extractSizeValue(response.productPlanName):
-            getDataValue(double.parse(response.dataSizeInMb)),
+            response.dataSizeInMb == null
+                ? extractSizeValue(response.productPlanName)
+                : getDataValue(double.parse(response.dataSizeInMb)),
             style: CustomTextStyle.kTxtBold.copyWith(
                 color: AppColor.black100,
                 fontSize: 12.sp,
@@ -760,10 +797,9 @@ Widget dataCard(ProductPlanItemResponse response,bool selectedOption){
         ),
         Center(
           child: Text(
-            NumberFormat.currency(
-                symbol: '\₦', decimalDigits: 0)
+            NumberFormat.currency(symbol: '\₦', decimalDigits: 0)
                 .format(double.parse(response.sellingPrice.toString())),
-            style: CustomTextStyle.kTxtMedium.copyWith(
+            style: GoogleFonts.inter(
                 color: AppColor.secondary100,
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w400),
@@ -779,25 +815,26 @@ Widget dataCard(ProductPlanItemResponse response,bool selectedOption){
         //   ),
         // ),
       ],
-    ),);
+    ),
+  );
 }
 
-
-Widget cablePlanCard(ProductPlanItemResponse response,bool selectedOption){
+Widget cablePlanCard(ProductPlanItemResponse response, bool selectedOption) {
   return Container(
     height: 120.h,
     width: 90.w,
     //margin: EdgeInsets.symmetric(vertical: 16.h),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12.r),
-      border:Border.all(color: selectedOption?AppColor.secondary100:AppColor.black0) ,
+      border: Border.all(
+          color: selectedOption ? AppColor.secondary100 : AppColor.black0),
       boxShadow: [
         BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
       ],
       color: AppColor.black0,
     ),
     padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-    child:  Column(
+    child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Center(
@@ -820,10 +857,9 @@ Widget cablePlanCard(ProductPlanItemResponse response,bool selectedOption){
         ),
         Center(
           child: Text(
-            NumberFormat.currency(
-                symbol: '\₦', decimalDigits: 0)
+            NumberFormat.currency(symbol: '\₦', decimalDigits: 0)
                 .format(double.parse(response.sellingPrice.toString())),
-            style: CustomTextStyle.kTxtMedium.copyWith(
+            style: GoogleFonts.inter(
                 color: AppColor.secondary100,
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w400),
@@ -839,37 +875,43 @@ Widget cablePlanCard(ProductPlanItemResponse response,bool selectedOption){
         //   ),
         // ),
       ],
-    ),);
+    ),
+  );
 }
 
-
-Widget airtimeCard({String title =""}){
+Widget airtimeCard({String title = ""}) {
   return Container(
-      height: 63.h,
-      width: 70.w,
-      margin: EdgeInsets.symmetric(vertical: 16.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
-        ],
-        color: AppColor.black0,
+    height: 63.h,
+    width: 70.w,
+    margin: EdgeInsets.symmetric(vertical: 16.h),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 8)),
+      ],
+      color: AppColor.black0,
+    ),
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+    child: Center(
+      child: Text(
+        title,
+        style: CustomTextStyle.kTxtMedium.copyWith(
+            color: AppColor.black100,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w400),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      child:  Center(
-        child: Text(
-          title,
-          style: CustomTextStyle.kTxtMedium.copyWith(
-              color: AppColor.black100,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w400),
-        ),
-      ),);
+    ),
+  );
 }
 
-Widget listButtons({String title = "", String icons = "", bool hasSwitch =false,
-  bool isNotification=false,String notifications ="0",
-bool switchValue=false, Function(bool)? onChanged}) {
+Widget listButtons(
+    {String title = "",
+    String icons = "",
+    bool hasSwitch = false,
+    bool isNotification = false,
+    String notifications = "0",
+    bool switchValue = false,
+    Function(bool)? onChanged}) {
   return Container(
       height: 50.h,
       width: 335.w,
@@ -895,7 +937,7 @@ bool switchValue=false, Function(bool)? onChanged}) {
                   visible: icons == "" ? false : true,
                   child: Image.asset(
                     "assets/image/icons/$icons.png",
-                    color: title == "My Cards" ? AppColor.primary100 : null,
+                    color: title == "My Accounts" ? AppColor.primary100 : null,
                   ),
                 ),
                 Visibility(
@@ -912,35 +954,33 @@ bool switchValue=false, Function(bool)? onChanged}) {
               ],
             ),
           ),
-          hasSwitch?
-              Switch(
-                inactiveTrackColor: AppColor.black40,
-                  activeTrackColor:AppColor.primary100,
-                  value: switchValue, onChanged: onChanged):
-              isNotification?
-                  Container(
-                    height: 44.h,
-                    padding: EdgeInsets.all(6.h),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColor.secondary100
-                    ),
-                    child: Center(
-                      child: Text(
-                        notifications,
-                        style: CustomTextStyle.kTxtMedium.copyWith(
-                          color: AppColor.black0,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.sp
+          hasSwitch
+              ? Switch(
+                  inactiveTrackColor: AppColor.black40,
+                  activeTrackColor: AppColor.primary100,
+                  value: switchValue,
+                  onChanged: onChanged)
+              : isNotification
+                  ? Container(
+                      height: 44.h,
+                      padding: EdgeInsets.all(6.h),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: AppColor.secondary100),
+                      child: Center(
+                        child: Text(
+                          notifications,
+                          style: CustomTextStyle.kTxtMedium.copyWith(
+                              color: AppColor.black0,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.sp),
                         ),
                       ),
-                    ),
-                  ):
-          Icon(
-            Icons.arrow_forward_ios_outlined,
-            color: AppColor.black60,
-            size: 18.h,
-          )
+                    )
+                  : Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      color: AppColor.black60,
+                      size: 18.h,
+                    )
         ],
       ));
 }
@@ -1110,8 +1150,7 @@ Widget convertContainer(
                 isFrom
                     ? "Account Balance ${NumberFormat.currency(symbol: isNaira ? '\₦' : '\$', decimalDigits: 0).format(accountBalance)}"
                     : "",
-
-                style:  GoogleFonts.inter(
+                style: GoogleFonts.inter(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w400,
                     color: AppColor.black80),
@@ -1126,7 +1165,7 @@ Widget convertContainer(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                 height:44 .h,
+                  height: 44.h,
                   width: 125.w,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1202,6 +1241,6 @@ Widget convertContainer(
   );
 }
 
+String nairaSymbol = '₦';
 
-String nairaSymbol ='₦' ;
-String dollarSymbol='\$';
+String dollarSymbol = '\$';

@@ -93,7 +93,7 @@ class AllUserDetails extends ProfileState{
 }
 
 class UserKYCs extends ProfileState{
-  UserKycResponse response;
+  UserKycResponse? response;
   UserKYCs(this.response);
   @override
   List<Object?> get props =>[response];

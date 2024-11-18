@@ -9,6 +9,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
 import 'package:utilitypoint/services/api_service.dart';
+import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../../model/response/userInfoUpdated.dart';
 import '../../../repository/onboarding_repository.dart';
@@ -205,6 +206,31 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                         }, buttonText:"Forgot Password?",
                         textColor:AppColor.primary100 ,
                         buttonColor: Colors.transparent,borderRadius: 8.r,),
+                    ),
+
+                    Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Don't have an account?",
+                            style: CustomTextStyle.kTxtMedium.copyWith(
+                              color: AppColor.black100,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13.sp
+                            ),
+                          ),
+                          Gap(4.w),
+                          CustomButton(
+                            height:58.h,
+                            onTap: (){
+                             Get.to(SignUpCreateAccountScreen());
+                            }, buttonText:"SignUp",
+                            textfontSize: 13.sp,
+                            textColor:AppColor.primary100 ,
+                            buttonColor: Colors.transparent,borderRadius: 8.r,),
+                        ],
+                      ),
                     ),
                   ],
                 ),

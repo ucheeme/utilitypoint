@@ -10,6 +10,7 @@ import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../model/defaultModel.dart';
 import '../utils/app_util.dart';
+import '../utils/mySharedPreference.dart';
 import 'api_respondCodes.dart';
 import 'api_status.dart';
 
@@ -102,14 +103,14 @@ class ApiService {
         }
         if (399 <= (response.statusCode ?? 400) &&
             (response.statusCode ?? 400) <= 500) {
-          print("this is the status code: ${response.statusCode}");
+
           if(response.statusCode == 401){
-            print("i am here 401");
+            MySharedPreference.saveUserLoginResponse(
+                jsonEncode(""));
           nav.Get.offAll(SignInPage(),predicate: (route) => false);
             var apiRes = defaultApiResponseFromJson(response.data as String);
             return Failure(response.statusCode ?? 400, (apiRes));
           }else if ((response.data is String )&& (response.statusCode !=401)) {
-            print("I am the issue: ${response.data}");
             try {
               var apiRes = defaultApiResponseFromJson(response.data as String);
               return Failure(response.statusCode ?? 400, (apiRes));

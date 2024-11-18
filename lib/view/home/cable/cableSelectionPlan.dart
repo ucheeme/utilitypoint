@@ -66,7 +66,7 @@ class _CableTvSelectionState extends State<CableTvSelection>with TickerProviderS
     _animationManager.dispose();
     super.dispose();
   }
-
+int maxLentgh = 0;
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProductBloc>(context);
@@ -85,6 +85,8 @@ class _CableTvSelectionState extends State<CableTvSelection>with TickerProviderS
             productPlanList= state.response;
             productPlanId=productPlanList[0].productPlanId;
             selectedProductPlan= productPlanList[0];
+           maxLentgh= productPlanList[0].productPlanName.toLowerCase().contains("startimes")?11:10;
+
           });
           bloc.initial();
         }
@@ -155,10 +157,22 @@ class _CableTvSelectionState extends State<CableTvSelection>with TickerProviderS
                         SizedBox(
                           height: 58.h,
                           child: CustomizedTextField(
-                            maxLength: 10,
+                            maxLength: maxLentgh,
                               textEditingController:smartCardNumber,
                               keyboardType:TextInputType.number,
                               onChanged: (value){
+                              if(productPlanList[0].productPlanName.toLowerCase().contains("startimes")){
+                                if(value.length==11){
+                                  bloc.add(ConfirmCableNameEvent(
+                                      ConfirmMeterOrCableNameRequest(
+                                          userId: loginResponse!.id,
+                                          pin:userDetails!.pin,
+                                          smartCardNumber: value,
+                                          productPlanId: selectedProductPlan!.productPlanId
+                                      )
+                                  ));
+                                }
+                              }else{
                                 if(value.length==10){
                                   bloc.add(ConfirmCableNameEvent(
                                       ConfirmMeterOrCableNameRequest(
@@ -169,6 +183,8 @@ class _CableTvSelectionState extends State<CableTvSelection>with TickerProviderS
                                       )
                                   ));
                                 }
+                              }
+
                               },
                               isTouched: false),
                         ),

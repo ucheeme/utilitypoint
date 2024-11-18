@@ -21,6 +21,7 @@ import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
 import '../../onboarding_screen/signIn/login_screen.dart';
 import '../../transactionHistory/transaction.dart';
+import '../../transactionHistory/transactionReceipt.dart';
 import '../dataPurchase/singleDataPurchase.dart';
 import 'buyBulkAirtime.dart';
 import 'buyBulkData.dart';
@@ -142,7 +143,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Airtime & data purchase")),
+                  child: CustomAppBar(title: "Airtime purchase")),
             ),
           ),
           Gap(20.h),
@@ -237,7 +238,25 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                             itemBuilder: (context, index){
                               return   Padding(
                                 padding:  EdgeInsets.only(bottom:12.h),
-                                child: ProductTransactionWidgetDesgin(transactionList: transactionList[index],),
+                                child: GestureDetector(
+                                    onTap: (){
+
+                                      Get.to(TransactionReceiptScreen(
+                                        userTransactions: UserTransactions(
+                                          isProduct: true,
+                                          userId: loginResponse!.id,
+                                          userScreenMessage: transactionList[index].userScreenMessage,
+                                          actionBy: transactionList[index].userId,
+                                          transactionCategory: transactionList[index].transactionCategory,
+                                          balanceBefore: transactionList[index].balanceBefore,
+                                          balanceAfter: transactionList[index].balanceAfter,
+                                          description: transactionList[index].description,
+                                          createdAt: transactionList[index].createdAt,
+                                          updatedAt: transactionList[index].updatedAt,
+                                        ),
+                                      ));
+                                    },
+                                    child: ProductTransactionWidgetDesgin(transactionList: transactionList[index],)),
                               );
                             }),
                       ),

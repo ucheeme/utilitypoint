@@ -1,33 +1,57 @@
 // To parse this JSON data, do
 //
-//     final buyAirtimeResponse = buyAirtimeResponseFromJson(jsonString);
+//     final buyAirtimeDataResponse = buyAirtimeDataResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-BuyAirtimeDataResponse buyAirtimeResponseFromJson(String str) => BuyAirtimeDataResponse.fromJson(json.decode(str));
+BuyAirtimeDataResponse buyAirtimeDataResponseFromJson(String str) => BuyAirtimeDataResponse.fromJson(json.decode(str));
 
-String buyAirtimeResponseToJson(BuyAirtimeDataResponse data) => json.encode(data.toJson());
+String buyAirtimeDataResponseToJson(BuyAirtimeDataResponse data) => json.encode(data.toJson());
 
 class BuyAirtimeDataResponse {
-  bool status;
-  String message;
+  String networkId;
+  String phoneNumber;
+  String productPlanCategoryId;
+  String productPlanId;
+  String pin;
+  String walletCategory;
+  int validatephonenetwork;
+  String userId;
   List<Datum> data;
 
   BuyAirtimeDataResponse({
-    required this.status,
-    required this.message,
+    required this.networkId,
+    required this.phoneNumber,
+    required this.productPlanCategoryId,
+    required this.productPlanId,
+    required this.pin,
+    required this.walletCategory,
+    required this.validatephonenetwork,
+    required this.userId,
     required this.data,
   });
 
   factory BuyAirtimeDataResponse.fromJson(Map<String, dynamic> json) => BuyAirtimeDataResponse(
-    status: json["status"],
-    message: json["message"],
+    networkId: json["network_id"]??"",
+    phoneNumber: json["phone_number"]??"",
+    productPlanCategoryId: json["product_plan_category_id"]??"",
+    productPlanId: json["product_plan_id"]??"",
+    pin: json["pin"]??"",
+    walletCategory: json["wallet_category"]??"",
+    validatephonenetwork: json["validatephonenetwork"]??0,
+    userId: json["user_id"],
     data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
+    "network_id": networkId,
+    "phone_number": phoneNumber,
+    "product_plan_category_id": productPlanCategoryId,
+    "product_plan_id": productPlanId,
+    "pin": pin,
+    "wallet_category": walletCategory,
+    "validatephonenetwork": validatephonenetwork,
+    "user_id": userId,
     "data": List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
@@ -55,6 +79,7 @@ class Datum {
     "status": status,
   };
 }
+
 
 AirtimeDataAdminMessage airtimAdminMessageFromJson(String str) => AirtimeDataAdminMessage.fromJson(json.decode(str));
 

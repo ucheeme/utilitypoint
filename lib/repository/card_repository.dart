@@ -11,6 +11,7 @@ import '../model/defaultModel.dart';
 import '../model/request/convertNairaRequest.dart';
 import '../model/request/generateBankAcct.dart';
 import '../model/request/getProduct.dart';
+import '../model/response/cardDetailInformation.dart';
 import '../model/response/cardTransactions.dart';
 import '../model/response/exchangeRate.dart';
 import '../model/response/freezeUnFreezeResponse.dart';
@@ -109,6 +110,25 @@ class CardRepository extends DefaultRepository{
       if (r.status == true) {
         List<UserVirtualAccouts> res =
         userVirtualAccoutsFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getUserSingleCardDetails(GetProductRequest request) async {
+    var response = await postRequest(
+        null, "${AppUrls.getSingleVirtualCard}?user_id=${request.userId}&"
+        "card_id=${request.cardId}",
+        true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        SingleCardInformation res =
+        singleCardInformationFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
