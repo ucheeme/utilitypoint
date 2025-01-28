@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:utilitypoint/bloc/product/product_bloc.dart';
 import 'package:utilitypoint/model/request/buyCableSubscriptionRequest.dart';
 import 'package:utilitypoint/model/request/confirmElectricityMeterOrCableName.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
@@ -9,9 +10,12 @@ import 'package:utilitypoint/model/response/userSetting.dart';
 import '../../model/defaultModel.dart';
 import '../../model/request/buyAirtimeData.dart';
 import '../../model/request/buyElectricity.dart';
+import '../../model/request/bvnOtpValidate.dart';
 import '../../model/request/getProduct.dart';
 import '../../model/response/buyAirtimeDataResponse.dart';
 import '../../model/response/buy_electricity_response.dart';
+import '../../model/response/bvnFinalVerification.dart';
+import '../../model/response/bvnValidationResponse.dart';
 import '../../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../../model/response/dataPlanCategory.dart';
 import '../../model/response/dataPlanResponse.dart';
@@ -57,6 +61,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<GetUserKYCStatusEvent>((event,emit){handleGetUserKYCStatusEvent(event.request);});
     on<UploadUserKYCEvent>((event,emit){handleUploadUserKYCEvent(event.request);});
     on<VerifyBVNEvent>((event,emit){handleVerifyBVNEvent(event.request);});
+    on<ValidateBVNOTPEvent>((event,emit){handleValidateBVNOTPEvent(event.request);});
    // on<GetAllUserUploadedKYCEvent>((event,emit){handleGetAllUserUploadedKYCEvent(event.request);});
   }
 
@@ -73,7 +78,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -90,7 +95,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -107,7 +112,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -124,7 +129,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -141,7 +146,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -158,7 +163,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -175,7 +180,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -193,7 +198,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -210,7 +215,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -228,7 +233,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -245,7 +250,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -263,7 +268,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     }catch(e,trace){
       print(trace);
       print(e);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -280,7 +285,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -297,7 +302,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -314,7 +319,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -337,7 +342,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -359,7 +364,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -376,7 +381,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -393,7 +398,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -410,7 +415,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -418,7 +423,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductIsLoading());
     try {
       final response = await productRepository.verifyBVN(event);
-      if (response is DefaultApiResponse) {
+      if (response is BvnValidationResponse) {
         emit(BVNVerified(response) );
         AppUtils.debug("success");
       }else{
@@ -427,10 +432,26 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProductError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
+  void handleValidateBVNOTPEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.validateBVNOTP(event);
+      if (response is BvnFinalVerified) {
+        emit(ValidateBvnOtp(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
 
   initial(){
     emit(ProductInitial());

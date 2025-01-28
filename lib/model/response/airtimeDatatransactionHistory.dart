@@ -1,12 +1,12 @@
 // To parse this JSON data, do
 //
-//     final transactionList = transactionListFromJson(jsonString);
+//     final productTransactionList = productTransactionListFromJson(jsonString);
 
 import 'dart:convert';
 
-List<ProductTransactionList> transactionListFromJson(String str) => List<ProductTransactionList>.from(json.decode(str).map((x) => ProductTransactionList.fromJson(x)));
+List<ProductTransactionList> productTransactionListFromJson(String str) => List<ProductTransactionList>.from(json.decode(str).map((x) => ProductTransactionList.fromJson(x)));
 
-String transactionListToJson(List<ProductTransactionList> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String productTransactionListToJson(List<ProductTransactionList> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ProductTransactionList {
   String id;
@@ -15,14 +15,14 @@ class ProductTransactionList {
   String transactionCategory;
   String status;
   String walletCategory;
-  String phoneNumber;
-  String? smartCardNumber;
+  String? phoneNumber;
+  dynamic smartCardNumber;
   String? metreNumber;
   String cableTvSlots;
   String utilitySlots;
   String amount;
   dynamic referralCommissionValue;
-  String? discountedAmount;
+  String discountedAmount;
   String balanceBefore;
   String balanceAfter;
   String description;
@@ -63,23 +63,23 @@ class ProductTransactionList {
     id: json["id"],
     userId: json["user_id"],
     productPlanId: json["product_plan_id"],
-    transactionCategory: json["transaction_category"]!,
+    transactionCategory: json["transaction_category"],
     status: json["status"],
-    walletCategory: json["wallet_category"]!,
-    phoneNumber: json["phone_number"]??"",
-    smartCardNumber: json["smart_card_number"]??"",
-    metreNumber: json["metre_number"]??"",
-    cableTvSlots: json["cable_tv_slots"]??"",
-    utilitySlots: json["utility_slots"]??"",
-    amount: json["amount"]??"0",
-    referralCommissionValue: json["referral_commission_value"]??"",
-    discountedAmount: json["discounted_amount"]??"",
-    balanceBefore: json["balance_before"]??"0",
-    balanceAfter: json["balance_after"]??"",
-    description: json["description"]??"No Description",
-    userScreenMessage: json["user_screen_message"]??"",
-    adminScreenMessage: json["admin_screen_message"]??"",
-    referralCommissionStatus: json["referral_commission_status"]??"",
+    walletCategory: json["wallet_category"],
+    phoneNumber: json["phone_number"],
+    smartCardNumber: json["smart_card_number"],
+    metreNumber: json["metre_number"],
+    cableTvSlots: json["cable_tv_slots"],
+    utilitySlots: json["utility_slots"],
+    amount: json["amount"],
+    referralCommissionValue: json["referral_commission_value"],
+    discountedAmount: json["discounted_amount"],
+    balanceBefore: json["balance_before"],
+    balanceAfter: json["balance_after"],
+    description: json["description"],
+    userScreenMessage: json["user_screen_message"],
+    adminScreenMessage: json["admin_screen_message"],
+    referralCommissionStatus: json["referral_commission_status"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
     productPlan: ProductPlan.fromJson(json["product_plan"]),
@@ -91,7 +91,7 @@ class ProductTransactionList {
     "product_plan_id": productPlanId,
     "transaction_category": transactionCategory,
     "status": status,
-    "wallet_category":walletCategory,
+    "wallet_category": walletCategory,
     "phone_number": phoneNumber,
     "smart_card_number": smartCardNumber,
     "metre_number": metreNumber,
@@ -170,8 +170,8 @@ class ProductPlan {
     uplineCommissionCap: json["upline_commission_cap"],
     uplineFlatCommission: json["upline_flat_commission"],
     uplinePercentageCommission: json["upline_percentage_commission"],
-    uplineCommissionOption: json["upline_commission_option"]!,
-    productPlanName:json["product_plan_name"]!,
+    uplineCommissionOption: json["upline_commission_option"],
+    productPlanName: json["product_plan_name"],
     productPlanCategoryId: json["product_plan_category_id"],
     automationProductPlanId: json["automation_product_plan_id"],
     automationId: json["automation_id"],
@@ -219,4 +219,3 @@ class ProductPlan {
     "updated_at": updatedAt.toIso8601String(),
   };
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -25,7 +26,7 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 76.h,
-      width: 335.w,
+      width: 343.w,
       padding: EdgeInsets.all(9.h),
       decoration: BoxDecoration(
         color: AppColor.black0,
@@ -46,7 +47,7 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description,
+                Text("${transactionList.description} to ${extractPhoneNumber(transactionList.userScreenMessage)}",
                 style: CustomTextStyle.kTxtBold.copyWith(
                   color: AppColor.black100,
                   fontSize: 12.sp,
@@ -455,7 +456,7 @@ class StartDateEndDate {
 EdgeInsets screenPad() => EdgeInsets.symmetric(horizontal: 13.w);
 
 class NairaTransactionWidgetDesgin extends StatelessWidget {
-  NairaTransactionList transactionList;
+  ProductTransactionList transactionList;
   NairaTransactionWidgetDesgin({super.key,required this.transactionList});
 
   @override
@@ -480,12 +481,12 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
             height: 59.h,
             width: 168.w,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height:35.h,
-                  child: Text(transactionList.description,
+                  child: Text("${transactionList.transactionCategory.toLowerCase().capitalizeFirst} to ${getValue(transactionList)}",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: CustomTextStyle.kTxtBold.copyWith(
@@ -506,19 +507,46 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
           ),
           SizedBox(
             width: 90.w,
-            child: Text(
-              textAlign: TextAlign.end,
-              NumberFormat.currency(
-                  symbol: '\₦',
-                  name: 'NGN',
-                  decimalDigits: 0)
-                  .format(amountGotten()),
-              style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.sp,
-                  color:transactionList.description.toLowerCase().contains("purchase")?AppColor.Error100:
-                  AppColor.success100
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children:[
+                Text(
+                  textAlign: TextAlign.end,
+                  NumberFormat.currency(
+                      symbol: '\₦',
+                      name: 'NGN',
+                      decimalDigits: 0)
+                      .format(amountGotten()),
+                  style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.sp,
+                      color:(transactionList.userScreenMessage.contains("Successful")
+                      || transactionList.userScreenMessage.contains("successful")
+                      )?AppColor.success100:AppColor.Error100
+                  ),
+                ),
+                Gap(6.h),
+                Container(
+                  height: 20.h,
+                  width: 110.w,
+                  color:(transactionList.userScreenMessage.contains("Successful")
+                      || transactionList.userScreenMessage.contains("successful")
+                  )?AppColor.success20:AppColor.Error20,
+                  child: Center(
+                    child: Text((transactionList.userScreenMessage.contains("Successful")
+                        || transactionList.userScreenMessage.contains("successful")
+                    )?"Successful":"Failed",
+                      style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.sp,
+                          color: (transactionList.userScreenMessage.contains("Successful")
+                              || transactionList.userScreenMessage.contains("successful")
+                          )?AppColor.success100:AppColor.Error100
+                      ),
+                    ),
+                  ),
+                )
+              ]
             ),
           )
         ],
@@ -543,7 +571,11 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
 
   Widget imageContainer(String transactionType){
     return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
-      height: 48.h,width: 48.w,);
+      height: 48.h,width: 48.w,
+    color: (transactionList.userScreenMessage.contains("Successful")
+        || transactionList.userScreenMessage.contains("successful")
+    )?AppColor.success100:AppColor.Error100,
+    );
   }
 }
 class DollarTransactionWidgetDesgin extends StatelessWidget {
@@ -798,4 +830,28 @@ class _ReusableTextFormFieldState extends State<ReusableTextFormField> {
       ),
     );
   }
+}
+String getValue(ProductTransactionList productTransactionList) {
+  if(productTransactionList.phoneNumber!=null){
+    return productTransactionList.phoneNumber!;
+  }
+  if(productTransactionList.metreNumber!=null){
+    return productTransactionList.metreNumber!;
+  }
+  if(productTransactionList.smartCardNumber!=null){
+    return productTransactionList.smartCardNumber!;
+  }
+  else{
+    return "";
+  }
+}
+String extractPhoneNumber(String sentence) {
+  // Regular expression to match a phone number starting with 234
+  final regExp = RegExp(r'\b234\d{10}\b');
+
+  // Find the first match
+  final match = regExp.firstMatch(sentence);
+
+  // Return the matched phone number or an empty string if no match is found
+  return match != null ? match.group(0)! : '';
 }

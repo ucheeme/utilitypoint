@@ -223,7 +223,7 @@ class _ElectricTokenScreenState extends State<ElectricTokenScreen> with TickerPr
                                     style: CustomTextStyle.kTxtBold.copyWith(
                                         color: AppColor.primary100,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 20.sp
+                                        fontSize: 19.sp
                                     ),
                                   ),
                                   Gap(8.w),

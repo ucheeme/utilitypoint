@@ -152,7 +152,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
             child: Container(
               height: 668.72.h,
               width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
+              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
                 borderRadius: BorderRadius.only(
@@ -169,7 +169,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         dashboardIcons(
-                            title: "Airtime Single",
+                            title: "Single purchase",
                             icon: "buyAirtime",
                             onTap: () {
                               setState(() {
@@ -181,7 +181,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                             },
                             isSelected: isAirtime),
                         dashboardIcons(
-                            title: "Bulk Airtime",
+                            title: "Bulk purchase",
                             icon: "bulkAirtime_Icon",
                             onTap: () {
                               setState(() {
@@ -196,39 +196,45 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                     ),
                   ),
                   Gap(10.h),
-                  SizedBox(
-                      height: 58.h,
-                      child: CustomizedTextField(isTouched: false)),
+                  // Visibility(
+                  //   visible:  transactionList.isNotEmpty,
+                  //   child: SizedBox(
+                  //       height: 58.h,
+                  //       child: CustomizedTextField(isTouched: false)),
+                  // ),
                   Gap(10.h),
                   transactionList.isEmpty?
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/image/images_png/empty.png",
-                        height: 40.h,
-                        width: 60.w,
-                      ),
-                      Text(
-                        "Nothing here, yet ...",
-                        style: CustomTextStyle.kTxtBold.copyWith(
-                            color: AppColor.black100,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16.sp),
-                      ),
-                      SizedBox(
-                        height: 49.h,
-                        width: 269.w,
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          " You have not saved any airtime or data beneficiary. Buy Airtime or Data to proceed.",
-                          style: CustomTextStyle.kTxtMedium.copyWith(
-                              color: AppColor.black80,
+                  SizedBox(
+                    height: 350.h,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/image/images_png/empty.png",
+                          height: 40.h,
+                          width: 60.w,
+                        ),
+                        Text(
+                          "Nothing here, yet ...",
+                          style: CustomTextStyle.kTxtBold.copyWith(
+                              color: AppColor.black100,
                               fontWeight: FontWeight.w400,
-                              fontSize: 12.sp),),
-                      )
-                    ],
+                              fontSize: 16.sp),
+                        ),
+                        SizedBox(
+                          height: 49.h,
+                          width: 269.w,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            " You have not saved any airtime or data beneficiary. Buy Airtime or Data to proceed.",
+                            style: CustomTextStyle.kTxtMedium.copyWith(
+                                color: AppColor.black80,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.sp),),
+                        )
+                      ],
+                    ),
                   ):
                       SizedBox(
                         height: 370.h,
@@ -242,6 +248,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                                     onTap: (){
 
                                       Get.to(TransactionReceiptScreen(
+                                        productTransactionList: transactionList[index],
                                         userTransactions: UserTransactions(
                                           isProduct: true,
                                           userId: loginResponse!.id,
@@ -256,7 +263,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                                         ),
                                       ));
                                     },
-                                    child: ProductTransactionWidgetDesgin(transactionList: transactionList[index],)),
+                                    child: NairaTransactionWidgetDesgin(transactionList: transactionList[index],)),
                               );
                             }),
                       ),

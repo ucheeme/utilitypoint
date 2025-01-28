@@ -351,6 +351,9 @@ class _AirtimeConfirmPaymentState extends State<AirtimeConfirmPayment>
                           onTap: () async {
                             List<dynamic> response = await Get.to(TransactionPin());
                             if(response[0]){
+                              print("the value");
+                              print(widget.airtimeRecharge.amount);
+                              print(widget.productPlanList[0].amount);
                               bloc.add(BuyAirtimeEvent(
                                   BuyAirtimeDataRequest(
                                       networkId:widget.airtimeRecharge.networkId,
@@ -359,7 +362,7 @@ class _AirtimeConfirmPaymentState extends State<AirtimeConfirmPayment>
                                       productPlanCategoryId: widget.airtimeRecharge.productPlanCategoryId,
                                       pin: response[1],
                                       amount: widget.productPlanList.isEmpty?widget.airtimeRecharge.amount:
-                                      widget.productPlanList[0].sellingPrice.toString()
+                                      widget.productPlanList[0].amount.toString()
                                       , walletCategory:"naira_wallet",
                                       validatephonenetwork: 0
                                   )));

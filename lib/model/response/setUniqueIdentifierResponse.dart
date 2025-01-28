@@ -1,33 +1,33 @@
 // To parse this JSON data, do
 //
-//     final updateUserDetailResponse = updateUserDetailResponseFromJson(jsonString);
+//     final uniqueIdentifierResponse = uniqueIdentifierResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-UpdateUserDetailResponse updateUserDetailResponseFromJson(String str) => UpdateUserDetailResponse.fromJson(json.decode(str));
+UniqueIdentifierResponse uniqueIdentifierResponseFromJson(String str) => UniqueIdentifierResponse.fromJson(json.decode(str));
 
-String updateUserDetailResponseToJson(UpdateUserDetailResponse data) => json.encode(data.toJson());
+String uniqueIdentifierResponseToJson(UniqueIdentifierResponse data) => json.encode(data.toJson());
 
-class UpdateUserDetailResponse {
+class UniqueIdentifierResponse {
   String id;
-  String firstName;
-  String lastName;
-  dynamic userName;
+  dynamic firstName;
+  dynamic lastName;
+  String userName;
   String email;
-  dynamic phoneNumber;
+  String phoneNumber;
   String bvn;
-  String addressStreet;
-  DateTime dob;
-  String city;
-  String state;
-  String country;
-  String postalCode;
-  String identificationType;
-  String identificationNumber;
-  String photo;
-  String identityType;
-  String identityNumber;
-  String identityImage;
+  dynamic addressStreet;
+  dynamic dob;
+  dynamic city;
+  dynamic state;
+  dynamic country;
+  dynamic postalCode;
+  dynamic identificationType;
+  dynamic identificationNumber;
+  dynamic photo;
+  dynamic identityType;
+  dynamic identityNumber;
+  dynamic identityImage;
   String bvnVerificationStatus;
   dynamic bvnJson;
   String dollarWallet;
@@ -41,7 +41,7 @@ class UpdateUserDetailResponse {
   DateTime updatedAt;
   String token;
 
-  UpdateUserDetailResponse({
+  UniqueIdentifierResponse({
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -75,7 +75,7 @@ class UpdateUserDetailResponse {
     required this.token,
   });
 
-  factory UpdateUserDetailResponse.fromJson(Map<String, dynamic> json) => UpdateUserDetailResponse(
+  factory UniqueIdentifierResponse.fromJson(Map<String, dynamic> json) => UniqueIdentifierResponse(
     id: json["id"],
     firstName: json["first_name"],
     lastName: json["last_name"],
@@ -84,7 +84,7 @@ class UpdateUserDetailResponse {
     phoneNumber: json["phone_number"],
     bvn: json["bvn"],
     addressStreet: json["address_street"],
-    dob: DateTime.parse(json["dob"]),
+    dob: json["dob"],
     city: json["city"],
     state: json["state"],
     country: json["country"],
@@ -118,7 +118,7 @@ class UpdateUserDetailResponse {
     "phone_number": phoneNumber,
     "bvn": bvn,
     "address_street": addressStreet,
-    "dob": "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
+    "dob": dob,
     "city": city,
     "state": state,
     "country": country,

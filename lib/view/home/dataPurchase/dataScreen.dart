@@ -142,7 +142,7 @@ class _AllDataState extends State<AllData>
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: CustomAppBar(title: "Airtime & data purchase")),
+                  child: CustomAppBar(title: "Data purchase")),
             ),
           ),
           Gap(20.h),
@@ -151,7 +151,7 @@ class _AllDataState extends State<AllData>
             child: Container(
               height: 668.72.h,
               width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
+              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
                 borderRadius: BorderRadius.only(
@@ -197,39 +197,47 @@ class _AllDataState extends State<AllData>
                     ),
                   ),
                   Gap(10.h),
-                  SizedBox(
-                      height: 58.h,
-                      child: CustomizedTextField(isTouched: false)),
+                  // Visibility(
+                  //   visible:  transactionList.isNotEmpty ,
+                  //   child: SizedBox(
+                  //       height: 58.h,
+                  //       child: CustomizedTextField(isTouched: false)),
+                  // ),
                   Gap(10.h),
                   transactionList.isEmpty?
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/image/images_png/empty.png",
-                        height: 40.h,
-                        width: 60.w,
+                  Center(
+                    child: SizedBox(
+                      height: 350.h,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/image/images_png/empty.png",
+                            height: 40.h,
+                            width: 60.w,
+                          ),
+                          Text(
+                            "Nothing here, yet ...",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.black100,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp),
+                          ),
+                          SizedBox(
+                            height: 49.h,
+                            width: 269.w,
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              " You have not saved any airtime or data beneficiary. Buy Airtime or Data to proceed.",
+                              style: CustomTextStyle.kTxtMedium.copyWith(
+                                  color: AppColor.black80,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12.sp),),
+                          )
+                        ],
                       ),
-                      Text(
-                        "Nothing here, yet ...",
-                        style: CustomTextStyle.kTxtBold.copyWith(
-                            color: AppColor.black100,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16.sp),
-                      ),
-                      SizedBox(
-                        height: 49.h,
-                        width: 269.w,
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          " You have not saved any airtime or data beneficiary. Buy Airtime or Data to proceed.",
-                          style: CustomTextStyle.kTxtMedium.copyWith(
-                              color: AppColor.black80,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12.sp),),
-                      )
-                    ],
+                    ),
                   ):
                   SizedBox(
                     height: 370.h,
@@ -239,7 +247,7 @@ class _AllDataState extends State<AllData>
                         itemBuilder: (context, index){
                           return   Padding(
                             padding:  EdgeInsets.only(bottom:12.h),
-                            child: ProductTransactionWidgetDesgin(transactionList: transactionList[index],),
+                            child: NairaTransactionWidgetDesgin(transactionList: transactionList[index],),
                           );
                         }),
                   ),

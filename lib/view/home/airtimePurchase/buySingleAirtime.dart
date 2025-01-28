@@ -53,18 +53,24 @@ class _SingleBuyAirtimeState extends State<SingleBuyAirtime>  with TickerProvide
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
-      networkName="MTN";
-      for(var item in appAllNetworkList){
-        if(item.networkName.toLowerCase() =="mtn"){
-          setState(() {
-            networkId = item.id;
-          });
-        }
+      if(appAllNetworkList.isEmpty||appAllNetworkList==null){
+        bloc.add(GetAllNetworkEvent());
       }
-      bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-          networkId: networkId,
-          productSlug: "airtime"
-      )));
+      else{
+        networkName="MTN";
+        for(var item in appAllNetworkList){
+          if(item.networkName.toLowerCase() =="mtn"){
+            setState(() {
+              networkId = item.id;
+            });
+          }
+        }
+        bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+            networkId: networkId,
+            productSlug: "airtime"
+        )));
+      }
+
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -88,6 +94,24 @@ late ProductBloc bloc;
             Future.delayed(Duration.zero, (){
               AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
             });
+          });
+          bloc.initial();
+        }
+        if (state is ProductAllNetworks) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appAllNetworkList = state.response;
+            networkName="MTN";
+            for(var item in appAllNetworkList){
+              if(item.networkName.toLowerCase() =="mtn"){
+                setState(() {
+                  networkId = item.id;
+                });
+              }
+            }
+            bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+                networkId: networkId,
+                productSlug: "airtime"
+            )));
           });
           bloc.initial();
         }
@@ -373,8 +397,7 @@ late ProductBloc bloc;
                                       setState(() {
                                         airtimeAmountController.text=element;
                                       });
-                
-                                    },
+                                      },
                                     child: airtimeCard(title: element))
                                 )
                               ],

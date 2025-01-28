@@ -57,18 +57,24 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
-      networkName="MTN";
-      for(var item in appAllNetworkList){
-        if(item.networkName.toLowerCase() =="mtn"){
-          setState(() {
-            networkId = item.id;
-          });
-        }
+      if(appAllNetworkList.isEmpty||appAllNetworkList==null){
+        bloc.add(GetAllNetworkEvent());
       }
-      bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-          networkId: networkId,
-          productSlug: "data"
-      )));
+      else{
+        networkName="MTN";
+        for(var item in appAllNetworkList){
+          if(item.networkName.toLowerCase() =="mtn"){
+            setState(() {
+              networkId = item.id;
+            });
+          }
+        }
+        bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+            networkId: networkId,
+            productSlug: "data"
+        )));
+      }
+
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -92,6 +98,24 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
             Future.delayed(Duration.zero, (){
               AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
             });
+          });
+          bloc.initial();
+        }
+        if (state is ProductAllNetworks) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appAllNetworkList = state.response;
+            networkName="MTN";
+            for(var item in appAllNetworkList){
+              if(item.networkName.toLowerCase() =="mtn"){
+                setState(() {
+                  networkId = item.id;
+                });
+              }
+            }
+            bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+                networkId: networkId,
+                productSlug: "data"
+            )));
           });
           bloc.initial();
         }
@@ -309,42 +333,45 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                     Gap(6.h),
                     SizedBox(
                       width: Get.width,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ...productPlanCategoryList.mapIndexed((element, index)=>
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: dashboardIcons(
-                                      title:getTitle(element.productPlanCategoryName,networkName),
-                                      icon: getNetworkIcon(networkName),
-                                      onTap: () {
-                                        dataCategotyId=element.id;
-                                        bloc.add(GetAllProductPlanEvent(GetProductRequest(
-                                            userId: loginResponse!.id,
-                                            planCategoryId:dataCategotyId,
-                                            // amount: airtimeAmountController.text.trim(),
-                                            networkId: networkId,
-                                            productSlug: "data"
-                                        )));
-                                        setState(() {
-                                          selectedValue=index;
-                                        });
-                                        
-                                      },
-                                      isSelected:selectedValue==index),
-                                ),
-                            )
-                          ],
-                        ),
-                      ),
+                      height: 200.h,
+                      child: GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, // 4 items per row
+                            // crossAxisSpacing: 5.h, // Spacing between columns
+                            mainAxisSpacing: 20.w, // Spacing between rows
+                          ),
+                          itemCount: productPlanCategoryList.length,
+                          itemBuilder: (context, index){
+                            return SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: dashboardIcons(
+                                  horizontal: 0.w,
+                                  title:getTitle(productPlanCategoryList[index].productPlanCategoryName,networkName),
+                                  icon: getNetworkIcon(networkName),
+                                  onTap: () {
+                                    dataCategotyId=productPlanCategoryList[index].id;
+                                    bloc.add(GetAllProductPlanEvent(GetProductRequest(
+                                        userId: loginResponse!.id,
+                                        planCategoryId:dataCategotyId,
+                                        // amount: airtimeAmountController.text.trim(),
+                                        networkId: networkId,
+                                        productSlug: "data"
+                                    )));
+                                    setState(() {
+                                      selectedValue=index;
+                                    });
+
+                                  },
+                                  isSelected:selectedValue==index),
+                            );
+                          }),
                     ),
                     Gap(20.h),
 
                     SizedBox(
-                      height: 180.h,
+                      height: productPlanList.length>8? 300.h:180.h,
                       child:productPlanList.isEmpty?
                       Center(
                         child: Column(
@@ -379,6 +406,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                       ):
                       GridView.builder(
                         padding: EdgeInsets.zero,
+                          physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4, // 4 items per row
                             crossAxisSpacing: 10.h, // Spacing between columns
@@ -467,7 +495,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                             Get.to(ConfirmDataPayment(
                               airtimeRecharge:  AirtimeRecharge(
                                   networkId: networkId,
-                                  number:  phoneNumberController.text,
+                                  number:  phoneNumberController.text.removeAllWhitespace.replaceAll("+234", "0"),
                                   productPlanCategoryId: dataCategotyId,
                                   productPlanId: productPlanId,
                                   networkName: networkName,

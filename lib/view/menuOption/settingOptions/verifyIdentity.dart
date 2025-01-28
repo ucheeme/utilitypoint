@@ -10,8 +10,11 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/bloc/product/product_bloc.dart';
+import 'package:utilitypoint/model/request/bvnOtpValidate.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
 import 'package:utilitypoint/utils/constant.dart';
+import 'package:utilitypoint/utils/height.dart';
+import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
@@ -24,6 +27,7 @@ import '../../../utils/myCustomCamera/myCameraScreen.dart';
 import '../../../utils/myCustomCamera/secondCamera.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
+import '../validateBVNOtp.dart';
 import 'checkImageQuality.dart';
 
 class UserIdentityVerification extends StatefulWidget {
@@ -116,15 +120,25 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           bloc.initial();
         }
         if(state is BVNVerified){
-          WidgetsBinding.instance.addPostFrameCallback((_){
-            showSuccessSlidingModal(context,successMessage: state.response.message,
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+           var response= await Get.to(ValidateBVNOTPScreen(pinId: state.response.pinId??"",));
+           if(response[0]){
+             bloc.add(ValidateBVNOTPEvent(ValidateBvnOtpRequest(pinId: state.response.pinId??"",
+               userId: loginResponse!.id, otp: response[1],)));
+           }
+
+          });
+          bloc.initial();
+        }
+        if(state is ValidateBvnOtp){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showSuccessSlidingModal(context,successMessage: "",
             headerText: "Sent for Verification",
             onTap: (){
               Get.back();
              // Get.back();
             });
           });
-          bloc.initial();
         }
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -395,7 +409,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
         ),
         builder: (context) => SizedBox(
-            height: 400.h,
+            height:350.h,
             child: VerifyBVN())
         );
       if(result[0]){
@@ -772,54 +786,76 @@ class _VerifyBVNState extends State<VerifyBVN> {
             color: AppColor.black0,
             borderRadius: BorderRadius.only(topRight: Radius.circular(18.r),topLeft:  Radius.circular(18.r)),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Gap(8.h),
-                Container(
-                  height: 6.h,
-                  width: 48.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3.r),
-                      color: AppColor.black40
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Gap(8.h),
+              Container(
+                height: 6.h,
+                width: 48.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3.r),
+                    color: AppColor.black40
                 ),
-                Gap(15.h),
-                Text("Verify Your BVN?",
-                  style: CustomTextStyle.kTxtMedium.copyWith(
-                    color: AppColor.black80,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
+              ),
+              Gap(15.h),
+              Text("Verify Your BVN?",
+                style: CustomTextStyle.kTxtMedium.copyWith(
+                  color: AppColor.black80,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
                 ),
-                Gap(10.h),
-                CustomizedTextField(
-                  textEditingController: bvnController,
-                  keyboardType: TextInputType.number,
-                  readOnly: false,
-                  hintTxt: "Enter bvn",
-                  maxLength: 11,
+              ),
+              height8,
+              CustomizedTextField(
+                textEditingController: bvnController,
+                keyboardType: TextInputType.number,
+                readOnly: false,
+                hintTxt: "Enter bvn",
+                maxLength: 11,
+              ),
+              // height8,
+              Text("Note: An OTP will be sent to the phone attached to your bvn.",
+                style: CustomTextStyle.kTxtMedium.copyWith(
+                  color: AppColor.black100,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
                 ),
+              ),
+              Gap(70.h),
+              CustomButton(onTap: (){
+                Get.back(result:[true, bvnController.text]);
+              //  Get.to(ValidateBVNOTPScreen(pinId: "",));
 
-                CustomButton(onTap: (){
-                  Get.back(result:[true, bvnController.text]);
-                },
-                  buttonText: "Done",
-                  borderRadius: 8.r,
-                  height: 48.h,
-                  textColor: AppColor.black0,
-                  buttonColor: AppColor.primary100,),
-                Gap(5.h),
-                CustomButton(onTap: (){
+              },
+                buttonText: "Done",
+                borderRadius: 8.r,
+                height: 48.h,
+                textColor: AppColor.black0,
+                buttonColor: AppColor.primary100,),
+              Gap(5.h),
+              // CustomButton(onTap: (){
+              //
+              // },
+              //   buttonText: "Cancel",
+              //   borderRadius: 8.r,
+              //   textColor:AppColor.secondary100 ,
+              //   height: 28.h,
+              //   buttonColor: Colors.transparent,),
+
+              GestureDetector(
+                onTap: (){
                   Get.back( result:[false, ""]);
                 },
-                  buttonText: "Cancel",
-                  borderRadius: 8.r,
-                  textColor:AppColor.secondary100 ,
-                  height: 28.h,
-                  buttonColor: Colors.transparent,)
-              ],
-            ),
+                child: Text("Cancel",
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                    color:AppColor.secondary100,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ) ,
       ),

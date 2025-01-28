@@ -10,8 +10,12 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/main.dart';
+import 'package:utilitypoint/model/request/setUniqueIdentifier.dart';
+import 'package:utilitypoint/model/response/setUniqueIdentifierResponse.dart';
+import 'package:utilitypoint/model/response/userDetails.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
+import 'package:utilitypoint/view/home/home_screen.dart';
 
 import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
@@ -43,6 +47,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
   late Animation<Offset> _moveAnimation;
   late Animation<Size> _containerSizeAnimation;
   late OnboardNewBloc bloc;
+  TextEditingController phoneNumberController = TextEditingController();
   @override
   void initState() {
     MySharedPreference.saveCreateAccountStep(key: isCreateAccountSecondStep,value: false);
@@ -104,15 +109,59 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
         loginResponse?.email =state.response.email;
         loginResponse?.firstName =state.response.firstName;
         loginResponse?.lastName =state.response.lastName;
-        loginResponse?.userName =state.response.userName;
+        //loginResponse?.userName =state.response.userName;
         loginResponse?.id =state.response.id;
         loginResponse?.dollarWallet =state.response.dollarWallet;
         loginResponse?.nairaWallet =state.response.nairaWallet;
         loginResponse?.token = state.response.token;
+        userDetails = UserDetails(id: state.response.id, bvn: state.response.bvn,
+            bvnJson: state.response.bvnJson,
+            bvnVerificationStatus: state.response.bvnVerificationStatus,
+            kycVerificationStatus: state.response.kycVerificationStatus,
+            firstName: state.response.firstName,
+            lastName: state.response.lastName,
+            otherNames: "",
+            userName: state.response.userName ?? "", pin:"",
+            userPlanId: "",
+            roleId: "",
+            dollarWallet: state.response.dollarWallet,
+            nairaWallet: state.response.nairaWallet,
+            email: state.response.email,
+            accountDeactivation: state.response.accountDeactivation,
+            smsAlert: state.response.smsAlert,
+            pushNotification: state.response.pushNotification,
+            emailNotification: state.response.emailNotification,
+            phoneNumber: phoneNumberController.text.length==11?
+            phoneNumberController.text:
+            "0${phoneNumberController.text}",
+            uplineId: "",
+            emailVerifiedAt: DateTime.now(),
+            emailOtp: "",
+            otpExpirationTime: DateTime.now(),
+            twoFactorCode: "",
+            twoFactorCodeExpirationTime: DateTime.now(),
+            active: "",
+            twoFactorSecret: null,
+            twoFactorRecoveryCodes: null,
+            createdAt: state.response.createdAt, updatedAt: state.response.updatedAt);
         accessToken =state.response.token;
         userId = state.response.id;
         MySharedPreference.saveCreateAccountStep(key: isCreateAccountFourthStep,value: true);
         MySharedPreference.saveUserLoginResponse(jsonEncode(loginResponse));
+        bloc.add(SetUserIdentifierEvent(bloc.validation.setUniqueIdentifierRequest()));
+
+      });
+      bloc.initial();
+    }
+
+    if(state is UniqueIdentifierSet){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        loginResponse?.userName =state.response.userName;
+        userDetails?.userName=state.response.userName;
+        userDetails?.phoneNumber=state.response.phoneNumber;
+
+        print("This is the username: ${state.response.userName}");
+        print("This is the phone: ${state.response.phoneNumber}");
         Get.toNamed(Pages.transactionPin);
       });
       bloc.initial();
@@ -122,7 +171,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration.zero, (){
         // Get.toNamed(Pages.personalInformation);
-          AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+          AppUtils.showSnack("${state.errorResponse.message }:  ${state.errorResponse.data.toString()}", context);
         });
       });
       bloc.initial();
@@ -226,6 +275,35 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
                         }
                     ),
                     height16,
+                    Text("Middle Name", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: AppColor.black100,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp
+                    ),),
+                    height8,
+                    StreamBuilder<Object>(
+                        stream: bloc.validation.middleName,
+                        builder: (context, snapshot) {
+                          return CustomizedTextField(
+                            error: snapshot.error?.toString(),
+                            keyboardType: TextInputType.name,
+                            hintTxt: "Enter middle name",
+                            isTouched: bloc.validation.isMiddleNameSelected,
+                            onTap: (){
+                              setState(() {
+                                bloc.validation.isFirstNameSelected=false;
+                                bloc.validation.isUserNameSelected= false;
+                                bloc.validation.isPhoneNumberSelected= false;
+                                bloc.validation.isReferralCodeSelected= false;
+                                bloc.validation.isLastNameSelected= false;
+                                bloc.validation.isMiddleNameSelected=!bloc.validation.isMiddleNameSelected;
+                              });
+                            },
+                            onChanged:  bloc.validation.setMiddleName,
+                          );
+                        }
+                    ),
+                    height16,
                     Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontWeight: FontWeight.w400,
@@ -264,6 +342,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
                         stream: bloc.validation.phoneNumber,
                         builder: (context, snapshot) {
                           return CustomizedTextField(
+                            textEditingController:phoneNumberController ,
                             prefixWidget:CountryCodePicker(
                               initialSelection: "NG",
                               dialogSize: Size(100.w, 229.h),
@@ -343,6 +422,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
     );
   }
   _createUserInfo(){
+
     bloc.add(SetUserInfoEvent(bloc.validation.userInfo()));
   }
 }

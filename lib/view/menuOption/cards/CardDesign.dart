@@ -166,7 +166,7 @@ class CardInfoDesign extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         if(isVirtualCardScreen!=true||isVirtualCardScreen==null){
-          Get.to(()=>CardInformation(userVirtualCards: cardDetail,));
+        //  Get.to(()=>CardInformation(userVirtualCards: cardDetail,));
         }else{
           Get.to(()=>CardTransactionHistory(cardId: cardDetail!.cardId,));
         }

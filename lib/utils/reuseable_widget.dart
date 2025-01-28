@@ -725,7 +725,7 @@ Widget dashboardIcons(
   return GestureDetector(
     onTap: onTap,
     child: SizedBox(
-      height: 86.h,
+      height: 100.h,
       // width: 74.w,
       child: Column(
         children: [

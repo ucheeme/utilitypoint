@@ -29,7 +29,8 @@ import '../bottomNav.dart';
 import '../onboarding_screen/signUp/personal_information.dart';
 import '../onboarding_screen/signUp/set_transaction_pin.dart';
 import '../onboarding_screen/signUp/verifyemail.dart';
-
+String userNameBio ="";
+String passwordBio ="";
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
 
@@ -154,8 +155,14 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
   bool isSecond = MySharedPreference.getCreateAccountStep(isCreateAccountSecondStep);
   bool isThird = MySharedPreference.getCreateAccountStep(isCreateAccountThirdStep);
   bool isFourth = MySharedPreference.getCreateAccountStep(isCreateAccountFourthStep);
+  bool isRequireBiometeric = MySharedPreference.getCreateAccountStep(isUseBiometeric);
+  String userName = MySharedPreference.getStringValue(isUserName);
+  String userPassword = MySharedPreference.getStringValue(isUserPassword);
   @override
   Widget build(BuildContext context) {
+    userNameBio = userName;
+    passwordBio = userPassword;
+    useBiometeric = isRequireBiometeric;
     return FutureBuilder<UserInfoUpdated?>(
         future: hasLoggedIn,
         builder: (context,snapshot){
@@ -175,6 +182,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
         if(isSecond) return const VerifyEmail();
         if(isThird) return const PersonalInformation();
         if(isFourth) return const SetTransactionPin();
+        if(isRequireBiometeric) return const SignInPage();
         return   Scaffold(
           body: Container(
             width: Get.width,
@@ -210,6 +218,8 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                     height30,
                     SlideTransition(
 
+                      position: _slideAnimationB,
+
                       child: Container(
 
                         height: 400.h,
@@ -224,7 +234,7 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                             children: [
                               height40,
                               SizedBox(
-                                height: 89.h,
+                                height: 100.h,
                                 width: 314.w,
                                 child: Text(
                                     "Your Everyday Financial Hub!",
@@ -278,7 +288,6 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
                           ),
                         ),
                       ),
-                      position: _slideAnimationB,
                     ),
                   ],
                 ),

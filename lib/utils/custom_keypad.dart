@@ -12,8 +12,9 @@ import 'app_color_constant.dart';
 
 class CustomKeypad extends StatefulWidget {
   final TextEditingController controller;
+  int? textLength;
   CustomKeypad(
-      {super.key,required this.controller}
+      {super.key,required this.controller,this.textLength}
       );
   @override
   _CustomKeypadState createState() => _CustomKeypadState();
@@ -343,7 +344,8 @@ class _CustomKeypadState extends State<CustomKeypad> {
 
   void _input(String text) {
     final value = _controller.text + text;
-    if(_controller.text.length!=4){
+    int value2= widget.textLength??4;
+    if(_controller.text.length!= value2){
       _controller.text = value;
       print(value);
     }

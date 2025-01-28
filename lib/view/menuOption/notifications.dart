@@ -48,8 +48,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>  with TickerP
     WidgetsBinding.instance.addPostFrameCallback((_){
       bloc.add(GetAllUserNotificationEvent(GetProductRequest(
         userId: loginResponse!.id,
-          startDate: "${currentDateTime.year}-${currentDateTime.month-1}-01",
-          endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+         // startDate: "${currentDateTime.year}-${currentDateTime.month-1}-01",
+          //endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
       )));
     });
     super.initState();
@@ -211,7 +211,7 @@ class _NotificationsDesignState extends State<NotificationsDesign> {
       backgroundColor: Colors.transparent,
       body:  Container(
         height: 120.h,
-        width: 335.w,
+       // width: 335.w,
         padding: EdgeInsets.all(9.h),
         decoration: BoxDecoration(
           color:colorChoice(),
@@ -226,14 +226,14 @@ class _NotificationsDesignState extends State<NotificationsDesign> {
           children: [
             SizedBox(
               height: 48.h,
-              width: 235.w,
+              width: 343.w,
               child: Row(
                 children: [
                   imageContainer(widget.notificationList.title,imagePath:widget.notificationList.imagePath),
                   Gap(10.w),
                   SizedBox(
-                    height: 44.h,
-                    width: 158.w,
+                    // height: 44.h,
+                    //width: 200.w,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,

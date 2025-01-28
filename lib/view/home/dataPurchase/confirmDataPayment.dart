@@ -61,10 +61,10 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
       builder: (context, state) {
         if (state is ProductError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration.zero, () {
+           // Future.delayed(Duration.zero, () {
               AppUtils.showSnack(
-                  state.errorResponse.message ?? "Error occurred", context);
-            });
+                  "${state.errorResponse.message } ${state.errorResponse.data??""}", context);
+           // });
           });
           bloc.initial();
         }

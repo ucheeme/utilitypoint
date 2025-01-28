@@ -160,9 +160,9 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                           child: CustomizedTextField(
                               textEditingController: meterNumber,
                               keyboardType: TextInputType.text,
-                              maxLength: 11,
+                              //maxLength: 11,
                               onChanged: (value){
-                                if(value.length==11){
+                                if(value.length==11||value.length==13){
                                   bloc.add(ConfirmMeterNameEvent(
                                       ConfirmMeterOrCableNameRequest(
                                           userId: loginResponse!.id,

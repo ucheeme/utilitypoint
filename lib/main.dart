@@ -34,12 +34,15 @@ String isCreateAccountFirstStep ="isCreateAccountFirstStep";
 String isCreateAccountSecondStep ="isCreateAccountSecondStep";
 String isCreateAccountThirdStep ="isCreateAccountThirdStep";
 String isCreateAccountFourthStep ="isCreateAccountFourthStep";
+String isUseBiometeric ="isUseBiometric";
+String isUserName ="isUserName";
+String isUserPassword ="isUserPassword";
 ThemeMode themeMode = ThemeMode.system;
 void mainCommon(AppFlavorConfig config) async{
   WidgetsFlutterBinding.ensureInitialized();
   statusBarTheme();
   await MySharedPreference.init();
-  DeviceUtils.initDeviceInfo();
+  await initRemoteConfig();
   FlutterError.onError = (FlutterErrorDetails details) {
     if (details.library == 'image resource service') {
       return;
@@ -77,7 +80,7 @@ class MyApp extends StatelessWidget {
          GetPage(name: Pages.forgotPassword, page:()=> ForgotpasswordScreen(),curve: Curves.easeIn),
          GetPage(name: Pages.twoFactorAuthentication, page:()=> Twofactorauthentication(),curve: Curves.easeIn),
          GetPage(name: Pages.notification, page:()=> NotificationsScreen(),curve: Curves.easeIn),
-         GetPage(name: Pages.bottomNav, page:()=> CurvedBottomNave(),curve: Curves.easeIn),
+         GetPage(name: Pages.bottomNav, page:()=> MyBottomNav(),curve: Curves.easeIn),
           GetPage(name: Pages.myCards, page: ()=>Cardscreen(),curve: Curves.easeIn),
           GetPage(name: Pages.myProfile, page: ()=>ProfileScreen(),curve: Curves.easeIn),
           GetPage(name: Pages.transactionHistory, page: ()=>TransactionScreen(),curve: Curves.easeIn),

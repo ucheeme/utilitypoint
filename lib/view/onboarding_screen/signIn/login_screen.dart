@@ -6,11 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
 import 'package:utilitypoint/services/api_service.dart';
+import 'package:utilitypoint/utils/mySharedPreference.dart';
 import 'package:utilitypoint/view/onboarding_screen/SignUpScreen.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
+import '../../../main.dart';
 import '../../../model/response/userInfoUpdated.dart';
 import '../../../repository/onboarding_repository.dart';
 import '../../../utils/app_color_constant.dart';
@@ -21,6 +24,7 @@ import '../../../utils/image_paths.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
+bool useBiometeric =false;
 UserInfoUpdated? loginResponse;
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -32,13 +36,93 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
   late OnboardNewBloc bloc;
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  var userName=TextEditingController();
+  var userPassword =TextEditingController();
+  bool _isAuthenticated = false;
+
+  Future<void> _authenticate() async {
+    try {
+      bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
+      bool isAuthenticated = false;
+
+      if (canCheckBiometrics) {
+        isAuthenticated = await _localAuth.authenticate(
+          localizedReason: 'Authenticate to access the app',
+          options: AuthenticationOptions(
+            biometricOnly: true,
+          ),
+        );
+      }
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
+      if(_isAuthenticated){
+        Get.back();
+        bloc.add(LoginUserEvent(bloc.validation.loginUserRequestBio()));
+      }
+
+    } catch (e) {
+      print("Error during authentication: $e");
+    }
+  }
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(useBiometeric){
+        _showBottomSheet(context);
+      }
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
   }
 
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      enableDrag: false,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Logic for login or authentication
+
+                    _authenticate();
+                    // Navigator.of(context).pop(); // Close the BottomSheet
+                  },
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.fingerprint,
+                        size: 100,
+                        color: Colors.blue,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Tap on me to login",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   @override
   void dispose() {
     // Dispose the animation manager to avoid memory leaks
@@ -68,7 +152,12 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         userId = state.response.id;
         accessToken = state.response.token;
         loginResponse = state.response;
-        Get.toNamed(Pages.twoFactorAuthentication);
+        if(state.response.requireOtp=="1"){
+          Get.toNamed(Pages.twoFactorAuthentication);
+        }else{
+          Get.toNamed(Pages.bottomNav);
+        }
+
       });
       bloc.initial();
     }
@@ -124,9 +213,10 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                         stream: bloc.validation.loginUserName,
                         builder: (context, snapshot) {
                           return CustomizedTextField(
+                            textEditingController: userName,
                             error: snapshot.error?.toString(),
                             keyboardType: TextInputType.name,
-                            hintTxt: "Enter username",
+                            hintTxt: "Enter username/email",
                             isTouched: bloc.validation.isLoginUserNameSelected,
                             onTap: (){
                               setState(() {
@@ -149,6 +239,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                       stream: bloc.validation.loginPassword,
                       builder: (context, snapshot) {
                         return CustomizedTextField(
+                          textEditingController:userPassword ,
                           error: snapshot.error?.toString(),
                           onChanged: bloc.validation.setLoginPassword,
                           hintTxt: "Enter password",
@@ -183,6 +274,8 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                           return CustomButton(
                             onTap: (){
                             if (snapshot.hasData==true && snapshot.data!=null) {
+                              MySharedPreference.saveAnyStringValue(key:isUserName,value:userName.text);
+                              MySharedPreference.saveAnyStringValue(key:isUserPassword,value:userPassword.text);
                               bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
                               //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
                             }

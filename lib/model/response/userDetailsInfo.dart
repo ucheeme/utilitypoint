@@ -1,28 +1,37 @@
 // To parse this JSON data, do
 //
-//     final userDetails = userDetailsFromJson(jsonString);
+//     final userDetailsInfo = userDetailsInfoFromJson(jsonString);
 
 import 'dart:convert';
 
-UserDetails userDetailsFromJson(String str) => UserDetails.fromJson(json.decode(str));
+UserDetailsInfo userDetailsInfoFromJson(String str) => UserDetailsInfo.fromJson(json.decode(str));
 
-String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
+String userDetailsInfoToJson(UserDetailsInfo data) => json.encode(data.toJson());
 
-class UserDetails {
+class UserDetailsInfo {
   String id;
   String bvn;
-  String? identityImage;
-  String? identityNumber;
-  String? identityType;
-  String? identityPhoto;
-  String? identificationNumber;
-  String? identificationType;
-  String? postalCode;
-  String? country;
-  String? state;
-  String? city;
-  String? dob;
-  String? addressStreet;
+  dynamic sendchampJson;
+  String termiiJson;
+  String termiiPinId;
+  String sendchampSuccessStatus;
+  String sendchampChannel;
+  dynamic sendchampOtp;
+  dynamic sendchampReference;
+  String sendchampAttempts;
+  String canDoCardTransactions;
+  String identityImage;
+  String identityNumber;
+  String identityType;
+  String photo;
+  String identificationNumber;
+  String identificationType;
+  String postalCode;
+  String country;
+  String state;
+  String city;
+  DateTime dob;
+  String addressStreet;
   dynamic bvnJson;
   String bvnVerificationStatus;
   String kycVerificationStatus;
@@ -41,34 +50,44 @@ class UserDetails {
   String pushNotification;
   String emailNotification;
   String phoneNumber;
-  String uplineId;
+  dynamic uplineId;
   DateTime emailVerifiedAt;
   String emailOtp;
   DateTime otpExpirationTime;
   String twoFactorCode;
   DateTime twoFactorCodeExpirationTime;
   String active;
-  String? profilePic;
   dynamic twoFactorSecret;
   dynamic twoFactorRecoveryCodes;
   DateTime createdAt;
   DateTime updatedAt;
+  String deviceId;
+  DateTime lastLoginAt;
 
-  UserDetails({
+  UserDetailsInfo({
     required this.id,
     required this.bvn,
-    this.country,
-    this.state,
-    this.city,
-    this.dob,
-    this.postalCode,
-    this.addressStreet,
-    this.identificationType,
-    this.identificationNumber,
-    this.identityImage,
-    this.identityType,
-    this.identityNumber,
-    this.identityPhoto,
+     this.sendchampJson,
+    required this.termiiJson,
+    required this.termiiPinId,
+    required this.sendchampSuccessStatus,
+    required this.sendchampChannel,
+    required this.sendchampOtp,
+    required this.sendchampReference,
+    required this.sendchampAttempts,
+    required this.canDoCardTransactions,
+    required this.identityImage,
+    required this.identityNumber,
+    required this.identityType,
+    required this.photo,
+    required this.identificationNumber,
+    required this.identificationType,
+    required this.postalCode,
+    required this.country,
+    required this.state,
+    required this.city,
+    required this.dob,
+    required this.addressStreet,
     required this.bvnJson,
     required this.bvnVerificationStatus,
     required this.kycVerificationStatus,
@@ -88,7 +107,6 @@ class UserDetails {
     required this.emailNotification,
     required this.phoneNumber,
     required this.uplineId,
-    this.profilePic,
     required this.emailVerifiedAt,
     required this.emailOtp,
     required this.otpExpirationTime,
@@ -99,70 +117,90 @@ class UserDetails {
     required this.twoFactorRecoveryCodes,
     required this.createdAt,
     required this.updatedAt,
+    required this.deviceId,
+    required this.lastLoginAt,
   });
 
-  factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
+  factory UserDetailsInfo.fromJson(Map<String, dynamic> json) => UserDetailsInfo(
     id: json["id"],
     bvn: json["bvn"],
+    sendchampJson: json["sendchamp_json"]==null?null:SendchampJson.fromJson(json["sendchamp_json"]),
+    termiiJson: json["termii_json"],
+    termiiPinId: json["termii_pin_id"],
+    sendchampSuccessStatus: json["sendchamp_success_status"],
+    sendchampChannel: json["sendchamp_channel"],
+    sendchampOtp: json["sendchamp_otp"],
+    sendchampReference: json["sendchamp_reference"],
+    sendchampAttempts: json["sendchamp_attempts"],
+    canDoCardTransactions: json["can_do_card_transactions"],
     identityImage: json["identity_image"],
-   identityNumber: json[ "identity_number"],
+    identityNumber: json["identity_number"],
     identityType: json["identity_type"],
-    identityPhoto: json["photo"],
+    photo: json["photo"],
     identificationNumber: json["identification_number"],
     identificationType: json["identification_type"],
     postalCode: json["postal_code"],
     country: json["country"],
     state: json["state"],
     city: json["city"],
-    dob: json["dob"],
+    dob: DateTime.parse(json["dob"]),
     addressStreet: json["address_street"],
     bvnJson: json["bvn_json"],
     bvnVerificationStatus: json["bvn_verification_status"],
     kycVerificationStatus: json["kyc_verification_status"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    otherNames: json["other_names"]??"",
-    userName: json["user_name"]??"",
+    otherNames: json["other_names"],
+    userName: json["user_name"],
     pin: json["pin"],
     userPlanId: json["user_plan_id"],
     roleId: json["role_id"],
     dollarWallet: json["dollar_wallet"],
     nairaWallet: json["naira_wallet"],
-    email: json["email"]??"",
+    email: json["email"],
     accountDeactivation: json["account_deactivation"],
     smsAlert: json["sms_alert"],
     pushNotification: json["push_notification"],
     emailNotification: json["email_notification"],
-    phoneNumber: json["phone_number"]??"",
-    uplineId: json["upline_id"]??"",
+    phoneNumber: json["phone_number"],
+    uplineId: json["upline_id"],
     emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
-    emailOtp: json["email_otp"]??"",
+    emailOtp: json["email_otp"],
     otpExpirationTime: DateTime.parse(json["otp_expiration_time"]),
-    twoFactorCode: json["two_factor_code"]??"",
-    twoFactorCodeExpirationTime: json["two_factor_code_expiration_time"] != null
-        ? DateTime.parse(json["two_factor_code_expiration_time"])
-        : DateTime.now().add(const Duration(minutes: 1)),
+    twoFactorCode: json["two_factor_code"],
+    twoFactorCodeExpirationTime: DateTime.parse(json["two_factor_code_expiration_time"]),
     active: json["active"],
-    twoFactorSecret: json["two_factor_secret"]??"",
-    twoFactorRecoveryCodes: json["two_factor_recovery_codes"]??"",
+    twoFactorSecret: json["two_factor_secret"],
+    twoFactorRecoveryCodes: json["two_factor_recovery_codes"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
+    deviceId: json["device_id"],
+    lastLoginAt: DateTime.parse(json["last_login_at"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "bvn": bvn,
+    "sendchamp_json": sendchampJson.toJson(),
+    "termii_json": termiiJson,
+    "termii_pin_id": termiiPinId,
+    "sendchamp_success_status": sendchampSuccessStatus,
+    "sendchamp_channel": sendchampChannel,
+    "sendchamp_otp": sendchampOtp,
+    "sendchamp_reference": sendchampReference,
+    "sendchamp_attempts": sendchampAttempts,
+    "can_do_card_transactions": canDoCardTransactions,
     "identity_image": identityImage,
-    "identity_number": identificationNumber,
+    "identity_number": identityNumber,
     "identity_type": identityType,
-    "photo": identityPhoto,
+    "photo": photo,
     "identification_number": identificationNumber,
     "identification_type": identificationType,
     "postal_code": postalCode,
     "country": country,
     "state": state,
     "city": city,
-    "dob": dob,
+    "dob": "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
     "address_street": addressStreet,
     "bvn_json": bvnJson,
     "bvn_verification_status": bvnVerificationStatus,
@@ -193,5 +231,17 @@ class UserDetails {
     "two_factor_recovery_codes": twoFactorRecoveryCodes,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
+    "device_id": deviceId,
+    "last_login_at": "${lastLoginAt.year.toString().padLeft(4, '0')}-${lastLoginAt.month.toString().padLeft(2, '0')}-${lastLoginAt.day.toString().padLeft(2, '0')}",
+  };
+}
+
+class SendchampJson {
+  SendchampJson();
+
+  factory SendchampJson.fromJson(Map<String, dynamic> json) => SendchampJson(
+  );
+
+  Map<String, dynamic> toJson() => {
   };
 }

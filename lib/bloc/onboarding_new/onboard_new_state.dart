@@ -97,3 +97,17 @@ class TwoFactorAuthenticationCodeResent extends OnboardNewState{
   @override
   List<Object?> get props =>[response];
 }
+
+class UniqueIdentifierSet extends OnboardNewState{
+  UniqueIdentifierResponse response;
+  UniqueIdentifierSet(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class SingleUserDetailsState extends OnboardNewState{
+  UserDetailsInfo response;
+  SingleUserDetailsState(this.response);
+  @override
+  List<Object?> get props =>[response];
+}

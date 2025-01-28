@@ -6,7 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:utilitypoint/main.dart';
 import 'package:utilitypoint/utils/constant.dart';
+import 'package:utilitypoint/utils/mySharedPreference.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
@@ -32,13 +34,15 @@ class _AlertnotificationState extends State<Alertnotification>  with TickerProvi
     "Email Notification",
     "Push Notification",
     "SMS Alert",
+    "Enable Biometric",
   ];
 
 
   List<bool> toogleState = [
     userDetails!.emailNotification=="1"?true:false,
     userDetails!.pushNotification=="1"?true:false,
-    userDetails!.smsAlert=="1"?true:false,];
+    userDetails!.smsAlert=="1"?true:false,
+    useBiometeric];
   @override
   void initState() {
 
@@ -149,6 +153,11 @@ class _AlertnotificationState extends State<Alertnotification>  with TickerProvi
                                 smsAlert: res,
                                 accountDeactivation: '0',
                               )));
+                        } else if(index == 3) {
+                          setState(() {
+                            useBiometeric= !useBiometeric;
+                          });
+                          MySharedPreference.saveCreateAccountStep(key:isUseBiometeric,value: useBiometeric);
                         }
                         setState(() {
                           toogleState[index]=value;

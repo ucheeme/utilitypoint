@@ -64,7 +64,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleBuyDollarEvent(ConvertNairaToDollarRequest event)async{
@@ -80,7 +80,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetExchangeRateEvent()async{
@@ -96,7 +96,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetUserCardEvent(GetUserIdRequest event)async{
@@ -112,7 +112,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleCreateCardEvent(CreateCardRequest event)async{
@@ -128,7 +128,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       // print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetNairaFundingOptionEvent()async{
@@ -144,7 +144,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       // print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleFundCardEvent(TopUpCardRequest event)async{
@@ -160,7 +160,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleFreezeCardEvent(FreezeUnfreezeCard event)async{
@@ -176,7 +176,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleUnFreezeCardEvent(FreezeUnfreezeCard event)async{
@@ -192,7 +192,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetUserVirtualAccountEvent( event)async{
@@ -208,7 +208,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleCreateUserVirtualAccountEvent( event)async{
@@ -224,7 +224,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -241,7 +241,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 

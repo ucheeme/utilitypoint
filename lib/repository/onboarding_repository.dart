@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:utilitypoint/model/defaultModel.dart';
 import 'package:utilitypoint/model/request/changePin.dart';
 import 'package:utilitypoint/model/request/loginRequest.dart';
+import 'package:utilitypoint/model/request/setUniqueIdentifier.dart';
 import 'package:utilitypoint/model/request/verifyEmailRequest.dart';
 import 'package:utilitypoint/repository/apiRepository.dart';
 
@@ -14,18 +15,21 @@ import '../model/request/signInResetPasswordRequest.dart';
 import '../model/request/twoFactorAuthenticationRequest.dart';
 import '../model/request/updateUserInfo.dart';
 import '../model/response/accountCreated.dart';
+import '../model/response/setUniqueIdentifierResponse.dart';
+import '../model/response/userDetailsInfo.dart';
 import '../model/response/userInfoUpdated.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
 
-class OnboardingRepository extends DefaultRepository{
+class OnboardingRepository extends DefaultRepository {
   Future<Object> createUser(request) async {
-    var response = await postRequest(request, AppUrls.register, false, HttpMethods.post);
+    var response = await postRequest(
+        request, AppUrls.register, false, HttpMethods.post);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-
-        AccountCreatedResponse res = accountCreatedFromJson(json.encode(r.data));
+        AccountCreatedResponse res = accountCreatedFromJson(
+            json.encode(r.data));
         return res;
       } else {
         return r;
@@ -40,7 +44,8 @@ class OnboardingRepository extends DefaultRepository{
 
   Future<Object> verifyUserEmail(VerifiedEmailRequest request) async {
     var response = await postRequest(null,
-        "${AppUrls.emailVerification}?user_id=${request.userId}&otp=${request.otp}",
+        "${AppUrls.emailVerification}?user_id=${request.userId}&otp=${request
+            .otp}",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -76,9 +81,11 @@ class OnboardingRepository extends DefaultRepository{
     }
   }
 
-  Future<Object> resendTwoFactorAuthentication(VerifiedEmailRequest request) async {
+  Future<Object> resendTwoFactorAuthentication(
+      VerifiedEmailRequest request) async {
     var response = await postRequest(null,
-        "${AppUrls.resendCompleteTwoFactorAuthentication}?user_id=${request.userId}",
+        "${AppUrls.resendCompleteTwoFactorAuthentication}?user_id=${request
+            .userId}",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -130,13 +137,14 @@ class OnboardingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
   Future<Object> createNewPassword(SignInResetPasswordRequest request) async {
     var response = await postRequest(request, AppUrls.createNewPassword,
         true, HttpMethods.post);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-       UserInfoUpdated res = userInfoUpdatedFromJson(json.encode(r.data));
+        UserInfoUpdated res = userInfoUpdatedFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -165,6 +173,25 @@ class OnboardingRepository extends DefaultRepository{
     }
   }
 
+  Future<Object> setIdentifiers(SetUniqueIdentifierRequest request) async {
+    var response = await postRequest(request, AppUrls.setUserIdentifier,
+        true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        UniqueIdentifierResponse res = uniqueIdentifierResponseFromJson(
+            json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    }
+    else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
   Future<Object> loginUser(LoginUserRequest request) async {
     var response = await postRequest(request, AppUrls.login,
         true, HttpMethods.post);
@@ -182,8 +209,10 @@ class OnboardingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+
   Future<Object> forgotPassword(String request) async {
-    var response = await postRequest(null, "${AppUrls.forgotPassword}?email=$request",
+    var response = await postRequest(
+        null, "${AppUrls.forgotPassword}?email=$request",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -200,8 +229,10 @@ class OnboardingRepository extends DefaultRepository{
     }
   }
 
-  Future<Object> twoFactorAuthentication(TwoFactorAuthenticationRequest request) async {
-    var response = await postRequest(request, AppUrls.completeTwoFactorAuthentication,
+  Future<Object> twoFactorAuthentication(
+      TwoFactorAuthenticationRequest request) async {
+    var response = await postRequest(
+        request, AppUrls.completeTwoFactorAuthentication,
         true, HttpMethods.post);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -218,42 +249,22 @@ class OnboardingRepository extends DefaultRepository{
     }
   }
 
-  Future<Object> newUser(CreateAccountRequest request) async {
-  var headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'Accept':'*/*',
-    'Accept-Encoding':'gzip,deflate,br',
-    'Connection':'keep-alive',
-    'User-Agent':'Postman Runtime/7.42.0'
-  };
-  var data = json.encode(request.toJson());
-  var dio = Dio();
-  var response = await dio.request(
-    'https://app.zennalfinance.com/vdc/api/auth/register',
-    options: Options(
-      method: 'POST',
-      headers: headers,
-    ),
-    data: data,
-  );
-  print(response.statusCode);
-  print(response.data);
-  var r = handleSuccessResponse(response);
-  if (r is DefaultApiResponse) {
-    if (r.status == true) {
-      AccountCreatedResponse res = accountCreatedFromJson(json.encode(r.data));
-      return res;
-    } else {
-      return r;
+  Future<Object> getSingleUserDetails(String request) async {
+    var response = await postRequest(
+        null, "${AppUrls.getSingleUserDetails}?user_id=$request",
+        true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        UserDetailsInfo res = userDetailsInfoFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    }
+    else {
+      handleErrorResponse(response);
+      return errorResponse!;
     }
   }
-  else {
-    print(response);
-    handleErrorResponse(response);
-    return errorResponse!;
-  }
-}
-
-
 }

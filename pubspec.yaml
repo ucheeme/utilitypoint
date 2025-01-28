@@ -40,15 +40,21 @@ dependencies:
   rich_text_widget: ^0.2.7
   pin_code_fields: ^8.0.1
   flutter_animate:
+  local_auth:
   msh_checkbox: ^2.0.1
+  package_info_plus:
+  flutter_udid:
   country_code_picker: ^3.0.0
   provider: ^6.1.1
   shared_preferences: ^2.2.2
   rxdart:
   device_info_plus:
-
+  curved_navigation_bar:
+  screenshot:
   flutter_contacts: ^1.1.9
   permission_handler:
+  proste_bezier_curve:
+  flutter_flip_card:
   dio: ^5.7.0
   http:
   dio_cache_interceptor: ^3.5.0
@@ -63,10 +69,7 @@ dependencies:
   flutter_flavor:
   android_intent_plus: ^5.1.0
   url_launcher:
-#  open_mail_app: ^0.4.5
   flutter_dotenv:
-  proste_bezier_curve: ^2.0.2
-  curved_navigation_bar: ^1.0.6
   overlay_loader_with_app_icon:
   camera: ^0.10.0+4
   image: ^3.0.1
@@ -77,13 +80,12 @@ dependencies:
   image_picker:
   image_cropper:
   file_picker: ^5.2.2
-  flutter_flip_card: ^0.0.6
   envied: ^0.3.0+3
-  screenshot: ^3.0.0
 #  image_gallery_saver:
   saver_gallery: ^4.0.0
   path_provider:
   gap:
+
   flutter_email_sender:
   country: ^4.1.9
   flutter_screenutil:

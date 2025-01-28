@@ -112,7 +112,7 @@ class _ReviewOrderState extends State<ReviewOrder>
             Get.back();
             Get.back(result: true);
             showSuccessSlidingModal(context,
-                successMessage: "Card Successfully Topped up!");
+                successMessage: "Top up Successful!");
           });
           bloc.initial();
         }

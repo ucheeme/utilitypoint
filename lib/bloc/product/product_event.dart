@@ -138,3 +138,9 @@ class VerifyBVNEvent extends ProductEvent {
   @override
   List<Object?> get props => [];
 }
+class ValidateBVNOTPEvent extends ProductEvent {
+  final ValidateBvnOtpRequest request;
+  const ValidateBVNOTPEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}

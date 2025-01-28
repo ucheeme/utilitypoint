@@ -13,9 +13,12 @@ import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../model/request/buyCableSubscriptionRequest.dart';
 import '../model/request/buyElectricity.dart';
+import '../model/request/bvnOtpValidate.dart';
 import '../model/request/confirmElectricityMeterOrCableName.dart';
 import '../model/request/getProduct.dart';
 import '../model/response/buyAirtimeDataResponse.dart';
+import '../model/response/bvnFinalVerification.dart';
+import '../model/response/bvnValidationResponse.dart';
 import '../model/response/confirmSmartCardMeterNameResponse.dart';
 import '../model/response/dataPlanCategory.dart';
 import '../model/response/dataPlanResponse.dart';
@@ -24,6 +27,7 @@ import '../model/response/exchangeRate.dart';
 import '../model/response/kycValidated.dart';
 import '../model/response/nairaDollarTransactionList.dart';
 import '../model/response/userKYCResponse.dart';
+import '../model/response/validateBVNOTPResponse.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
 
@@ -38,7 +42,7 @@ class Productsrepository extends DefaultRepository {
     if (r is DefaultApiResponse) {
       if (r.status == true) {
         List<ProductTransactionList> res =
-            transactionListFromJson(json.encode(r.data));
+        productTransactionListFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -396,8 +400,25 @@ class Productsrepository extends DefaultRepository {
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        DefaultApiResponse res =
-        defaultApiResponseFromJson(json.encode(r));
+        BvnValidationResponse res =
+        bvnValidationResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> validateBVNOTP(ValidateBvnOtpRequest request) async {
+    var response = await postRequest(
+        request,AppUrls.validateBvnOtp , true, HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is DefaultApiResponse) {
+      if (r.status == true) {
+        BvnFinalVerified res =
+        bvnFinalVerifiedFromJson(json.encode(r.data));
         return res;
       } else {
         return r;

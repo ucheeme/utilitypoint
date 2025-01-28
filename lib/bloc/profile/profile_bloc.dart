@@ -55,7 +55,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleUpdateUserDetailsEvent(UpdateUserDetailRequest event)async{
@@ -71,7 +71,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleChangePasswordEvent(ChangeUserPasswordRequest event)async{
@@ -92,7 +92,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleLogOutEvent(LogOutRequest event)async{
@@ -113,7 +113,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetAllUserNotificationEvent(GetProductRequest event)async{
@@ -128,7 +128,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleMarkNotificationAsReadEvent( event)async{
@@ -143,7 +143,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleMarkNotificationAsUnReadEvent( event)async{
@@ -158,7 +158,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleUpdateUserAppSettingEvent( event)async{
@@ -173,7 +173,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetFAQsEvent  ()async{
@@ -188,7 +188,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -206,7 +206,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -224,7 +224,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 

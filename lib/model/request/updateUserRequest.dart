@@ -13,8 +13,8 @@ class UpdateUserDetailRequest {
   String firstName;
   String lastName;
   String otherNames;
-  String userName;
-  String phoneNumber;
+  // String? userName;
+  // String? phoneNumber;
   String? addressStreet;
   String? dob;
   String? city;
@@ -33,8 +33,8 @@ class UpdateUserDetailRequest {
     required this.firstName,
     required this.lastName,
     required this.otherNames,
-    required this.userName,
-    required this.phoneNumber,
+    // required this.userName,
+    // required this.phoneNumber,
      this.addressStreet,
      this.dob,
      this.city,
@@ -54,8 +54,8 @@ class UpdateUserDetailRequest {
     firstName: json["first_name"],
     lastName: json["last_name"],
     otherNames: json["other_names"],
-    userName: json["user_name"],
-    phoneNumber: json["phone_number"],
+    // userName: json["user_name"],
+    // phoneNumber: json["phone_number"],
     addressStreet: json["address_street"]??"",
     dob: json["dob"]??"",
     city: json["city"]??"",
@@ -75,8 +75,8 @@ class UpdateUserDetailRequest {
     "first_name": firstName,
     "last_name": lastName,
     "other_names": otherNames,
-    "user_name": userName,
-    "phone_number": phoneNumber,
+    // "user_name": userName,
+    // "phone_number": phoneNumber,
     "address_street": addressStreet,
     "dob": dob,
     "city": city,

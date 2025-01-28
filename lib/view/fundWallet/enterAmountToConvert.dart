@@ -242,7 +242,13 @@ class _EnterUsdAmountScreenState extends State<EnterUsdAmountScreen> {
               padding:  EdgeInsets.symmetric(horizontal: 34.w),
               child: CustomButton(
                 onTap: () async {
-                  showSlidingModalCreate(context,amount);
+                  if(double.parse(amount)>2){
+                    showSlidingModalCreate(context,amount);
+                  }else{
+                    AppUtils.showInfoSnack(
+                        "Amount must be greater than 2",
+                        context);
+                  }
                 },
                 buttonText:'Continue',
                 buttonColor: AppColor.primary100,

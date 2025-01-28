@@ -239,7 +239,7 @@ class User {
     kycVerificationStatus: json["kyc_verification_status"],
     firstName: json["first_name"],
     lastName: json["last_name"],
-    otherNames: json["other_names"],
+    otherNames: json["other_names"]??"",
     userName: json["user_name"],
     pin: json["pin"],
     userPlanId: json["user_plan_id"],

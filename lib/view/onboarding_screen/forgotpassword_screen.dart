@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
@@ -143,7 +144,7 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
                             onTap: (){
                               if (snapshot.hasData==true && snapshot.data!=null) {
                                // print(snapshot.data.toString());
-                             bloc.add(ForgotPasswordEvent(snapshot.data.toString()));
+                             bloc.add(ForgotPasswordEvent(snapshot.data.toString().toLowerCase()));
                               }else{
                                 AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
                               }
@@ -167,4 +168,16 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
     );
   }
 }
+
+
+Future<void> openEmailApp() async {
+  final Uri emailUri = Uri(scheme: 'mailto'); // No recipient or query parameters
+
+  if (await canLaunchUrl(emailUri)) {
+    await launchUrl(emailUri);
+  } else {
+    throw 'Could not open the email app';
+  }
+}
+
 

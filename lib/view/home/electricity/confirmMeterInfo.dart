@@ -156,7 +156,7 @@ class _ConfirmElectricPaymentState extends State<ConfirmElectricPayment>
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400),
                               ),
-                              Text( widget.airtimeRecharge.cableName??"",
+                              Text( widget.airtimeRecharge.cableName?.replaceAll("Defaulted to:", "")??"",
                                 style: CustomTextStyle.kTxtBold.copyWith(
                                     color: AppColor.black100,
                                     fontSize: 16.sp,

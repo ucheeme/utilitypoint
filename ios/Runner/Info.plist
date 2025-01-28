@@ -14,6 +14,8 @@
     <string>6.0</string>
     <key>CFBundleName</key>
     <string>utilitypoint</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>We use Face ID to authenticate you</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app will need to access your file when necessary</string>
     <key>NSCameraUsageDescription</key>

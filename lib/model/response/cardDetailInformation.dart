@@ -63,7 +63,7 @@ class Details {
   String cardNumber;
   String expiry;
   String ccv;
-  int balance;
+  dynamic balance;
   String status;
   Billing billing;
   DateTime createdAt;

@@ -39,6 +39,13 @@ class ChangePinEvent extends OnboardNewEvent{
   List<Object?> get props => [];
 }
 
+class SetUserIdentifierEvent extends OnboardNewEvent{
+  final SetUniqueIdentifierRequest request;
+  const SetUserIdentifierEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
 class SetUserInfoEvent extends OnboardNewEvent{
   final UpdateUser request;
   const SetUserInfoEvent(this.request);
@@ -77,6 +84,13 @@ class ForgotPasswordEvent extends OnboardNewEvent{
 class SignInCreateNewPasswordEvent extends OnboardNewEvent{
   final SignInResetPasswordRequest request;
   const SignInCreateNewPasswordEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}
+
+class GetSingleUserDetailEvent extends OnboardNewEvent{
+  String userId;
+   GetSingleUserDetailEvent(this.userId);
   @override
   List<Object?> get props => [];
 }

@@ -259,7 +259,7 @@ class _NewCardInformationState extends State<NewCardInformation>
             child: Container(
               height: 668.72.h,
               width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
+              padding: EdgeInsets.only(top: 15.h, left: 24.w, right: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
                 borderRadius: BorderRadius.only(
@@ -302,21 +302,30 @@ class _NewCardInformationState extends State<NewCardInformation>
                     ),
                 GestureFlipCard(
                 animationDuration: const Duration(milliseconds: 300),
-                axis: FlipAxis.horizontal,
+                axis: FlipAxis.vertical,
                 controller:con, // used to ccontrol the Gesture flip programmatically
-                enableController : false ,// if [True] if you need flip the card using programmatically
-              frontWidget:  CardInfoDesign(cardDetail: widget.userVirtualCards,
-                  information:singeCardDetails),
-            backWidget:  Container(
-              margin: EdgeInsets.only(top: 20.h),
-                height: 164.h,
-                child: CardBackView(
-                  cardDetail: widget.userVirtualCards,
-                  information: singeCardDetails,)),
+                enableController : true ,// if [True] if you need flip the card using programmatically
+              frontWidget:  GestureDetector(
+                onTap: (){
+                  print("I am here");
+                  con.flipcard();
+                },
+                child: CardInfoDesign(cardDetail: widget.userVirtualCards,
+                    information:singeCardDetails),
+              ),
+            backWidget:  GestureDetector(
+              onTap: (){
+                con.flipcard();
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 20.h),
+                  height: 164.h,
+                  child: CardBackView(
+                    cardDetail: widget.userVirtualCards,
+                    information: singeCardDetails,)),
+            ),
           ),
-
-                    Gap(24.h),
-
+                    // Gap(24.h),
                     Gap(24.h),
                     GestureDetector(
                       onTap: () async {
@@ -580,7 +589,7 @@ class _TopUpCardOptionState extends State<TopUpCardOption> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.back(result: true);
             showSuccessSlidingModal(context,
-                successMessage: "Card Successfully Topped up!");
+                successMessage: "Card topped up, Successfully !");
           });
           bloc.initial();
         }

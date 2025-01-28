@@ -49,6 +49,15 @@ class MySharedPreference {
 static saveCreateAccountStep({String key="",bool value=false}){
     _preferences?.setBool(key, value);
 }
+
+  static saveAnyStringValue({String key="",String value=""}){
+    _preferences?.setString(key, value);
+  }
+
+  static String getStringValue(String key)  {
+    return _preferences?.getString(key) ?? "";
+  }
+
   static saveUserId({String key="userId",String value=""}){
     _preferences?.setString(key, value);
   }
@@ -62,6 +71,12 @@ static saveCreateAccountStep({String key="",bool value=false}){
 
   static setVisitingFlag() async {
     return _preferences?.setBool("alreadyvisited", true);
+  }
+  static setIsProfileUpdate(bool value) async {
+    return _preferences?.setBool("isNewAccount", value);
+  }
+  static bool getIsProfileUpdate() {
+    return _preferences?.getBool('isNewAccount') ?? false;
   }
 
   static clearSharedPref() async {

@@ -143,6 +143,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>with TickerProviderStateMi
                         textColor: AppColor.black0,
                         onTap: () {
                           isNewAccount=true;
+                          MySharedPreference.setIsProfileUpdate(isNewAccount);
                           Get.offAll(MyBottomNav(), predicate: (route) => false); },
                         buttonText: "Continue to Home",
                         height: 58.h,

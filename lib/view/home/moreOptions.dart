@@ -36,7 +36,7 @@ class _MoreoptionsState extends State<Moreoptions>
   late SlideAnimationManager _animationManager;
   OnboardingFormValidation validation = OnboardingFormValidation();
   late ProfileBloc bloc;
-
+  bool isLoading = false;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -111,7 +111,7 @@ class _MoreoptionsState extends State<Moreoptions>
         }
 
         return OverlayLoaderWithAppIcon(
-          isLoading: state is ProfileIsLoading,
+          isLoading: state is ProfileIsLoading||isLoading,
           overlayBackgroundColor: AppColor.black40,
           circularProgressColor: AppColor.primary100,
           appIconSize: 60.h,
@@ -203,7 +203,7 @@ class _MoreoptionsState extends State<Moreoptions>
                                 ),
                                 Gap(4.h),
                                 Text(
-                                  "@${loginResponse?.userName}",
+                                  "@${userDetails?.userName}",
                                   style: CustomTextStyle.kTxtMedium.copyWith(
                                       color: AppColor.black0,
                                       fontWeight: FontWeight.w400,
@@ -241,11 +241,13 @@ class _MoreoptionsState extends State<Moreoptions>
                                       GestureDetector(
                                           onTap: () async {
                                             if (index == 6) {
-                                              showSlidingModalLogOut(
+                                          bool response=  await showSlidingModalLogOut(
                                                   context);
 
-                                              if (isLogOut.value) {
-
+                                              if (response) {
+                                                setState(() {
+                                                  isLoading=true;
+                                                });
                                               }
                                             } else {
                                               navigateToNewScreen(index);

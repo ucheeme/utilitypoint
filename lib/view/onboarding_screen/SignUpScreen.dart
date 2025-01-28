@@ -41,11 +41,20 @@ class _SignUpCreateAccountScreenState extends State<SignUpCreateAccountScreen> w
    isValidString(String input) {
     final symbolPattern = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
     final numberPattern = RegExp(r'\d');
-
+    final uppercasePattern = RegExp(r'[A-Z]');
     bool containsSymbol = symbolPattern.hasMatch(input);
-
+    bool containsUppercase = uppercasePattern.hasMatch(input);
     bool containsNumber = numberPattern.hasMatch(input);
     bool hasValidLength = input.length > 7;
+    if(containsUppercase){
+      setState(() {
+        controller.isContainsOneUpperCaseChecked=true;
+      });
+    }else{
+      setState(() {
+        controller.isContainsOneUpperCaseChecked=false;
+      });
+    }
     if(containsSymbol){
       setState(() {
         controller.isContainsSymbolChecked=true;
@@ -168,7 +177,7 @@ _handlePress(){
     if (state is OnBoardingError){
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(Duration.zero, (){
-          AppUtils.showSnack("${state.errorResponse.message} ${state.errorResponse.data}", context);
+          AppUtils.showSnack("${state.errorResponse.message}: ${state.errorResponse.data}", context);
         });
       });
       bloc.initial();
@@ -294,7 +303,7 @@ _handlePress(){
                       ),
                       height16,
                       SizedBox(
-                        height: 78.h,
+                        height: 110.h,
                         width: Get.width,
                         child: Column(
                           children: [
@@ -350,6 +359,25 @@ _handlePress(){
                                       onChanged: (value){}),
                                   Gap(8.w),
                                   Text("one symbol minimum", style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                  ),)
+                                ],
+                              ),
+                            ),
+                            height8,
+                            SizedBox(
+                              height: 20.h,
+                              child: Row(
+                                children: [
+                                  MSHCheckbox(value:controller.isContainsOneUpperCaseChecked,
+                                      colorConfig: MSHColorConfig.fromCheckedUncheckedDisabled(
+                                        checkedColor: AppColor.success100,
+                                      ),
+                                      style: MSHCheckboxStyle.fillScaleColor,
+                                      onChanged: (value){}),
+                                  Gap(8.w),
+                                  Text("one capital letter", style: CustomTextStyle.kTxtMedium.copyWith(
                                     color: AppColor.black100,
                                     fontSize: 14.sp,
                                   ),)

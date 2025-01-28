@@ -27,8 +27,8 @@ class CustomValidator {
     if (value.length < 3) {
       return "At least 3 characters!";
     }
-    if (value.length >= 20) {
-      return "The name must not be greater than 20 characters";
+    if (value.length >= 50) {
+      return "The name must not be greater than 50 characters";
     }
     return null;
   }
@@ -160,16 +160,87 @@ class CustomValidator {
     return null;
   }
 
-  String? validateConfirmPassword(String? value,){
-    String error ='';
-    if(value == null){
-      error = "";
+  String? validateConfirmPassword(String? value,) {
+    String error = '';
+    if (value == null) {
+      error = 'Password can\'t be empty';
     }
 
-    if(value!=tempPassword){
-      error="Password does not match";
+    const requiredPasswordLength = 8;
+
+    if (value!.isEmpty) {
+      return "";
     }
-    if (error == '') {
+    if (value.length < requiredPasswordLength) {
+      return "Password can't be smaller than  $requiredPasswordLength characters";
+    }
+    // } else if (!regExp.hasMatch(value)) {
+    //   return "Password must have uppercase, lowercase, numeric, special characters (! @ # \$ & * ~)";
+    // }
+    if (value.contains(RegExp(r'[A-Z]'))) {
+      error = "Must have lowercase, numeric and special characters";
+    }
+    if (value.contains(RegExp(r'[0-9]'))) {
+      error = "Must have uppercase, lowercase and special characters ";
+    }
+    if (value.contains(RegExp(r'[a-z]'))) {
+      error = "Must have uppercase, numeric and special characters";
+    }
+    if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      error = "Must have uppercase, lowercase and numeric";
+    }
+    if (value.contains(RegExp(r'[A-Z]')) && value.contains(RegExp(r'[0-9]'))) {
+      error = "Must have lowercase and special characters";
+    }
+    if (value.contains(RegExp(r'[A-Z]')) && value.contains(RegExp(r'[a-z]'))) {
+      error = "Must have numeric and special characters";
+    }
+    if (value.contains(RegExp(r'[0-9]')) && value.contains(RegExp(r'[a-z]'))) {
+      error = "Must have uppercase and special characters";
+    }
+    if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) &&
+        value.contains(RegExp(r'[A-Z]'))) {
+      error = "Must have lowercase and numeric";
+    }
+    if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) &&
+        value.contains(RegExp(r'[0-9]'))) {
+      error = "Must have uppercase and lowercase";
+    }
+    if (value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) &&
+        value.contains(RegExp(r'[a-z]'))) {
+      error = "Must have uppercase and numeric";
+    }
+
+    if (value.contains(RegExp(r'[A-Z]')) &&
+        value.contains(RegExp(r'[a-z]')) &&
+        value.contains(RegExp(r'[0-9]'))) {
+      error = "Must have special characters";
+    }
+    if (value.contains(RegExp(r'[A-Z]')) &&
+        value.contains(RegExp(r'[a-z]')) &&
+        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      error = "Must have numeric";
+    }
+    if (value.contains(RegExp(r'[0-9]')) &&
+        value.contains(RegExp(r'[a-z]')) &&
+        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      error = "Must have uppercase";
+    }
+    if (value.contains(RegExp(r'[A-Z]')) &&
+        value.contains(RegExp(r'[0-9]')) &&
+        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      error = "Must have lowercase";
+    }
+    if (value.contains(RegExp(r'[A-Z]')) &&
+        value.contains(RegExp(r'[0-9]')) &&
+        value.contains(RegExp(r'[a-z]')) &&
+        value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      error = '';
+    }
+    if (value != tempPassword) {
+      error = "Password does not match";
+    }
+    if (error == '' && value == tempPassword) {
       return null;
     } else {
       return error;

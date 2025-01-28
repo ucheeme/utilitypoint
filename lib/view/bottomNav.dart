@@ -203,6 +203,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
         ));
   }
 }
+
 class CurvedBottomNave extends StatefulWidget {
   const CurvedBottomNave({super.key});
 

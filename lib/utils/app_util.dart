@@ -26,6 +26,7 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/menuOption/notifications.dart';
+import 'package:utilitypoint/view/onboarding_screen/forgotpassword_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/verifyForgotPasswordOtp.dart';
 
 import '../bloc/onboarding_new/onBoardingValidator.dart';
@@ -282,6 +283,7 @@ void showSlidingModal(BuildContext context) {
                   padding:  EdgeInsets.symmetric(horizontal: 34.w),
                   child: CustomButton(
                     onTap: () async {
+                      openEmailApp();
                       // Android: Will open mail app or show native picker.
                       // iOS: Will open mail app if single mail app found.
                       // var result = await OpenMailApp.openMailApp();
@@ -314,10 +316,15 @@ void showSlidingModal(BuildContext context) {
                 ),
                height10,
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Get.back();
-                   Get.to(ResetPasswordSignIn());
-                  },
+                    List<dynamic> response = await Get.to(TransactionPin(header:"Enter OTP",));
+                    if(response[0] == true){
+                      resetPasswordOTP = response[1];
+                      Get.to(ResetPasswordSignIn());
+                    }
+
+                    },
                   child: Text(
                     'Done',
                     style: CustomTextStyle.kTxtBold.copyWith(color: AppColor.secondary100,
@@ -332,6 +339,7 @@ void showSlidingModal(BuildContext context) {
     },
   );
 }
+String resetPasswordOTP ="";
 void showNoMailAppsDialog(BuildContext context) {
   showDialog(
     context: context,

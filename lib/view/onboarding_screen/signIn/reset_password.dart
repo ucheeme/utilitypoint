@@ -241,16 +241,16 @@ class _ResetPasswordSignInState extends State<ResetPasswordSignIn> with TickerPr
     if(newPass.isEmpty||confirmNew.isEmpty){
       AppUtils.showInfoSnack("No Field should be empty", context);
     }else if(newPass.contains(confirmNew)){
-      List<dynamic> response = await Get.to(TransactionPin());
-      if(response[0]==true){
-        print("trans");
+      // List<dynamic> response = await Get.to(TransactionPin());
+      // if(response[0]==true){
+      //   print("trans");
         bloc.add(SignInCreateNewPasswordEvent(SignInResetPasswordRequest(
                     userId: loginResponse!.id,
                     password: newPass, confirmPassword: confirmNew,
-                    resetCode: response[1])
+                    resetCode: resetPasswordOTP)
             )
         );
-      }
+      // }
 
     }else{
       AppUtils.showSnack("Confirm new password does not match with your new password",

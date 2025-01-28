@@ -7,11 +7,14 @@ import '../../model/defaultModel.dart';
 import '../../model/request/accountCreation.dart';
 import '../../model/request/loginRequest.dart';
 import '../../model/request/setTransactionPin.dart';
+import '../../model/request/setUniqueIdentifier.dart';
 import '../../model/request/signInResetPasswordRequest.dart';
 import '../../model/request/twoFactorAuthenticationRequest.dart';
 import '../../model/request/updateUserInfo.dart';
 import '../../model/request/verifyEmailRequest.dart';
 import '../../model/response/accountCreated.dart';
+import '../../model/response/setUniqueIdentifierResponse.dart';
+import '../../model/response/userDetailsInfo.dart';
 import '../../model/response/userInfoUpdated.dart';
 import '../../repository/onboarding_repository.dart';
 import '../../utils/app_util.dart';
@@ -37,6 +40,8 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
     on<ResendTwoFactorAuthenticatorEvent>((event, emit)async{handleResendTwoFactorAuthentication(event.request);});
     on<ChangePinEvent>((event, emit)async{handleChangePin(event.request);});
     on<SignInCreateNewPasswordEvent>((event, emit)async{handleSignInCreateNewPasswordEvent(event.request);});
+    on<SetUserIdentifierEvent>((event, emit)async{handleSetUserIdentifierEvent(event.request);});
+    on<GetSingleUserDetailEvent>((event, emit)async{handleGetSingleUserDetailEvent(event);});
   }
   void handleAccountCreateEvent(event)async{
     emit(OnboardingIsLoading());
@@ -52,7 +57,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleVerifyEmailEvent(VerifiedEmailRequest event)async{
@@ -73,7 +78,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleResendEmailVerificationEvent(VerifiedEmailRequest event)async{
@@ -94,7 +99,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleSetTransactionPin(SetTransactionPinRequest event)async{
@@ -115,7 +120,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleSetUserInfo(UpdateUser event)async{
@@ -131,7 +136,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleLoginUser(LoginUserRequest event)async{
@@ -147,7 +152,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleForgotPassword(String event)async{
@@ -165,7 +170,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleTwoFactorAuthentication(TwoFactorAuthenticationRequest event)async{
@@ -182,7 +187,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleResendTwoFactorAuthentication(VerifiedEmailRequest event)async{
@@ -203,7 +208,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -225,7 +230,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -242,13 +247,48 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
+  void handleSetUserIdentifierEvent(SetUniqueIdentifierRequest event)async{
+    emit(OnboardingIsLoading());
+    try {
+      final response = await onboardingRepository.setIdentifiers(event);
+      if (response is UniqueIdentifierResponse) {
+          emit(UniqueIdentifierSet(response));
+          AppUtils.debug("success");
+      }else{
+        emit(OnBoardingError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
 
   initial(){
     emit(OnboardNewInitial());
+  }
+
+  void handleGetSingleUserDetailEvent(request) async {
+    emit(OnboardingIsLoading());
+    try {
+      final   response = await onboardingRepository.getSingleUserDetails(request.userId);
+      if (response is UserDetailsInfo) {
+        emit(SingleUserDetailsState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(OnBoardingError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+
+      print(trace);
+      print(e);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
   }
 
 

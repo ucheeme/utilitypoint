@@ -59,9 +59,9 @@ class _PersonInformationState extends State<PersonInformation>
       firstName.text = loginResponse!.firstName ?? "No Name";
       lastName.text = loginResponse!.lastName ?? "No Name";
       middleName.text = userDetails!.otherNames ?? "No Name";
-      userName.text = loginResponse!.userName ?? "No Name";
+      userName.text = userDetails?.userName ?? "No Name";
       emailAddress.text = loginResponse!.email ?? "No Name";
-      phoneNumber.text = userDetails!.phoneNumber ?? "No Name";
+      phoneNumber.text = userDetails?.phoneNumber ?? "No Name";
     }
 
     super.initState();
@@ -89,22 +89,22 @@ class _PersonInformationState extends State<PersonInformation>
           });
           bloc.initial();
         }
-        if (state is UserDetailUpdate) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            userDetails!.firstName = state.response.firstName;
-            userDetails!.lastName = state.response.lastName;
-            userDetails!.otherNames = middleName.text;
-            userDetails!.userName = state.response.userName;
-            userDetails!.email = state.response.email;
-            userDetails!.phoneNumber = phoneNumber.text;
-            isNewAccount=false;
-            showSuccessSlidingModal(context,
-                headerText: "Detail Updated!",
-                successMessage: "User Update was successful!");
-          });
-          Get.back();
-          bloc.initial();
-        }
+        // if (state is UserDetailUpdate) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     userDetails!.firstName = state.response.firstName;
+        //     userDetails!.lastName = state.response.lastName;
+        //     userDetails!.otherNames = middleName.text;
+        //     //userDetails!.userName = state.response.userName;
+        //     userDetails!.email = state.response.email;
+        //    // userDetails!.phoneNumber = phoneNumber.text;
+        //     isNewAccount=false;
+        //     showSuccessSlidingModal(context,
+        //         headerText: "Detail Updated!",
+        //         successMessage: "User Update was successful!");
+        //   });
+        //   Get.back();
+        //   bloc.initial();
+        // }
         return OverlayLoaderWithAppIcon(
             isLoading: state is ProfileIsLoading,
             overlayBackgroundColor: AppColor.black40,
@@ -357,6 +357,8 @@ class _PersonInformationState extends State<PersonInformation>
                         SizedBox(
                             height: 58.h,
                             child: CustomizedTextField(
+                              readOnly: true,
+                              isProfile: true,
                               textEditingController: phoneNumber,
                               prefixWidget: CountryCodePicker(
                                 initialSelection: "NG",
@@ -377,10 +379,12 @@ class _PersonInformationState extends State<PersonInformation>
                         firstName: firstName.text.trim(),
                         lastName: lastName.text.trim(),
                         otherNames: middleName.text.trim(),
-                        userName: userName.text.trim(),
-                        phoneNumber:phoneNumber.text.length==11? phoneNumber.text.trim():"0${phoneNumber.text.trim()}");
-                       Get.to(Nextpersonalinformation(updateUserDetailRequest:v,),curve: Curves.easeIn,);
-
+                      //  userName: userName.text.trim(),
+                      //  phoneNumber:phoneNumber.text.length==11? phoneNumber.text.trim():"0${phoneNumber.text.trim()}"
+                    );
+                       Get.to(Nextpersonalinformation(
+                         updateUserDetailRequest:v,),
+                         curve: Curves.easeIn,);
                     },
                     buttonText: "Next",
                     textColor: AppColor.black0,

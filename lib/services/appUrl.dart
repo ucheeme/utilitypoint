@@ -53,6 +53,10 @@ class AppUrls{
   static const updateAppSetting="${baseUrl}user/update_appside_setting";
   static const getFAQ="${baseUrl}faqs";
   static const getSingleVirtualCard="${baseUrl}user/view_single_virtual_card";
+  static const setUserIdentifier="${baseUrl}user/update_user_unique";
+  static const getSingleUserDetails="${baseUrl}user/fetch_single_user";
+
+  static const validateBvnOtp= "${baseUrl}kyc/verify_bvn_phone_otp";
  // static const completeTwoFactorAuthentication=
  // "${baseUrl}auth/complete_two_factor_authentication";
 }

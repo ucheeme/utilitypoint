@@ -2,36 +2,30 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:local_auth/local_auth.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:utilitypoint/utils/mySharedPreference.dart';
-import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
-import '../app_color_constant.dart';
-import '../app_util.dart';
-import '../custom_keypad.dart';
-import '../height.dart';
-import '../reuseableFunctions.dart';
-import '../reuseable_widget.dart';
-import '../text_style.dart';
+import '../../utils/app_color_constant.dart';
+import '../../utils/custom_keypad.dart';
+import '../../utils/height.dart';
+import '../../utils/reuseable_widget.dart';
+import '../../utils/text_style.dart';
 
-class TransactionPin extends StatefulWidget {
- bool? isTransactionScreen;
- String? header;
-  TransactionPin({super.key, this.isTransactionScreen,this.header});
+class ValidateBVNOTPScreen extends StatefulWidget {
+  String pinId;
+   ValidateBVNOTPScreen({super.key, required this.pinId});
 
   @override
-  State<TransactionPin> createState() => _TransactionPinState();
+  State<ValidateBVNOTPScreen> createState() => _ValidateBVNOTPScreenState();
 }
 
-class _TransactionPinState extends State<TransactionPin>with TickerProviderStateMixin {
+class _ValidateBVNOTPScreenState extends State<ValidateBVNOTPScreen>with TickerProviderStateMixin {
   late AnimationController _slideController;
   late AnimationController _slideControllerTop;
   // TextEditingController pinValueController=TextEditingController();
@@ -40,38 +34,9 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
   late Animation<Offset> _slideAnimationTop;
   TextEditingController transactionPinController = TextEditingController();
   late OnboardNewBloc bloc;
-  final LocalAuthentication _localAuth = LocalAuthentication();
-  var userName=TextEditingController();
-  var userPassword =TextEditingController();
-  bool _isAuthenticated = false;
-  String pin="";
-
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(widget.isTransactionScreen==null || widget.isTransactionScreen==false){
-        if(useBiometeric){
-
-        _isAuthenticated =await  authenticate(_localAuth);
-        setState(() {
-          _isAuthenticated=_isAuthenticated;
-        });
-        if(_isAuthenticated){
-           pin =  MySharedPreference.getStringValue("transactionPin");
-          if(pin.isEmpty){
-            bloc.add(GetSingleUserDetailEvent(loginResponse?.id??""));
-          }else{
-            Get.back(result:  [true,pin]);
-          }
-
-        }
-        }else{
-         // AppUtils.showSuccessSnack("enable biometric", context);
-        }
-      }
-    });
-
     super.initState();
 
     // Slide Animation
@@ -125,13 +90,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
     bloc = BlocProvider.of<OnboardNewBloc>(context);
     return BlocBuilder<OnboardNewBloc, OnboardNewState>(
       builder: (context, state) {
-        if(state is SingleUserDetailsState){
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            pin= state.response.pin;
-            MySharedPreference.saveAnyStringValue(key:"transactionPin", value:pin);
-            Get.back(result:  [true,pin]);
-          });
-        }
+
         return OverlayLoaderWithAppIcon(
           isLoading:state is OnboardingIsLoading,
           overlayBackgroundColor: AppColor.black40,
@@ -155,8 +114,8 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
               padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
               child: SizedBox(
                   height: 52.h,
-                  child: widget.header==null?CustomAppBar(title:widget.isTransactionScreen==true? "Set transaction Pin":"Enter Pin")
-              :  CustomAppBar(title:widget.header!)
+                  child: CustomAppBar(title:"Enter OTP")
+
               ),
             ),
           ),
@@ -179,16 +138,15 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                         height: 30.h,
                         child: pinCodeTextField(context: context)),
                     Gap(42.h),
-                    CustomKeypad(controller: transactionPinController),
+                    CustomKeypad(controller: transactionPinController,textLength: 6,),
                     height45,
                     StreamBuilder<Object>(
-                        stream: bloc.validation.otpValue,
+                        stream: bloc.validation.bvnotpValue,
                         builder: (context, snapshot) {
                           return CustomButton(onTap: () {
-                            bloc.validation.transactionPinController.text=transactionPinController.text;
-                            MySharedPreference.saveAnyStringValue(key:"transactionPin", value:transactionPinController.text);
+
                             Get.back(result: [true,transactionPinController.text]);
-                            bloc.validation.setOtpValue("");
+
 
                           }, buttonText: "Submit", textfontSize: 16.sp,
                             borderRadius: 8.r,
@@ -207,14 +165,14 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
   }
   Widget pinCodeTextField({required BuildContext context}){
     return StreamBuilder<String>(
-        stream: bloc.validation.otpValue,
+        stream: bloc.validation.bvnotpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-            cursorColor: Colors.transparent,
+              cursorColor: Colors.transparent,
               appContext: context,
               enableActiveFill: true,
               autoFocus: true,
-              length: 4,
+              length: 6,
               obscuringCharacter: '●',
               obscuringWidget: Container(height: 20.h,width: 40.w,
                   decoration:BoxDecoration(
@@ -239,7 +197,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
                   selectedColor:isWrongOTP?AppColor.Error100:AppColor.primary100,
                   errorBorderColor: AppColor.Error100
               ),
-              onChanged:bloc.validation.setOtpValue
+              onChanged:bloc.validation.setBVNOtpValue
           );
         }
     );

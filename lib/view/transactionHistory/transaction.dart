@@ -47,9 +47,9 @@ class _TransactionScreenState extends State<TransactionScreen>
   bool isNairaTransactions = false;
   bool isDollarTransactions = false;
   late ProductBloc bloc;
-  List<UserTransactions> transactionList = [];
-  List<UserTransactions> nairaTransactionList = [];
-  List<UserTransactions> dollarTransactionList = [];
+  List<ProductTransactionList> transactionList = [];
+  List<ProductTransactionList> nairaTransactionList = [];
+  List<ProductTransactionList> dollarTransactionList = [];
   TextEditingController searchController = TextEditingController();
   DateTime currentDateTime = DateTime.now();
 
@@ -103,7 +103,7 @@ class _TransactionScreenState extends State<TransactionScreen>
   }
 
   searchList(String value) {
-    transactionList = tempUserTransactionList
+    transactionList = tempTransactionList
         .where((element) =>
             element.description.toLowerCase().contains(value.toLowerCase()))
         .toList();
@@ -130,111 +130,93 @@ class _TransactionScreenState extends State<TransactionScreen>
         if (state is AirtimeDataTransactionHistorySuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             for (var item in state.response) {
-              transactionList.add(UserTransactions(
-                  isProduct: true,
-                  userId: item.userId,
-                  actionBy: "",
-                  transactionCategory: item.transactionCategory,
-                  balanceBefore: item.balanceBefore,
-                  balanceAfter: item.balanceAfter,
-                  description: item.description,
-                  productPlanId: item.productPlanId,
-                  status: item.status,
-                  walletCategory: item.walletCategory,
-                  phoneNumber: item.phoneNumber,
-                  smartCardNumber: item.smartCardNumber,
-                  metreNumber: item.metreNumber,
-                  cableTvSlots: item.cableTvSlots,
-                  utilitySlots: item.utilitySlots,
-                  amount: item.amount,
-                  referralCommissionValue: item.referralCommissionValue,
-                  discountedAmount: item.discountedAmount,
-                  createdAt: item.createdAt,
-                  updatedAt: item.updatedAt));
+              transactionList.add(item);
             }
             // transactionList=state.response;
             tempTransactionList = state.response;
-            tempUserTransactionList = transactionList;
-            bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
-              userId: loginResponse!.id,
-              startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-              endDate:
-                  "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-            )));
+            dollarTransactionList = tempTransactionList.where((element)=>element.walletCategory.toLowerCase()=="dollar_wallet").toList();
+            nairaTransactionList = tempTransactionList.where((element)=>element.walletCategory.toLowerCase()=="naira_wallet").toList();
+            // tempUserTransactionList = transactionList;
+            // bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
+            //   userId: loginResponse!.id,
+            //   startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+            //   endDate:
+            //       "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+            // )));
           });
           bloc.initial();
         }
 
-        if (state is AllNairaTransactions) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            for (var item in state.response) {
-              transactionList.add(UserTransactions(
-                  isProduct: false,
-                  userId: item.userId,
-                  actionBy: item.actionBy,
-                  transactionCategory: item.transactionCategory,
-                  balanceBefore: item.balanceBefore,
-                  balanceAfter: item.balanceAfter,
-                  description: item.description,
-                  transactionId: item.transactionId,
-                  createdAt: item.createdAt,
-                  updatedAt: item.updatedAt));
-              nairaTransactionList.add(UserTransactions(
-                  isProduct: false,
-                  userId: item.userId,
-                  actionBy: item.actionBy,
-                  transactionCategory: item.transactionCategory,
-                  balanceBefore: item.balanceBefore,
-                  balanceAfter: item.balanceAfter,
-                  description: item.description,
-                  transactionId: item.transactionId,
-                  createdAt: item.createdAt,
-                  updatedAt: item.updatedAt));
-            }
-
-            // transactionList=state.response;
-            tempUserTransactionList = transactionList;
-            bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
-              userId: loginResponse!.id,
-              startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-              endDate:
-                  "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-            )));
-          });
-          bloc.initial();
-        }
-        if (state is AllDollarTransactions) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            for (var item in state.response) {
-              transactionList.add(UserTransactions(
-                  isProduct: false,
-                  userId: item.userId,
-                  actionBy: item.actionBy,
-                  transactionCategory: item.transactionCategory,
-                  balanceBefore: item.balanceBefore,
-                  balanceAfter: item.balanceAfter,
-                  description: item.description,
-                  transactionId: item.transactionId,
-                  createdAt: item.createdAt,
-                  updatedAt: item.updatedAt));
-              dollarTransactionList.add(UserTransactions(
-                  isProduct: false,
-                  userId: item.userId,
-                  actionBy: item.actionBy,
-                  transactionCategory: item.transactionCategory,
-                  balanceBefore: item.balanceBefore,
-                  balanceAfter: item.balanceAfter,
-                  description: item.description,
-                  transactionId: item.transactionId,
-                  createdAt: item.createdAt,
-                  updatedAt: item.updatedAt));
-            }
-            // transactionList=state.response;
-            tempUserTransactionList = transactionList;
-            // nairaTransactionList = transactionList;
-          });
-          bloc.initial();
-        }
+        // if (state is AllNairaTransactions) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     for (var item in state.response) {
+        //       transactionList.add(UserTransactions(
+        //           isProduct: false,
+        //           userId: item.userId,
+        //           actionBy: item.actionBy,
+        //           transactionCategory: item.transactionCategory,
+        //           balanceBefore: item.balanceBefore,
+        //           balanceAfter: item.balanceAfter,
+        //           description: item.description,
+        //           transactionId: item.transactionId,
+        //           createdAt: item.createdAt,
+        //           updatedAt: item.updatedAt));
+        //       nairaTransactionList.add(UserTransactions(
+        //           isProduct: false,
+        //           userId: item.userId,
+        //           actionBy: item.actionBy,
+        //           transactionCategory: item.transactionCategory,
+        //           balanceBefore: item.balanceBefore,
+        //           balanceAfter: item.balanceAfter,
+        //           description: item.description,
+        //           transactionId: item.transactionId,
+        //           createdAt: item.createdAt,
+        //           updatedAt: item.updatedAt));
+        //     }
+        //
+        //     // transactionList=state.response;
+        //     tempUserTransactionList = transactionList;
+        //     bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
+        //       userId: loginResponse!.id,
+        //       startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
+        //       endDate:
+        //           "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+        //     )));
+        //   });
+        //   bloc.initial();
+        // }
+        // if (state is AllDollarTransactions) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     for (var item in state.response) {
+        //       transactionList.add(UserTransactions(
+        //           isProduct: false,
+        //           userId: item.userId,
+        //           actionBy: item.actionBy,
+        //           transactionCategory: item.transactionCategory,
+        //           balanceBefore: item.balanceBefore,
+        //           balanceAfter: item.balanceAfter,
+        //           description: item.description,
+        //           transactionId: item.transactionId,
+        //           createdAt: item.createdAt,
+        //           updatedAt: item.updatedAt));
+        //       dollarTransactionList.add(UserTransactions(
+        //           isProduct: false,
+        //           userId: item.userId,
+        //           actionBy: item.actionBy,
+        //           transactionCategory: item.transactionCategory,
+        //           balanceBefore: item.balanceBefore,
+        //           balanceAfter: item.balanceAfter,
+        //           description: item.description,
+        //           transactionId: item.transactionId,
+        //           createdAt: item.createdAt,
+        //           updatedAt: item.updatedAt));
+        //     }
+        //     // transactionList=state.response;
+        //     tempUserTransactionList = transactionList;
+        //     // nairaTransactionList = transactionList;
+        //   });
+        //   bloc.initial();
+        // }
 
         return OverlayLoaderWithAppIcon(
           isLoading: state is ProductIsLoading,
@@ -272,7 +254,7 @@ class _TransactionScreenState extends State<TransactionScreen>
             child: Container(
               height: 668.72.h,
               width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
+              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
                 borderRadius: BorderRadius.only(
@@ -375,13 +357,13 @@ class _TransactionScreenState extends State<TransactionScreen>
                               isDataAirtime = false;
                               isNairaTransactions = false;
                               isDollarTransactions = false;
-                              transactionList = tempUserTransactionList;
+                              transactionList = tempTransactionList;
                               selectionChoice = 0;
                             });
                           }),
                           Gap(8.w),
                           filterDesign("Data & Airtime", isDataAirtime, () {
-                            transactionList = tempUserTransactionList
+                            transactionList = tempTransactionList
                                 .where((element) => (element.description
                                         .toLowerCase()
                                         .contains("airtime") ||
@@ -467,17 +449,17 @@ class _TransactionScreenState extends State<TransactionScreen>
           padding: EdgeInsets.only(top: 10.h),
           itemCount: nairaTransactionList.length,
           itemBuilder: (context, index) {
-            UserTransactions element = nairaTransactionList[index];
+            ProductTransactionList element = nairaTransactionList[index];
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
                     Get.to(TransactionReceiptScreen(
-                      userTransactions: element,
+                      productTransactionList: element,
                     ));
                   },
-                  child: TransactionWidgetDesgin(
-                    transactionList: element,
+                  child: NairaTransactionWidgetDesgin(
+                   transactionList : element,
                   )),
             );
           });
@@ -486,16 +468,16 @@ class _TransactionScreenState extends State<TransactionScreen>
           padding: EdgeInsets.only(top: 10.h),
           itemCount: dollarTransactionList.length,
           itemBuilder: (context, index) {
-            UserTransactions element = dollarTransactionList[index];
+            ProductTransactionList element = dollarTransactionList[index];
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
                     Get.to(TransactionReceiptScreen(
-                      userTransactions: element,
+                      productTransactionList: element,
                     ));
                   },
-                  child: TransactionWidgetDesgin(
+                  child: NairaTransactionWidgetDesgin(
                     transactionList: element,
                   )),
             );
@@ -505,16 +487,16 @@ class _TransactionScreenState extends State<TransactionScreen>
           padding: EdgeInsets.only(top: 10.h),
           itemCount: transactionList.length,
           itemBuilder: (context, index) {
-            UserTransactions element = transactionList[index];
+            ProductTransactionList element = transactionList[index];
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
                     Get.to(TransactionReceiptScreen(
-                      userTransactions: element,
+                      productTransactionList: element,
                     ));
                   },
-                  child: TransactionWidgetDesgin(
+                  child: NairaTransactionWidgetDesgin(
                     transactionList: element,
                   )),
             );

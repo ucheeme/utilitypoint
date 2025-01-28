@@ -31,7 +31,7 @@ class _ContactusScreenState extends State<ContactusScreen>with TickerProviderSta
   TextEditingController phoneNumber = TextEditingController();
   late ProfileBloc bloc;
   List<Map<String,String>> contactUs =[
-    {"title":"08103615718",
+    {"title":"07073459839",
     "subTitle":"Call our 24/7 customer support",
     "icon":"callUs_Icon"},
     {"title":"utilitypointsolution@gmail.com",

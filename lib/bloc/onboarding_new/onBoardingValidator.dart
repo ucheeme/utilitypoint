@@ -15,18 +15,22 @@ import 'package:utilitypoint/utils/globalData.dart';
 
 import '../../model/request/accountCreation.dart';
 import '../../model/request/changePin.dart';
+import '../../model/request/setUniqueIdentifier.dart';
 import '../../model/request/twoFactorAuthenticationRequest.dart';
 import '../../model/request/updateUserInfo.dart';
 import '../../utils/device_util.dart';
 import '../../utils/pages.dart';
 import '../../view/onboarding_screen/signUp/accountCreated.dart';
 import '../../view/onboarding_screen/signUp/verifyemail.dart';
+import '../../view/splashScreen/splashScreen.dart';
 
 String tempPassword = '';
 String? userId = "";
 
 class OnboardingFormValidation {
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController
+
+  passwordController = TextEditingController();
   String otpController = "";
   TextEditingController transactionPinController = TextEditingController();
   TextEditingController twoFactorController = TextEditingController();
@@ -42,6 +46,7 @@ class OnboardingFormValidation {
   bool isEmailSelected = false;
   bool isFirstNameSelected = false;
   bool isLastNameSelected = false;
+  bool isMiddleNameSelected = false;
   bool isUserNameSelected = false;
   bool isWrongOTP = false;
   bool isCompleteOTP = false;
@@ -56,6 +61,7 @@ class OnboardingFormValidation {
   bool isEightCharacterMinimumChecked = false;
   bool isContainsNumChecked = false;
   bool isContainsSymbolChecked = false;
+  bool  isContainsOneUpperCaseChecked = false;
   bool isPasswordMatch = false;
   String tempPassword = "";
 
@@ -79,8 +85,10 @@ class OnboardingFormValidation {
   final _phoneSubject = BehaviorSubject<String>();
   final _firstNameSubject = BehaviorSubject<String>();
   final _lastNameSubject = BehaviorSubject<String>();
+  final _middleNameSubject = BehaviorSubject<String>();
   final _userNameSubject = BehaviorSubject<String>();
   final _otpValueSubject = BehaviorSubject<String>();
+  final _bvnotpValueSubject = BehaviorSubject<String>();
   final _referralCodeSubject = BehaviorSubject<String>();
   final _loginUserNameSubject = BehaviorSubject<String>();
   final _loginPasswordSubject = BehaviorSubject<String>();
@@ -98,10 +106,12 @@ class OnboardingFormValidation {
   Function(String) get setFirstName => _firstNameSubject.sink.add;
 
   Function(String) get setLastName => _lastNameSubject.sink.add;
+  Function(String) get setMiddleName => _middleNameSubject.sink.add;
 
   Function(String) get setUserName => _userNameSubject.sink.add;
 
   Function(String) get setOtpValue => _otpValueSubject.sink.add;
+  Function(String) get setBVNOtpValue => _bvnotpValueSubject.sink.add;
 
   Function(String) get setReferralValue => _referralCodeSubject.sink.add;
 
@@ -128,8 +138,9 @@ class OnboardingFormValidation {
   Stream<String> get phoneNumber =>
       _phoneSubject.stream.transform(validatePhoneNumber);
 
-  Stream<String> get firstName =>
-      _firstNameSubject.stream.transform(validateFullName);
+  Stream<String> get firstName => _firstNameSubject.stream.transform(validateFullName);
+  Stream<String> get middleName => _middleNameSubject.stream.transform(validateFullName);
+
 
   Stream<String> get password =>
       _passwordSubject.stream.transform(validatePassword);
@@ -165,21 +176,23 @@ class OnboardingFormValidation {
           true);
 
   Stream<bool> get completePersonalInformationFormValidation =>
-      Rx.combineLatest4(
+      Rx.combineLatest5(
           firstName,
           lastName,
           userName,
+          middleName,
           phoneNumber,
           (
             firstName,
             lastName,
             userName,
+            middle,
             phoneNumber,
           ) =>
               true);
 
-  Stream<String> get otpValue =>
-      _otpValueSubject.stream.transform(validateOtpValue);
+  Stream<String> get otpValue => _otpValueSubject.stream.transform(validateOtpValue);
+  Stream<String> get bvnotpValue => _bvnotpValueSubject.stream.transform(validateBvnOtpValue);
 
   setEmailError(String? value) {
     _emailError = value;
@@ -213,7 +226,7 @@ class OnboardingFormValidation {
     CustomValidator customValidator = CustomValidator();
     if (customValidator.validateusername(firstName) != null) {
       customValidator.validateusername(firstName);
-      sink.addError(customValidator.validatename(firstName)!);
+      sink.addError(customValidator.validateusername(firstName)!);
     } else {
       sink.add(firstName);
     }
@@ -258,6 +271,15 @@ class OnboardingFormValidation {
     if (!value.isNumericOnly) {
       sink.addError('Enter only number');
     } else if (value.isNumericOnly && value.length == 4) {
+      sink.add(value);
+    }
+  });
+
+  final validateBvnOtpValue =
+  StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
+    if (!value.isNumericOnly) {
+      sink.addError('Enter only number');
+    } else if (value.isNumericOnly && value.length == 6) {
       sink.add(value);
     }
   });
@@ -315,14 +337,22 @@ class OnboardingFormValidation {
     );
   }
 
+  SetUniqueIdentifierRequest setUniqueIdentifierRequest(){
+    return SetUniqueIdentifierRequest(
+      userId: userId!,
+      userName: _userNameSubject.value.trim(),
+      phoneNumber: "0${_phoneSubject.value.trim()}",
+    );
+  }
+
   UpdateUser userInfo() {
     return UpdateUser(
         userId: userId!,
         firstName: _firstNameSubject.value.trim(),
         lastName: _lastNameSubject.value.trim(),
-        otherNames: "",
-        userName: _userNameSubject.value.trim(),
-        phoneNumber: "0${_phoneSubject.value.trim()}",
+        otherNames: _middleNameSubject.value.trim(),
+        // userName: _userNameSubject.value.trim(),
+        // phoneNumber: "0${_phoneSubject.value.trim()}",
         addressStreet: "Lagos Nigeria",
         identificationNumber: "22222222222",
         identificationType: "NIN",
@@ -338,7 +368,7 @@ class OnboardingFormValidation {
     );
   }
 
-  SetTransactionPinRequest setTransactionPinRequest() {
+  SetTransactionPinRequest setTransactionPinRequest(TextEditingController t) {
     return SetTransactionPinRequest(
         userId: userId!,
         pin: transactionPinController.text,
@@ -349,8 +379,15 @@ class OnboardingFormValidation {
     return LoginUserRequest(
         userName: _loginUserNameSubject.value,
         password: _loginPasswordSubject.value,
-        deviceName: deviceName);
+        deviceId: deviceId);
   }
+  LoginUserRequest loginUserRequestBio() {
+    return LoginUserRequest(
+        userName: userNameBio,
+        password: passwordBio,
+        deviceId: deviceId);
+  }
+
 
   TwoFactorAuthenticationRequest twoFactorAuthenticationRequest() {
     return TwoFactorAuthenticationRequest(

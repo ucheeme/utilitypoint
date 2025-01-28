@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/utils/reusable_widget_two.dart';
@@ -192,5 +193,26 @@ ImageProvider<Object> getProfileImage() {
     return userDetails!.profilePic==null?Image.asset(
         "assets/image/images_png/tempImage.png").image:
     Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image;
+  }
+}
+
+Future<bool> authenticate(LocalAuthentication localAuth) async {
+  try {
+    bool canCheckBiometrics = await localAuth.canCheckBiometrics;
+    bool isAuthenticated = false;
+
+    if (canCheckBiometrics) {
+      isAuthenticated = await localAuth.authenticate(
+        localizedReason: 'Authenticate to access the app',
+        options: AuthenticationOptions(
+          biometricOnly: true,
+        ),
+      );
+    }
+    return isAuthenticated;
+
+  } catch (e) {
+    print("Error during authentication: $e");
+    return false;
   }
 }

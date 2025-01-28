@@ -55,18 +55,23 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
-      networkName="MTN";
-      for(var item in appAllNetworkList){
-        if(item.networkName.toLowerCase() =="mtn"){
-          setState(() {
-            networkId = item.id;
-          });
-        }
+      if(appAllNetworkList.isEmpty||appAllNetworkList==null){
+        bloc.add(GetAllNetworkEvent());
       }
-      bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-          networkId: networkId,
-          productSlug: "airtime"
-      )));
+      else{
+        networkName="MTN";
+        for(var item in appAllNetworkList){
+          if(item.networkName.toLowerCase() =="mtn"){
+            setState(() {
+              networkId = item.id;
+            });
+          }
+        }
+        bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+            networkId: networkId,
+            productSlug: "airtime"
+        )));
+      }
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -100,7 +105,24 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
           });
           bloc.initial();
         }
-
+        if (state is ProductAllNetworks) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appAllNetworkList = state.response;
+            networkName="MTN";
+            for(var item in appAllNetworkList){
+              if(item.networkName.toLowerCase() =="mtn"){
+                setState(() {
+                  networkId = item.id;
+                });
+              }
+            }
+            bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
+                networkId: networkId,
+                productSlug: "airtime"
+            )));
+          });
+          bloc.initial();
+        }
         if (state is AllProductPlanSuccess){
           WidgetsBinding.instance.addPostFrameCallback((_) {
             productPlanList= state.response;

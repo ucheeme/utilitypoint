@@ -123,7 +123,10 @@ class _ElectricityListViewState extends State<ElectricityListView> with TickerPr
                                 meterType:element.productPlanCategoryName
                             ));
                           },
-                          child: listButtons(title: element.productPlanCategoryName,icons: getCableLogo(element.productPlanCategoryName)))
+                          child: listButtons(title: element.productPlanCategoryName,
+                              icons: getCableLogo(element.productPlanCategoryName)
+                          )
+                      )
                   )
                 ],
               ),

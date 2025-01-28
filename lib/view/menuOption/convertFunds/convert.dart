@@ -57,7 +57,9 @@ class _ConvertScreenState extends State<ConvertScreen>
     currencyConvertingTo = "USD";
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(userDetails==null){
 
+      }
       //if(currencyConversionRateFees==null){
         bloc.add(GetExchangeRateEvent());
       // }else{
@@ -223,8 +225,8 @@ class _ConvertScreenState extends State<ConvertScreen>
                                   }
                                 },
                                 accountBalance: checkCurrencyFrom(currencyConvertingFrom)?
-                                double.parse(loginResponse!.nairaWallet):
-                                double.parse(loginResponse!.dollarWallet),
+                                double.parse(userDetails==null?"0":userDetails!.nairaWallet):
+                                double.parse(userDetails==null?"0":userDetails!.dollarWallet),
                                 isNaira:
                                 checkCurrencyFrom(currencyConvertingFrom),
                                 isSelected: isSelected,

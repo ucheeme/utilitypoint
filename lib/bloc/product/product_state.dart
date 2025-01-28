@@ -159,8 +159,15 @@ class AllDollarTransactions extends ProductState{
   List<Object?> get props =>[response];
 }
 class BVNVerified extends ProductState{
- DefaultApiResponse response;
+  BvnValidationResponse response;
   BVNVerified(this.response);
+  @override
+  List<Object?> get props =>[response];
+}
+
+class ValidateBvnOtp extends ProductState{
+  BvnFinalVerified response;
+  ValidateBvnOtp(this.response);
   @override
   List<Object?> get props =>[response];
 }

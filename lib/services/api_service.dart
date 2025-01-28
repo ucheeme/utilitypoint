@@ -131,7 +131,11 @@ class ApiService {
       } else {
         return UnExpectedError();
       }
-    } on DioError catch (e, trace) {
+    } on FormatException{
+
+      return Failure(404, "Network Error");
+    }
+    on DioError catch (e, trace) {
       AppUtils.debug(e.message);
       AppUtils.debug(trace);
       return NetWorkFailure();
