@@ -20,7 +20,8 @@ import 'app_util.dart';
 
 class ProductTransactionWidgetDesgin extends StatelessWidget {
   ProductTransactionList transactionList;
-   ProductTransactionWidgetDesgin({super.key,required this.transactionList});
+
+  ProductTransactionWidgetDesgin({super.key, required this.transactionList});
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +48,20 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${transactionList.description} to ${extractPhoneNumber(transactionList.userScreenMessage)}",
-                style: CustomTextStyle.kTxtBold.copyWith(
-                  color: AppColor.black100,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400
-                ),),
-                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                Text(
+                  "${transactionList.description} to ${extractPhoneNumber(transactionList.userScreenMessage)}",
+                  style: CustomTextStyle.kTxtBold.copyWith(
+                      color: AppColor.black100,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  dateTimeFormatter(
+                      transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.sp,
-                    color: AppColor.black80
-                  ),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.sp,
+                      color: AppColor.black80),
                 )
               ],
             ),
@@ -67,31 +70,38 @@ class ProductTransactionWidgetDesgin extends StatelessWidget {
             width: 90.w,
             child: Text(
               textAlign: TextAlign.end,
-                NumberFormat.currency(
-                    symbol: transactionList.walletCategory=="naira_wallet"?'\₦' : '\$',
-                    decimalDigits: 0)
-                    .format(double.parse(transactionList.amount)),
+              NumberFormat.currency(
+                      symbol: transactionList.walletCategory == "naira_wallet"
+                          ? '\₦'
+                          : '\$',
+                      decimalDigits: 0)
+                  .format(double.parse(transactionList.amount)),
               style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: 14.sp,
-                color:transactionList.transactionCategory=="fund"?AppColor.success100:
-                    AppColor.Error100
-              ),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  color: transactionList.transactionCategory == "fund"
+                      ? AppColor.success100
+                      : AppColor.Error100),
             ),
           )
         ],
       ),
     );
   }
-  Widget imageContainer(String transactionType){
-    return Image.asset(transactionType=="fund"?income_Image:expenses_Image,
-    height: 48.h,width: 48.w,);
+
+  Widget imageContainer(String transactionType) {
+    return Image.asset(
+      transactionType == "fund" ? income_Image : expenses_Image,
+      height: 48.h,
+      width: 48.w,
+    );
   }
 }
 
 class CardTransactionWidgetDesign extends StatelessWidget {
   CardTransactionList transactionList;
-   CardTransactionWidgetDesign({super.key,required this.transactionList});
+
+  CardTransactionWidgetDesign({super.key, required this.transactionList});
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +117,9 @@ class CardTransactionWidgetDesign extends StatelessWidget {
         ],
       ),
       child: Row(
-      //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          imageContainer(transactionList.description?.toLowerCase()??""),
+          imageContainer(transactionList.description?.toLowerCase() ?? ""),
           Gap(10.w),
           SizedBox(
             height: 50.h,
@@ -118,19 +128,20 @@ class CardTransactionWidgetDesign extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description??"",
+                Text(
+                  transactionList.description ?? "",
                   style: CustomTextStyle.kTxtBold.copyWith(
                       color: AppColor.black100,
                       fontSize: 10.sp,
-                      fontWeight: FontWeight.w400
-                  ),),
-
-                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                      fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  dateTimeFormatter(
+                      transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 10.sp,
-                      color: AppColor.black80
-                  ),
+                      color: AppColor.black80),
                 )
               ],
             ),
@@ -139,23 +150,29 @@ class CardTransactionWidgetDesign extends StatelessWidget {
             child: Text(
               textAlign: TextAlign.end,
               NumberFormat.currency(
-                  symbol: transactionList.currency!="USD"?'\₦' : '\$',
-                  decimalDigits: 0)
-                  .format(double.parse(transactionList.amount??"0")),
+                      symbol: transactionList.currency != "USD" ? '\₦' : '\$',
+                      decimalDigits: 0)
+                  .format(double.parse(transactionList.amount ?? "0")),
               style: GoogleFonts.inter(
-                fontSize: 12.sp,
-                  color:(transactionList.description!=null && transactionList.description!.toLowerCase().contains("topup"))?AppColor.success100:
-                  AppColor.Error100
-              ),
+                  fontSize: 12.sp,
+                  color: (transactionList.description != null &&
+                          transactionList.description!
+                              .toLowerCase()
+                              .contains("topup"))
+                      ? AppColor.success100
+                      : AppColor.Error100),
             ),
           )
         ],
       ),
     );
   }
-  Widget imageContainer(String transactionType){
-    return Image.asset(transactionType!="topup"?income_Image:expenses_Image,
-    height: 45.h,width: 45.w,
+
+  Widget imageContainer(String transactionType) {
+    return Image.asset(
+      transactionType != "topup" ? income_Image : expenses_Image,
+      height: 45.h,
+      width: 45.w,
     );
   }
 }
@@ -175,39 +192,39 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
     setState(() {
       DateTime? startDate = args.value.startDate;
       DateTime? endDate = args.value.endDate;
-      DateTime today =    DateTime.now();
-      if (today.compareTo(endDate ?? today) == -1){
+      DateTime today = DateTime.now();
+      if (today.compareTo(endDate ?? today) == -1) {
         AppUtils.showSnack("Maximum end date should be today's date", context);
         startDateControl.text = "";
         endDateControl.text = "";
         return;
       }
-      startDateControl.text =
-          DateFormat('yyyy-MM-dd').format(startDate!);
-      endDateControl.text =
-          DateFormat('yyy-MM-dd').format(endDate!);
+      startDateControl.text = DateFormat('yyyy-MM-dd').format(startDate!);
+      endDateControl.text = DateFormat('yyy-MM-dd').format(endDate!);
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        height: 400.h,width: double.infinity,
+        height: 400.h,
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.r),
-          color:AppColor.primary20,
+          color: AppColor.primary20,
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded (
+            Expanded(
               child: SfDateRangePicker(
-                backgroundColor:AppColor.primary20,
-               viewSpacing: 30.h,
+                backgroundColor: AppColor.primary20,
+                viewSpacing: 30.h,
                 selectionMode: DateRangePickerSelectionMode.extendableRange,
                 view: DateRangePickerView.month,
                 headerHeight: 38.h,
                 headerStyle: DateRangePickerHeaderStyle(
-      
                     backgroundColor: AppColor.primary20,
                     textAlign: TextAlign.center,
                     textStyle: TextStyle(
@@ -215,21 +232,20 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                       fontSize: 18.sp,
                       fontFamily: 'HKGroteskMedium',
                       fontWeight: FontWeight.w500,
-                    )
-                ),
+                    )),
                 toggleDaySelection: false,
                 showNavigationArrow: true,
                 //showActionButtons: true,
                 selectionColor: AppColor.primary100,
                 todayHighlightColor: AppColor.secondary100,
                 rangeSelectionColor: AppColor.secondary100.withOpacity(0.50),
-      
+
                 selectionShape: DateRangePickerSelectionShape.rectangle,
                 startRangeSelectionColor: AppColor.primary100,
-      
-                endRangeSelectionColor:AppColor.primary100,
+
+                endRangeSelectionColor: AppColor.primary100,
                 //selectionRadius: 15.r,
-                selectionTextStyle:TextStyle(
+                selectionTextStyle: TextStyle(
                   color: AppColor.black0,
                   fontSize: 15.sp,
                   fontFamily: 'HKGroteskRegular',
@@ -238,28 +254,24 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 monthCellStyle: DateRangePickerMonthCellStyle(
                   cellDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.r),
-                      color: AppColor.black0
-                  ),
+                      color: AppColor.black0),
                   textStyle: TextStyle(
                     color: AppColor.black100,
                     fontSize: 13.sp,
                     fontFamily: 'HKGroteskRegular',
                     fontWeight: FontWeight.w400,
                   ),
-      
                 ),
                 yearCellStyle: DateRangePickerYearCellStyle(
                     cellDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.r),
-                        color: AppColor.black0
-                    ),
+                        color: AppColor.black0),
                     textStyle: TextStyle(
                       color: AppColor.black80,
                       fontSize: 13.sp,
                       fontFamily: 'HKGroteskRegular',
                       fontWeight: FontWeight.w400,
-                    )
-                ),
+                    )),
                 monthViewSettings: DateRangePickerMonthViewSettings(
                     showWeekNumber: false,
                     dayFormat: "EEE",
@@ -267,16 +279,14 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                     showTrailingAndLeadingDates: false,
                     viewHeaderStyle: DateRangePickerViewHeaderStyle(
                         textStyle: TextStyle(
-                          color: AppColor.primary100,
-                          fontSize: 12.sp,
-                          fontFamily: 'creatoDisplayMedium',
-                          fontWeight: FontWeight.bold,
-                        )
-                    )
-                ),
-                onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
-      
-                  if(args.value.startDate != null &&args.value.endDate != null){
+                      color: AppColor.primary100,
+                      fontSize: 12.sp,
+                      fontFamily: 'creatoDisplayMedium',
+                      fontWeight: FontWeight.bold,
+                    ))),
+                onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                  if (args.value.startDate != null &&
+                      args.value.endDate != null) {
                     _handleDateRangeChanged(args);
                   }
                 },
@@ -284,7 +294,8 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
             ),
             Padding(
               padding: screenPad(),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,22 +304,21 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                         "Start Date",
                         style: GoogleFonts.inter(
                           fontSize: 12.sp,
-                          color:AppColor.black100,
+                          color: AppColor.black100,
                         ),
                       ),
                       Container(
-                        height:40.h,
+                        height: 40.h,
                         width: 150.w,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
-                          border: Border.all(color: AppColor.primary100)
-                        ),
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(color: AppColor.primary100)),
                         child: Center(
                           child: Text(
                             startDateControl.text,
                             style: GoogleFonts.inter(
-                                fontSize: 12.sp,
-                                color:AppColor.black100,
+                              fontSize: 12.sp,
+                              color: AppColor.black100,
                             ),
                           ),
                         ),
@@ -323,22 +333,21 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                         "End Date",
                         style: GoogleFonts.inter(
                           fontSize: 12.sp,
-                          color:AppColor.black100,
+                          color: AppColor.black100,
                         ),
                       ),
                       Container(
-                        height:40.h,
+                        height: 40.h,
                         width: 150.w,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.r),
-                            border: Border.all(color: AppColor.primary100)
-                        ),
+                            border: Border.all(color: AppColor.primary100)),
                         child: Center(
                           child: Text(
                             endDateControl.text,
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
-                              color:AppColor.black100,
+                              color: AppColor.black100,
                             ),
                           ),
                         ),
@@ -359,15 +368,17 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                   borderRadius: 10.r,
                   buttonColor: AppColor.primary100,
                   textColor: AppColor.black0,
-                  buttonText: "Proceed", onTap: (){
-                if(startDateControl.text.isNotEmpty && endDateControl.text.isNotEmpty){
-                  StartDateEndDate startAndEndDate = StartDateEndDate(
-                      startDate: startDateControl.text,
-                      endDate: endDateControl.text );
-                  Navigator.pop(context,startAndEndDate);
-                }
-                // return date range
-              }),
+                  buttonText: "Proceed",
+                  onTap: () {
+                    if (startDateControl.text.isNotEmpty &&
+                        endDateControl.text.isNotEmpty) {
+                      StartDateEndDate startAndEndDate = StartDateEndDate(
+                          startDate: startDateControl.text,
+                          endDate: endDateControl.text);
+                      Navigator.pop(context, startAndEndDate);
+                    }
+                    // return date range
+                  }),
             ),
             Gap(25.h),
           ],
@@ -375,30 +386,32 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
       ),
     );
   }
+
   bool isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
-
 }
-
 
 class SetDateTextFieldWidget extends StatelessWidget {
   final String title;
-  const SetDateTextFieldWidget({
-    super.key,
-    required this.dateControl,required this.title
-  });
+
+  const SetDateTextFieldWidget(
+      {super.key, required this.dateControl, required this.title});
 
   final TextEditingController dateControl;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Stack(clipBehavior: Clip.none,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Container(
-            height: 47.h,width: 180.w,
+            height: 47.h,
+            width: 180.w,
             padding: EdgeInsets.symmetric(horizontal: 15.w),
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
@@ -412,13 +425,14 @@ class SetDateTextFieldWidget extends StatelessWidget {
               enabled: false,
               controller: dateControl,
               cursorHeight: 15.h,
-              cursorColor:AppColor.primary100,
+              cursorColor: AppColor.primary100,
               style: TextStyle(
-                color: AppColor.black100, fontSize: 16.sp,
+                color: AppColor.black100,
+                fontSize: 16.sp,
                 fontFamily: 'HKGroteskMedium',
                 fontWeight: FontWeight.w500,
               ),
-              onChanged: (value){},
+              onChanged: (value) {},
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(bottom: 10.h),
                 border: InputBorder.none,
@@ -432,11 +446,13 @@ class SetDateTextFieldWidget extends StatelessWidget {
             child: Container(
               height: 19.h,
               padding: EdgeInsets.symmetric(horizontal: 5.w),
-              color: AppColor.primary20, // Customize the background color of the label
-              child: Text(title,style: CustomTextStyle.kTxtRegular.copyWith(
-                fontSize: 16.sp,
-                color: AppColor.primary100,
-              ) ),
+              color: AppColor.primary20,
+              // Customize the background color of the label
+              child: Text(title,
+                  style: CustomTextStyle.kTxtRegular.copyWith(
+                    fontSize: 16.sp,
+                    color: AppColor.primary100,
+                  )),
             ),
           )
         ],
@@ -444,6 +460,7 @@ class SetDateTextFieldWidget extends StatelessWidget {
     );
   }
 }
+
 class StartDateEndDate {
   String startDate;
   String endDate;
@@ -453,11 +470,13 @@ class StartDateEndDate {
     required this.endDate,
   });
 }
+
 EdgeInsets screenPad() => EdgeInsets.symmetric(horizontal: 13.w);
 
 class NairaTransactionWidgetDesgin extends StatelessWidget {
   ProductTransactionList transactionList;
-  NairaTransactionWidgetDesgin({super.key,required this.transactionList});
+
+  NairaTransactionWidgetDesgin({super.key, required this.transactionList});
 
   @override
   Widget build(BuildContext context) {
@@ -481,26 +500,28 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
             height: 59.h,
             width: 168.w,
             child: Column(
-             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height:35.h,
-                  child: Text("${transactionList.transactionCategory.toLowerCase().capitalizeFirst} to ${getValue(transactionList)}",
+                  height: 35.h,
+                  child: Text(
+                    "${transactionList.transactionCategory.toLowerCase().capitalizeFirst} to ${getValue(transactionList)}",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w400
-                    ),),
+                        fontWeight: FontWeight.w400),
+                  ),
                 ),
-                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                Text(
+                  dateTimeFormatter(
+                      transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 12.sp,
-                      color: AppColor.black80
-                  ),
+                      color: AppColor.black80),
                 )
               ],
             ),
@@ -508,46 +529,54 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
           SizedBox(
             width: 90.w,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:[
-                Text(
-                  textAlign: TextAlign.end,
-                  NumberFormat.currency(
-                      symbol: '\₦',
-                      name: 'NGN',
-                      decimalDigits: 0)
-                      .format(amountGotten()),
-                  style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                      color:(transactionList.userScreenMessage.contains("Successful")
-                      || transactionList.userScreenMessage.contains("successful")
-                      )?AppColor.success100:AppColor.Error100
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    textAlign: TextAlign.end,
+                    NumberFormat.currency(
+                            symbol: '\₦', name: 'NGN', decimalDigits: 0)
+                        .format(double.parse(transactionList.amount)),
+                    style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                        color: (transactionList.userScreenMessage
+                                    .contains("Successful") ||
+                                transactionList.userScreenMessage
+                                    .contains("successful"))
+                            ? AppColor.success100
+                            : AppColor.Error100),
                   ),
-                ),
-                Gap(6.h),
-                Container(
-                  height: 20.h,
-                  width: 110.w,
-                  color:(transactionList.userScreenMessage.contains("Successful")
-                      || transactionList.userScreenMessage.contains("successful")
-                  )?AppColor.success20:AppColor.Error20,
-                  child: Center(
-                    child: Text((transactionList.userScreenMessage.contains("Successful")
-                        || transactionList.userScreenMessage.contains("successful")
-                    )?"Successful":"Failed",
-                      style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12.sp,
-                          color: (transactionList.userScreenMessage.contains("Successful")
-                              || transactionList.userScreenMessage.contains("successful")
-                          )?AppColor.success100:AppColor.Error100
+                  Gap(6.h),
+                  Container(
+                    height: 20.h,
+                    width: 110.w,
+                    color: (transactionList.userScreenMessage
+                                .contains("Successful") ||
+                            transactionList.userScreenMessage
+                                .contains("successful"))
+                        ? AppColor.success20
+                        : AppColor.Error20,
+                    child: Center(
+                      child: Text(
+                        (transactionList.userScreenMessage
+                                    .contains("Successful") ||
+                                transactionList.userScreenMessage
+                                    .contains("successful"))
+                            ? "Successful"
+                            : "Failed",
+                        style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12.sp,
+                            color: (transactionList.userScreenMessage
+                                        .contains("Successful") ||
+                                    transactionList.userScreenMessage
+                                        .contains("successful"))
+                                ? AppColor.success100
+                                : AppColor.Error100),
                       ),
                     ),
-                  ),
-                )
-              ]
-            ),
+                  )
+                ]),
           )
         ],
       ),
@@ -555,32 +584,44 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
   }
 
   double amountGotten() {
-    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
-      return  double.parse(transactionList.balanceAfter)-double.parse(transactionList.balanceBefore);
-    }else{
-      return double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter);
+    if (double.parse(transactionList.balanceAfter) >
+        double.parse(transactionList.balanceBefore)) {
+      return double.parse(transactionList.balanceAfter) -
+          double.parse(transactionList.balanceBefore);
+    } else {
+      return double.parse(transactionList.balanceBefore) -
+          double.parse(transactionList.balanceAfter);
     }
   }
+
   String transactionType() {
-    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+    if (double.parse(transactionList.balanceAfter) >
+        double.parse(transactionList.balanceBefore)) {
       return "added";
-    }else{
+    } else {
       return "purchase";
     }
   }
 
-  Widget imageContainer(String transactionType){
-    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
-      height: 48.h,width: 48.w,
-    color: (transactionList.userScreenMessage.contains("Successful")
-        || transactionList.userScreenMessage.contains("successful")
-    )?AppColor.success100:AppColor.Error100,
+  Widget imageContainer(String transactionType) {
+    return Image.asset(
+      transactionType.toLowerCase().contains("purchase")
+          ? expenses_Image
+          : income_Image,
+      height: 48.h,
+      width: 48.w,
+      color: (transactionList.userScreenMessage.contains("Successful") ||
+              transactionList.userScreenMessage.contains("successful"))
+          ? AppColor.success100
+          : AppColor.Error100,
     );
   }
 }
+
 class DollarTransactionWidgetDesgin extends StatelessWidget {
   NairaTransactionList transactionList;
-  DollarTransactionWidgetDesgin({super.key,required this.transactionList});
+
+  DollarTransactionWidgetDesgin({super.key, required this.transactionList});
 
   @override
   Widget build(BuildContext context) {
@@ -607,18 +648,20 @@ class DollarTransactionWidgetDesgin extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transactionList.description,
+                Text(
+                  transactionList.description,
                   style: CustomTextStyle.kTxtBold.copyWith(
                       color: AppColor.black100,
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w400
-                  ),),
-                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                      fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  dateTimeFormatter(
+                      transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 12.sp,
-                      color: AppColor.black80
-                  ),
+                      color: AppColor.black80),
                 )
               ],
             ),
@@ -627,32 +670,39 @@ class DollarTransactionWidgetDesgin extends StatelessWidget {
             width: 90.w,
             child: Text(
               textAlign: TextAlign.end,
-              NumberFormat.currency(
-                  symbol: '\$',
-                  name: 'USD',
-                  decimalDigits: 0)
-                  .format(double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter)),
+              NumberFormat.currency(symbol: '\$', name: 'USD', decimalDigits: 0)
+                  .format(double.parse(transactionList.balanceBefore) -
+                      double.parse(transactionList.balanceAfter)),
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
-                  color:transactionList.transactionCategory.toLowerCase().contains("purchase")?AppColor.Error100:
-                  AppColor.success100
-              ),
+                  color: transactionList.transactionCategory
+                          .toLowerCase()
+                          .contains("purchase")
+                      ? AppColor.Error100
+                      : AppColor.success100),
             ),
           )
         ],
       ),
     );
   }
-  Widget imageContainer(String transactionType){
-    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
-      height: 48.h,width: 48.w,);
+
+  Widget imageContainer(String transactionType) {
+    return Image.asset(
+      transactionType.toLowerCase().contains("purchase")
+          ? expenses_Image
+          : income_Image,
+      height: 48.h,
+      width: 48.w,
+    );
   }
 }
 
 class TransactionWidgetDesgin extends StatelessWidget {
   UserTransactions transactionList;
-  TransactionWidgetDesgin({super.key,required this.transactionList});
+
+  TransactionWidgetDesgin({super.key, required this.transactionList});
 
   @override
   Widget build(BuildContext context) {
@@ -680,22 +730,24 @@ class TransactionWidgetDesgin extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height:35.h,
-                  child: Text(transactionList.description,
+                  height: 35.h,
+                  child: Text(
+                    transactionList.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: CustomTextStyle.kTxtBold.copyWith(
                         color: AppColor.black100,
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w400
-                    ),),
+                        fontWeight: FontWeight.w400),
+                  ),
                 ),
-                Text(dateTimeFormatter(transactionList.createdAt.toIso8601String()),
+                Text(
+                  dateTimeFormatter(
+                      transactionList.createdAt.toIso8601String()),
                   style: CustomTextStyle.kTxtMedium.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 12.sp,
-                      color: AppColor.black80
-                  ),
+                      color: AppColor.black80),
                 )
               ],
             ),
@@ -705,16 +757,23 @@ class TransactionWidgetDesgin extends StatelessWidget {
             child: Text(
               textAlign: TextAlign.end,
               NumberFormat.currency(
-                  symbol: (transactionList.walletCategory=="naira_wallet"||
-                  transactionList.description.toLowerCase().contains("from naira wallet"))?'\₦' : '\$',
-                  decimalDigits: 0)
+                      symbol:
+                          (transactionList.walletCategory == "naira_wallet" ||
+                                  transactionList.description
+                                      .toLowerCase()
+                                      .contains("from naira wallet"))
+                              ? '\₦'
+                              : '\$',
+                      decimalDigits: 0)
                   .format(amountGotten()),
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
-                  color:transactionList.description.toLowerCase().contains("topup")?AppColor.success100:
-                  AppColor.Error100
-              ),
+                  color: transactionList.description
+                          .toLowerCase()
+                          .contains("topup")
+                      ? AppColor.success100
+                      : AppColor.Error100),
             ),
           )
         ],
@@ -723,26 +782,35 @@ class TransactionWidgetDesgin extends StatelessWidget {
   }
 
   double amountGotten() {
-    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
-      return  double.parse(transactionList.balanceAfter)-double.parse(transactionList.balanceBefore);
-    }else{
-      return double.parse(transactionList.balanceBefore)-double.parse(transactionList.balanceAfter);
+    if (double.parse(transactionList.balanceAfter) >
+        double.parse(transactionList.balanceBefore)) {
+      return double.parse(transactionList.balanceAfter) -
+          double.parse(transactionList.balanceBefore);
+    } else {
+      return double.parse(transactionList.balanceBefore) -
+          double.parse(transactionList.balanceAfter);
     }
   }
+
   String transactionType() {
-    if(double.parse(transactionList.balanceAfter)>double.parse(transactionList.balanceBefore)){
+    if (double.parse(transactionList.balanceAfter) >
+        double.parse(transactionList.balanceBefore)) {
       return "added";
-    }else{
+    } else {
       return "purchase";
     }
   }
 
-  Widget imageContainer(String transactionType){
-    return Image.asset(transactionType.toLowerCase().contains("purchase")?expenses_Image:income_Image,
-      height: 48.h,width: 48.w,);
+  Widget imageContainer(String transactionType) {
+    return Image.asset(
+      transactionType.toLowerCase().contains("purchase")
+          ? expenses_Image
+          : income_Image,
+      height: 48.h,
+      width: 48.w,
+    );
   }
 }
-
 
 class ReusableTextFormField extends StatefulWidget {
   final TextEditingController controller;
@@ -761,19 +829,20 @@ class ReusableTextFormField extends StatefulWidget {
 
   const ReusableTextFormField(
       {super.key,
-        required this.controller,
-        required this.isPassword,
-        required this.validator,
-        required this.textInputType,
-        this.label,
-        this.issearch,
-        this.onchangedFunction,
-        this.readOnlyBool,
-        this.ontapFunction,
-        this.focusNode,
-        this.maxlines,
-        this.fillColor,
-        this.onFieldSubmitted});
+      required this.controller,
+      required this.isPassword,
+      required this.validator,
+      required this.textInputType,
+      this.label,
+      this.issearch,
+      this.onchangedFunction,
+      this.readOnlyBool,
+      this.ontapFunction,
+      this.focusNode,
+      this.maxlines,
+      this.fillColor,
+      this.onFieldSubmitted});
+
   @override
   _ReusableTextFormFieldState createState() => _ReusableTextFormFieldState();
 }
@@ -804,47 +873,48 @@ class _ReusableTextFormFieldState extends State<ReusableTextFormField> {
         readOnly: widget.readOnlyBool != null ? widget.readOnlyBool! : false,
         onFieldSubmitted: widget.onFieldSubmitted,
         decoration: InputDecoration(
-            label: Text(widget.label != null ? widget.label! : ''),
-            filled: false,
-            // errorText: widget.validator,
+          label: Text(widget.label != null ? widget.label! : ''),
+          filled: false,
+          // errorText: widget.validator,
 
-            contentPadding: EdgeInsets.all(9),
-            errorStyle: TextStyle(),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColor.primary100),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color:  AppColor.primary100),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            disabledBorder: InputBorder.none,
+          contentPadding: EdgeInsets.all(9),
+          errorStyle: TextStyle(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColor.primary100),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColor.primary100),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          disabledBorder: InputBorder.none,
         ),
       ),
     );
   }
 }
+
 String getValue(ProductTransactionList productTransactionList) {
-  if(productTransactionList.phoneNumber!=null){
+  if (productTransactionList.phoneNumber != null) {
     return productTransactionList.phoneNumber!;
   }
-  if(productTransactionList.metreNumber!=null){
+  if (productTransactionList.metreNumber != null) {
     return productTransactionList.metreNumber!;
   }
-  if(productTransactionList.smartCardNumber!=null){
+  if (productTransactionList.smartCardNumber != null) {
     return productTransactionList.smartCardNumber!;
-  }
-  else{
+  } else {
     return "";
   }
 }
+
 String extractPhoneNumber(String sentence) {
   // Regular expression to match a phone number starting with 234
   final regExp = RegExp(r'\b234\d{10}\b');

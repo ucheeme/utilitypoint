@@ -411,7 +411,7 @@ class _TopUpCardOptionState extends State<TopUpCardOption> {
                           Text(
                             NumberFormat.currency(
                                     symbol: nairaSymbol, decimalDigits: 2)
-                                .format(double.parse(userDetails!.nairaWallet)),
+                                .format(double.parse(walletBalanceResponse!.nairaWallet)),
                             style: GoogleFonts.inter(
                                 color: AppColor.primary100,
                                 fontSize: 14.sp,
@@ -465,7 +465,7 @@ class _TopUpCardOptionState extends State<TopUpCardOption> {
                             NumberFormat.currency(
                                     symbol: dollarSymbol, decimalDigits: 0)
                                 .format(
-                                    double.parse(userDetails!.dollarWallet)),
+                                    double.parse(walletBalanceResponse!.dollarWallet)),
                             style: GoogleFonts.inter(
                                 color: AppColor.primary100,
                                 fontSize: 14.sp,

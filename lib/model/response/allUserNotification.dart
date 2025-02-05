@@ -10,26 +10,26 @@ AllUserNotification allUserNotificationFromJson(String str) => AllUserNotificati
 String allUserNotificationToJson(AllUserNotification data) => json.encode(data.toJson());
 
 class AllUserNotification {
-  int unreadCount;
-  int readCount;
-  List<NotificationList> data;
+  int? unreadCount;
+  int? readCount;
+  List<NotificationList>? data;
 
   AllUserNotification({
-    required this.unreadCount,
-    required this.readCount,
-    required this.data,
+     this.unreadCount,
+     this.readCount,
+     this.data,
   });
 
   factory AllUserNotification.fromJson(Map<String, dynamic> json) => AllUserNotification(
     unreadCount: json["unread_count"],
     readCount: json["read_count"],
-    data: List<NotificationList>.from(json["data"].map((x) => NotificationList.fromJson(x))),
+    data: json["data"]==null?[]: List<NotificationList>.from(json["data"].map((x) => NotificationList.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "unread_count": unreadCount,
     "read_count": readCount,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    "data":data==null?[]: List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 

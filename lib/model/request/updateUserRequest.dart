@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../utils/device_util.dart';
+
 UpdateUserDetailRequest updateUserDetailRequestFromJson(String str) => UpdateUserDetailRequest.fromJson(json.decode(str));
 
 String updateUserDetailRequestToJson(UpdateUserDetailRequest data) => json.encode(data.toJson());
@@ -27,6 +29,7 @@ class UpdateUserDetailRequest {
   String? identityType;
   String? identityNumber;
   String? identityImage;
+  String? idDevice=deviceId;
 
   UpdateUserDetailRequest({
     required this.userId,
@@ -47,6 +50,7 @@ class UpdateUserDetailRequest {
      this.identityType,
      this.identityNumber,
      this.identityImage,
+    this.idDevice
   });
 
   factory UpdateUserDetailRequest.fromJson(Map<String, dynamic> json) => UpdateUserDetailRequest(
@@ -68,6 +72,7 @@ class UpdateUserDetailRequest {
     identityType: json["identity_type"]??"",
     identityNumber: json["identity_number"]??"",
     identityImage: json["identity_image"]??"",
+    idDevice: json["device_id"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -89,5 +94,6 @@ class UpdateUserDetailRequest {
     "identity_type": identityType,
     "identity_number": identityNumber,
     "identity_image": identityImage,
+    "device_id": idDevice=deviceId
   };
 }

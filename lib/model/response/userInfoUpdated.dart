@@ -15,7 +15,7 @@ class UserInfoUpdated {
   dynamic userName;
   String email;
   String bvn;
-  String addressStreet;
+  String? addressStreet;
   DateTime dob;
   String city;
   String state;
@@ -51,7 +51,7 @@ class UserInfoUpdated {
     required this.userName,
     required this.email,
     required this.bvn,
-    required this.addressStreet,
+     this.addressStreet,
     required this.dob,
     required this.city,
     required this.state,
@@ -87,21 +87,23 @@ class UserInfoUpdated {
     lastName: json["last_name"],
     userName: json["user_name"],
     email: json["email"],
-    bvn: json["bvn"],
-    addressStreet: json["address_street"],
+    bvn: json["bvn"]??"",
+    addressStreet: json["address_street"] ?? "",
     dob: json["dob"]==null?DateTime.now():DateTime.parse(json["dob"]),
-    city: json["city"],
-    state: json["state"],
-    country: json["country"],
-    postalCode: json["postal_code"],
-    identificationType: json["identification_type"],
-    identificationNumber: json["identification_number"],
-    photo: json["photo"],
-    identityType: json["identity_type"],
+    city: json["city"]??"",
+    state: json["state"]??"",
+    country: json["country"]??"",
+    postalCode: json["postal_code"]??"",
+    identificationType: json["identification_type"]??"",
+    identificationNumber: json["identification_number"]??"",
+    photo: json["photo"]??"",
+    identityType: json["identity_type"]??"",
     identityNumber: json["identity_number"],
     identityImage: json["identity_image"],
     bvnVerificationStatus: json["bvn_verification_status"],
-    bvnJson: json["bvn_json"],
+    bvnJson: json["bvn_json"].runtimeType==int?
+    json["bvn_json"]:json["bvn_json"]==null
+        ?null: BvnJson.fromJson(json["bvn_json"]),
     dollarWallet: json["dollar_wallet"],
     nairaWallet: json["naira_wallet"],
     kycVerificationStatus: json["kyc_verification_status"],
@@ -138,7 +140,7 @@ class UserInfoUpdated {
     "identity_number": identityNumber,
     "identity_image": identityImage,
     "bvn_verification_status": bvnVerificationStatus,
-    "bvn_json": bvnJson,
+    "bvn_json": bvnJson?.toJson(),
     "dollar_wallet": dollarWallet,
     "naira_wallet": nairaWallet,
     "can_do_card_transactions": canDoCardTransaction,
@@ -153,5 +155,102 @@ class UserInfoUpdated {
     "device_id": deviceId,
     "require_otp": requireOtp,
     "token": token,
+  };
+}
+
+
+BvnJson bvnJsonFromJson(String str) => BvnJson.fromJson(json.decode(str));
+
+String bvnJsonToJson(BvnJson data) => json.encode(data.toJson());
+
+class BvnJson {
+  bool status;
+  String detail;
+  String responseCode;
+  Data data;
+  Verification verification;
+  List<dynamic> session;
+  String endpointName;
+
+  BvnJson({
+    required this.status,
+    required this.detail,
+    required this.responseCode,
+    required this.data,
+    required this.verification,
+    required this.session,
+    required this.endpointName,
+  });
+
+  factory BvnJson.fromJson(Map<String, dynamic> json) => BvnJson(
+    status: json["status"],
+    detail: json["detail"],
+    responseCode: json["response_code"],
+    data: Data.fromJson(json["data"]),
+    verification: Verification.fromJson(json["verification"]),
+    session: List<dynamic>.from(json["session"].map((x) => x)),
+    endpointName: json["endpoint_name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "detail": detail,
+    "response_code": responseCode,
+    "data": data.toJson(),
+    "verification": verification.toJson(),
+    "session": List<dynamic>.from(session.map((x) => x)),
+    "endpoint_name": endpointName,
+  };
+}
+
+class Data {
+  String firstName;
+  String lastName;
+  String middleName;
+  String dateOfBirth;
+  String phoneNumber;
+
+  Data({
+    required this.firstName,
+    required this.lastName,
+    required this.middleName,
+    required this.dateOfBirth,
+    required this.phoneNumber,
+  });
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    firstName: json["firstName"],
+    lastName: json["lastName"],
+    middleName: json["middleName"],
+    dateOfBirth: json["dateOfBirth"],
+    phoneNumber: json["phoneNumber"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "firstName": firstName,
+    "lastName": lastName,
+    "middleName": middleName,
+    "dateOfBirth": dateOfBirth,
+    "phoneNumber": phoneNumber,
+  };
+}
+
+class Verification {
+  String status;
+  String reference;
+
+  Verification({
+    required this.status,
+    required this.reference,
+  });
+
+  factory Verification.fromJson(Map<String, dynamic> json) => Verification(
+    status: json["status"],
+    reference: json["reference"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "reference": reference,
   };
 }

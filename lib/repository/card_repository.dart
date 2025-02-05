@@ -22,12 +22,13 @@ import '../model/response/userVirtualAccounts.dart';
 import '../model/response/virtualCardSuccessful.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
+import '../utils/device_util.dart';
 import 'apiRepository.dart';
 
 class CardRepository extends DefaultRepository{
   Future<Object> getUserCards(GetUserIdRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getUserCards}?user_id=${request.userId}", true, HttpMethods.get);
+        null, "${AppUrls.getUserCards}?user_id=${request.userId}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -83,7 +84,7 @@ class CardRepository extends DefaultRepository{
     var response = await postRequest(
         null, "${AppUrls.getCardTransaction}?user_id=${request.userId}&"
         "card_id=${request.cardId}&start_date=${request.startDate}&end_date=${request.endDate}"
-        "&page_size=${request.pageSize}&page=${request.page}",
+        "&page_size=${request.pageSize}&page=${request.page}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -103,7 +104,7 @@ class CardRepository extends DefaultRepository{
   Future<Object> getUserVirtualAccounts(GetProductRequest request) async {
     var response = await postRequest(
         null, "${AppUrls.getUserVirtualAccounts}?user_id=${request.userId}&"
-        "pin=${request.pin}",
+        "pin=${request.pin}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -122,7 +123,7 @@ class CardRepository extends DefaultRepository{
   Future<Object> getUserSingleCardDetails(GetProductRequest request) async {
     var response = await postRequest(
         null, "${AppUrls.getSingleVirtualCard}?user_id=${request.userId}&"
-        "card_id=${request.cardId}",
+        "card_id=${request.cardId}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -165,9 +166,15 @@ class CardRepository extends DefaultRepository{
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
+
         CreateVirtualAccountNumberSuccess res =
         createVirtualAccountNumberSuccessFromJson(json.encode(r.data));
-        return res;
+        if(res.success){
+          return res;
+        }else{
+          return r;
+        }
+
       } else {
         return r;
       }

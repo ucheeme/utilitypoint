@@ -171,3 +171,10 @@ class ValidateBvnOtp extends ProductState{
   @override
   List<Object?> get props =>[response];
 }
+
+class UserWalletBalance extends ProductState{
+  WalletBalanceResponse response;
+  UserWalletBalance(this.response);
+  @override
+  List<Object?> get props =>[response];
+}

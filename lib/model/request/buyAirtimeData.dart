@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../utils/device_util.dart';
+
 BuyAirtimeDataRequest buyAirtimeRequestFromJson(String str) => BuyAirtimeDataRequest.fromJson(json.decode(str));
 
 String buyAirtimeRequestToJson(BuyAirtimeDataRequest data) => json.encode(data.toJson());
@@ -18,6 +20,7 @@ class BuyAirtimeDataRequest {
   String amount;
   String walletCategory;
   int validatephonenetwork;
+  String? idDevice=deviceId;
 
   BuyAirtimeDataRequest({
     required this.networkId,
@@ -29,6 +32,7 @@ class BuyAirtimeDataRequest {
     this.productPlanId,
     required this.walletCategory,
     required this.validatephonenetwork,
+    this.idDevice
   });
 
   factory BuyAirtimeDataRequest.fromJson(Map<String, dynamic> json) => BuyAirtimeDataRequest(
@@ -41,6 +45,7 @@ class BuyAirtimeDataRequest {
     amount: json["amount"],
     walletCategory: json["wallet_category"],
     validatephonenetwork: json["validatephonenetwork"],
+    idDevice: json["device_id"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,5 +58,6 @@ class BuyAirtimeDataRequest {
     "amount": amount,
     "wallet_category": walletCategory,
     "validatephonenetwork": validatephonenetwork,
+    "device_id":idDevice=deviceId
   };
 }

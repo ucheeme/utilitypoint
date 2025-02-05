@@ -225,8 +225,8 @@ class _ConvertScreenState extends State<ConvertScreen>
                                   }
                                 },
                                 accountBalance: checkCurrencyFrom(currencyConvertingFrom)?
-                                double.parse(userDetails==null?"0":userDetails!.nairaWallet):
-                                double.parse(userDetails==null?"0":userDetails!.dollarWallet),
+                                double.parse(walletBalanceResponse!.nairaWallet):
+                                double.parse(walletBalanceResponse!.dollarWallet),
                                 isNaira:
                                 checkCurrencyFrom(currencyConvertingFrom),
                                 isSelected: isSelected,
@@ -321,44 +321,44 @@ class _ConvertScreenState extends State<ConvertScreen>
                             top: 80.h,
                             left: 147.5.w,
                             child: GestureDetector(
-                              onTap:
-                              (widget.isTopUpCard==false)?
-                                  (){
-                                    print("Hi Dear");
-                                    setState(() {
-                                      if(currencyConvertingFrom=="USD"){
-                                        currencyConvertingFrom ="NGN";
-                                        currencyConvertingTo ="USD";
-                                        amountToConvertController.text=converting1;
-                                        amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
-                                        //
-                                      }else{
-                                        amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
-                                        amountToConvertController.text=converted;
-                                        currencyConvertingFrom ="USD";
-                                        currencyConvertingTo ="NGN";
-
-                                      }
-                                    });
-                                  }:
-                                  (){
-
-                                setState(() {
-                                  if(currencyConvertingFrom=="USD"){
-                                    currencyConvertingFrom ="NGN";
-                                    currencyConvertingTo ="USD";
-                                    amountToConvertController.text=converting1;
-                                    amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
-                                  //
-                                  }else{
-                                    amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
-                                    amountToConvertController.text=converted;
-                                    currencyConvertingFrom ="USD";
-                                    currencyConvertingTo ="NGN";
-
-                                  }
-                                });
-                              },
+                              onTap:null,
+                              // (widget.isTopUpCard==false)?
+                              //     (){
+                              //
+                              //       setState(() {
+                              //         if(currencyConvertingFrom=="USD"){
+                              //           currencyConvertingFrom ="NGN";
+                              //           currencyConvertingTo ="USD";
+                              //           amountToConvertController.text=converting1;
+                              //           amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                              //           //
+                              //         }else{
+                              //           amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                              //           amountToConvertController.text=converted;
+                              //           currencyConvertingFrom ="USD";
+                              //           currencyConvertingTo ="NGN";
+                              //
+                              //         }
+                              //       });
+                              //     }:
+                              //     (){
+                              //
+                              //   setState(() {
+                              //     if(currencyConvertingFrom=="USD"){
+                              //       currencyConvertingFrom ="NGN";
+                              //       currencyConvertingTo ="USD";
+                              //       amountToConvertController.text=converting1;
+                              //       amountConvertedController.text =(double.parse(converting1)/double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                              //     //
+                              //     }else{
+                              //       amountConvertedController.text=(double.parse(converting1)*double.parse(currencyConversionRateFees!.nairaRate)).toString();
+                              //       amountToConvertController.text=converted;
+                              //       currencyConvertingFrom ="USD";
+                              //       currencyConvertingTo ="NGN";
+                              //
+                              //     }
+                              //   });
+                              // },
                               child: Container(
                                 height: 30.h,
                                 width: 30.w,

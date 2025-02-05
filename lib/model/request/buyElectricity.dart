@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../utils/device_util.dart';
+
 BuyElectricityRequest buyElectricityRequestFromJson(String str) => BuyElectricityRequest.fromJson(json.decode(str));
 
 String buyElectricityRequestToJson(BuyElectricityRequest data) => json.encode(data.toJson());
@@ -16,6 +18,7 @@ class BuyElectricityRequest {
   String electricityProductPlanId;
   String amount;
   String pin;
+  String? iDevice = deviceId;
 
   BuyElectricityRequest({
     required this.userId,
@@ -25,6 +28,7 @@ class BuyElectricityRequest {
     required this.electricityProductPlanId,
     required this.amount,
     required this.pin,
+    this.iDevice
   });
 
   factory BuyElectricityRequest.fromJson(Map<String, dynamic> json) => BuyElectricityRequest(
@@ -35,6 +39,7 @@ class BuyElectricityRequest {
     electricityProductPlanId: json["electricity_product_plan_id"],
     amount: json["amount"],
     pin: json["pin"],
+    iDevice: json["device_id"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,5 +50,6 @@ class BuyElectricityRequest {
     "electricity_product_plan_id": electricityProductPlanId,
     "amount": amount,
     "pin": pin,
+    "device_id": iDevice=deviceId,
   };
 }

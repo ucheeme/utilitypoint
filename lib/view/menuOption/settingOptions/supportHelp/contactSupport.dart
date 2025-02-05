@@ -24,7 +24,7 @@ class ContactsupportScreen extends StatefulWidget {
 class _ContactsupportScreenState extends State<ContactsupportScreen> {
   late ProfileBloc bloc;
   List<Map<String,String>> contactUs =[
-    {"title":"08103615718",
+    {"title":"07073459839",
       "subTitle":"Call our 24/7 customer support",
       "icon":"callUs_Icon"},
     {"title":"utilitypointsolution@gmail.com",
@@ -121,7 +121,7 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
     }
   }
   Future<void> openWhatsApp(String phoneNumber, {String message = ''}) async {
-    final Uri whatsappUri = Uri.parse("https://wa.me/234=8103615718?text=${Uri.encodeComponent(message)}");
+    final Uri whatsappUri = Uri.parse("https://wa.me/234=7073459839?text=${Uri.encodeComponent(message)}");
 
     if (await canLaunchUrl(whatsappUri)) {
       await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);

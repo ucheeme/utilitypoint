@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:utilitypoint/utils/device_util.dart';
+
 CreateCardRequest createCardRequestFromJson(String str) => CreateCardRequest.fromJson(json.decode(str));
 
 String createCardRequestToJson(CreateCardRequest data) => json.encode(data.toJson());
@@ -16,6 +18,7 @@ class CreateCardRequest {
   String cardCreationCharge;
   String cardType;
   String pin;
+  String? idDevice=deviceId;
 
   CreateCardRequest({
     required this.userId,
@@ -24,7 +27,8 @@ class CreateCardRequest {
     required this.amount,
     required this.cardCreationCharge,
     required this.cardType,
-    required this.pin
+    required this.pin,
+    this.idDevice
   });
 
   factory CreateCardRequest.fromJson(Map<String, dynamic> json) => CreateCardRequest(
@@ -34,7 +38,8 @@ class CreateCardRequest {
     amount: json["amount"],
     cardCreationCharge: json["card_creation_charge"],
     cardType: json["card_type"],
-    pin: json["pin"]
+    pin: json["pin"],
+    idDevice: json["device_id"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -44,6 +49,7 @@ class CreateCardRequest {
     "amount": amount,
     "card_creation_charge":cardCreationCharge,
     "card_type": cardType,
-    "pin":pin
+    "pin":pin,
+    "device_id":idDevice=deviceId
   };
 }

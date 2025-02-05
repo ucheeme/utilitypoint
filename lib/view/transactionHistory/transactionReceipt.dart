@@ -38,7 +38,9 @@ import '../bottomNav.dart';
 class TransactionReceiptScreen extends StatefulWidget {
   UserTransactions? userTransactions;
   ProductTransactionList? productTransactionList;
-  TransactionReceiptScreen({super.key, this.userTransactions,this.productTransactionList});
+
+  TransactionReceiptScreen(
+      {super.key, this.userTransactions, this.productTransactionList});
 
   @override
   State<TransactionReceiptScreen> createState() =>
@@ -56,10 +58,20 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
   TextEditingController phoneNumberController = TextEditingController();
   bool isLoadingContact = false;
   late ProductBloc bloc;
+  ElectricityAdminMessage? electricityAdminMessage;
 
   @override
   void initState() {
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.productTransactionList?.metreNumber != null) {
+        setState(() {
+          electricityAdminMessage = adminMessageFromJson(
+              widget.productTransactionList!.adminScreenMessage);
+        });
+        print(
+            "heres the value of message:${electricityAdminMessage!.detail.message}");
+      }
+    });
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);
@@ -152,7 +164,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
   }
 
   getBody(context) {
-    return Column(
+    return ListView(
       children: [
         SlideTransition(
           position: _animationManager.slideAnimationTop,
@@ -167,7 +179,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
         SlideTransition(
           position: _animationManager.slideAnimation,
           child: Container(
-            height: 668.72.h,
+            // height: 668.72.h,
             width: Get.width,
             padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
             decoration: BoxDecoration(
@@ -221,7 +233,10 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                         SizedBox(
                           width: 200.w,
                           child: Text(
-                            DateTime.now().format("d-M-yy g:i A"),
+                            DateTime.parse(widget
+                                    .productTransactionList!.createdAt
+                                    .toIso8601String())
+                                .format("d-M-Y g:i A"),
                             style: CustomTextStyle.kTxtMedium.copyWith(
                                 color: AppColor.black100,
                                 fontSize: 14.sp,
@@ -252,18 +267,20 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                         ),
                         Gap(12.w),
                         Padding(
-                          padding:  EdgeInsets.only(left: 25.w),
+                          padding: EdgeInsets.only(left: 25.w),
                           child: SizedBox(
                             width: 150.w,
                             child: Text(
                               NumberFormat.currency(
                                       symbol: (widget.productTransactionList!
-                                                      .walletCategory?.toLowerCase() ==
-                                                  "naira_wallet" )
+                                                  .walletCategory
+                                                  ?.toLowerCase() ==
+                                              "naira_wallet")
                                           ? '\₦'
                                           : '\$',
                                       decimalDigits: 0)
-                                  .format(amountGotten()),
+                                  .format(double.parse(
+                                      widget.productTransactionList!.amount)),
                               style: GoogleFonts.inter(
                                   color: AppColor.black100,
                                   fontSize: 14.sp,
@@ -295,19 +312,20 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                         ),
                         Gap(12.w),
                         Padding(
-                          padding:  EdgeInsets.only(left: 25.w),
+                          padding: EdgeInsets.only(left: 25.w),
                           child: SizedBox(
                             width: 150.w,
                             child: Text(
                               NumberFormat.currency(
                                       symbol: (widget.productTransactionList!
-                                                      .walletCategory ==
-                                                  "naira_wallet" )
+                                                  .walletCategory ==
+                                              "naira_wallet")
                                           ? '\₦'
                                           : '\$',
                                       decimalDigits: 0)
                                   .format(double.parse(
-                                      widget.productTransactionList?.amount?? "0")),
+                                      widget.productTransactionList?.amount ??
+                                          "0")),
                               style: GoogleFonts.inter(
                                   color: AppColor.black100,
                                   fontSize: 14.sp,
@@ -336,11 +354,12 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                         ),
                         Gap(12.w),
                         Padding(
-                          padding:  EdgeInsets.only(left: 25.w),
+                          padding: EdgeInsets.only(left: 15.w),
                           child: SizedBox(
                             width: 190.w,
                             child: Text(
-                              widget.productTransactionList!.transactionCategory.capitalizeFirst ??
+                              widget.productTransactionList!.transactionCategory
+                                      .capitalizeFirst ??
                                   "no category",
                               style: CustomTextStyle.kTxtMedium.copyWith(
                                   color: AppColor.black100,
@@ -353,44 +372,132 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                     ),
                   ),
                 ),
-                // Visibility(
-                //   visible: widget.userTransactions?.transactionCategory
-                //               .toLowerCase() ==
-                //           "data" ||
-                //       widget.userTransactions?.transactionCategory
-                //               .toLowerCase() ==
-                //           "airtime",
-                //   child: Padding(
-                //     padding: EdgeInsets.symmetric(vertical: 5.h),
-                //     child: SizedBox(
-                //       height: 28.h,
-                //       //   width: 295.w,
-                //       child: Row(
-                //         // mainAxisAlignment: MainAxisAlignment.start,
-                //         children: [
-                //           Text(
-                //             "Network:",
-                //             style: CustomTextStyle.kTxtBold.copyWith(
-                //                 color: AppColor.primary100,
-                //                 fontSize: 14.sp,
-                //                 fontWeight: FontWeight.w400),
-                //           ),
-                //           Gap(12.w),
-                //           SizedBox(
-                //             width: 190.w,
-                //             child: Text(
-                //              "",
-                //               style: CustomTextStyle.kTxtMedium.copyWith(
-                //                   color: AppColor.black100,
-                //                   fontSize: 14.sp,
-                //                   fontWeight: FontWeight.w500),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                Visibility(
+                  visible: widget.productTransactionList?.metreNumber != null ||
+                      widget.productTransactionList?.smartCardNumber != null,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                    child: SizedBox(
+                      height: 28.h,
+                      //   width: 295.w,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Provider:",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.primary100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Gap(12.w),
+                          Padding(
+                            padding: EdgeInsets.only(left: 75.w),
+                            child: SizedBox(
+                              width: 190.w,
+                              child: Text(
+                                widget.productTransactionList?.productPlan
+                                    ?.productPlanName ??
+                                    "no provider",
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: widget.productTransactionList?.metreNumber != null,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                    child: SizedBox(
+                      height: 28.h,
+                      //   width: 295.w,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Unit:",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.primary100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Gap(12.w),
+                          Padding(
+                            padding: EdgeInsets.only(left: 105.w),
+                            child: SizedBox(
+                              width: 190.w,
+                              height: 60.h,
+                              child: Text(
+                                (electricityAdminMessage?.detail.message?.isEmpty ?? true) ||
+                                    !(electricityAdminMessage?.detail.message?.contains("TRANSID: ") ?? false)
+                                    ? "no unit"
+                                    : electricityAdminMessage?.detail.message
+                                    .split("TOKEN:")[1]
+                                    .split(" UNIT: ")[1]
+                                    .split("TRANSID: ")[0] ??
+                                    "no token",
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: widget.productTransactionList?.metreNumber != null,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
+                    child: SizedBox(
+                      height: 28.h,
+                      //   width: 295.w,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Token:",
+                            style: CustomTextStyle.kTxtBold.copyWith(
+                                color: AppColor.primary100,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          Gap(12.w),
+                          Padding(
+                            padding: EdgeInsets.only(left: 85.w),
+                            child: SizedBox(
+                              width: 190.w,
+                              height: 60.h,
+                              child: Text(
+                                (electricityAdminMessage?.detail.message.isEmpty ?? true) ||
+                                    !(electricityAdminMessage?.detail.message.contains(" UNIT: ") ?? false)
+                                    ?"No Token"
+                                    : electricityAdminMessage?.detail.message
+                                    .split("TOKEN:")[1]
+                                    .split(" UNIT: ")[0] ??
+                                    "no token",
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black100,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 5.h),
                   child: SizedBox(
@@ -428,7 +535,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                 Padding(
                   padding: EdgeInsets.only(bottom: 5.h),
                   child: SizedBox(
-                    height: 40.h,
+                    height: 55.h,
                     // width: 295.w,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -447,7 +554,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                         SizedBox(
                           width: 200.w,
                           child: Text(
-                            maxLines: 2,
+                            maxLines: 3,
                             widget.productTransactionList!.userScreenMessage ??
                                 "No Value",
                             style: CustomTextStyle.kTxtMedium.copyWith(
@@ -483,7 +590,7 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                           width: 200.w,
                           child: Text(
                             maxLines: 2,
-                            widget.productTransactionList!.phoneNumber ?? "no phone",
+                            getDetails(),
                             style: CustomTextStyle.kTxtMedium.copyWith(
                                 color: AppColor.black100,
                                 fontSize: 14.sp,
@@ -556,7 +663,10 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
                           width: 200.w,
                           child: Text(
                             maxLines: 2,
-                            widget.productTransactionList!.walletCategory.replaceAll("_", " ").capitalizeFirst ?? "",
+                            widget.productTransactionList!.walletCategory
+                                    .replaceAll("_", " ")
+                                    .capitalizeFirst ??
+                                "",
                             style: CustomTextStyle.kTxtMedium.copyWith(
                                 color: AppColor.black100,
                                 fontSize: 14.sp,
@@ -613,5 +723,18 @@ class _TransactionReceiptScreenState extends State<TransactionReceiptScreen>
       return double.parse(widget.productTransactionList!.balanceBefore) -
           double.parse(widget.productTransactionList!.balanceAfter);
     }
+  }
+
+  String getDetails() {
+    if (widget.productTransactionList!.phoneNumber != null) {
+      return widget.productTransactionList!.phoneNumber!;
+    }
+    if (widget.productTransactionList!.metreNumber != null) {
+      return widget.productTransactionList!.metreNumber!;
+    }
+    if (widget.productTransactionList!.smartCardNumber != null) {
+      return widget.productTransactionList!.smartCardNumber!;
+    }
+    return "";
   }
 }

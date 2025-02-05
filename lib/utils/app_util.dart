@@ -24,10 +24,13 @@ import 'package:utilitypoint/utils/height.dart';
 import 'package:utilitypoint/utils/reOccurringWidgets/transactionPin.dart';
 import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
+import 'package:utilitypoint/view/menuOption/cards/cardTransactionHistory.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/menuOption/notifications.dart';
 import 'package:utilitypoint/view/onboarding_screen/forgotpassword_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/verifyForgotPasswordOtp.dart';
+import 'package:utilitypoint/view/profile/personalInformation.dart';
+import 'package:utilitypoint/view/transactionHistory/transaction.dart';
 
 import '../bloc/onboarding_new/onBoardingValidator.dart';
 import '../bloc/profile/profile_bloc.dart';
@@ -37,6 +40,7 @@ import '../view/bottomNav.dart';
 import '../view/fundWallet/chooseFundingMethonds.dart';
 import '../view/fundWallet/convertToUsD.dart';
 import '../view/fundWallet/enterAmountToConvert.dart';
+import '../view/home/home_screen.dart';
 import '../view/onboarding_screen/signIn/login_screen.dart';
 import '../view/onboarding_screen/signIn/reset_password.dart';
 import 'image_paths.dart';
@@ -733,6 +737,17 @@ class LogOut extends StatelessWidget {
     if (state is UserLogOut) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         MySharedPreference.deleteAllSharedPref();
+        userDetails = null;
+        loginResponse = null;
+        userKycResponse=null;
+        appAllNetworkList=[];
+        appAllSettingsList=[];
+        appAllProductList=[];
+        airtimeDataTransactionHistory=[];
+        //tempTransactionList=[];
+        userImage.value="";
+        tempUserTransactionList=[];
+        tempAllTransactionList=[];
         Get.offAll(SignInPage(), predicate: (route) => false);
       });
       bloc.initial();

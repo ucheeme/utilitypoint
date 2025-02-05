@@ -178,10 +178,10 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
         accessToken=setUpAccessToken;
         userId=userIdSet;
         print("this is ${isFirst}");
-        if(isFirst) return const SignUpCreateAccountScreen();
-        if(isSecond) return const VerifyEmail();
-        if(isThird) return const PersonalInformation();
-        if(isFourth) return const SetTransactionPin();
+        // if(isFirst) return const SignUpCreateAccountScreen();
+        // if(isSecond) return const VerifyEmail();
+        // if(isThird) return const PersonalInformation();
+        // if(isFourth) return const SetTransactionPin();
         if(isRequireBiometeric) return const SignInPage();
         return   Scaffold(
           body: Container(

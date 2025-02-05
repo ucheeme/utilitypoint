@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:utilitypoint/utils/device_util.dart';
+
 GetProductRequest getProductRequestFromJson(String str) => GetProductRequest.fromJson(json.decode(str));
 
 String getProductRequestToJson(GetProductRequest data) => json.encode(data.toJson());
@@ -25,6 +27,7 @@ class GetProductRequest {
   String? pin;
   String? bvn;
   String? documentCategory;
+  String? idDevice;
   File? documentFile;
   GetProductRequest({
      this.networkId,
@@ -42,6 +45,7 @@ class GetProductRequest {
     this.page,
     this.pin,
     this.bvn,
+    this.idDevice,
     this.documentFile
   });
 
@@ -61,6 +65,7 @@ class GetProductRequest {
     page: json["page"],
     pin: json["pin"],
     documentFile: json["document_file"],
+      idDevice: json["device_id"],
       documentCategory:json["document_category"]
   );
 
@@ -79,6 +84,7 @@ class GetProductRequest {
     "page":page,
     "pin":pin,
     "bvn":bvn,
+    "device_id":idDevice=deviceId,
     "document_file":documentFile?.path,
     "document_category":documentCategory
   };

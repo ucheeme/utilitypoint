@@ -46,7 +46,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
   bool activateKeyboard = false;
   String requiredNumber = "";
   late Timer _timer;
-  int _start = 60;
+  int _start = 300;
   bool isLoading = false;
   bool isWrongOTP = false;
   bool isCompleteOTP = false;
@@ -100,8 +100,8 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
               userId = state.response.id;
               accessToken = state.response.token;
               loginResponse = state.response;
-              MySharedPreference.saveUserLoginResponse(
-                  jsonEncode(loginResponse));
+              // MySharedPreference.saveUserLoginResponse(
+              //     json.encode(loginResponse));
               Get.offAll(MyBottomNav(), predicate: (route) => false);
             });
           });
@@ -226,7 +226,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
                         onTap: () {
                           if (_start == 0) {
                             setState(() {
-                              _start = 60;
+                              _start = 300;
                             });
                             startTimer();
                             bloc.add(ResendTwoFactorAuthenticatorEvent(
@@ -236,11 +236,11 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
                         child: Text(
                           "Resend",
                           style: CustomTextStyle.kTxtMedium.copyWith(
-                              fontWeight: _start == 0
+                              fontWeight: _start <= 240
                                   ? FontWeight.w600
                                   : FontWeight.w400,
                               fontSize: 14.sp,
-                              color: _start == 0
+                              color: _start <= 240
                                   ? AppColor.primary100
                                   : AppColor.primary40),
                           textAlign: TextAlign.center,

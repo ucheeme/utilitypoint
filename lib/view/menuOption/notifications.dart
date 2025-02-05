@@ -79,16 +79,20 @@ class _NotificationsScreenState extends State<NotificationsScreen>  with TickerP
       builder: (context, state) {
         if (state is ProfileError){
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration.zero, (){
-              AppUtils.showSnack("${state.errorResponse.data}", context);
-            });
+            print("i am in notui");
+            if(state.errorResponse.message.toLowerCase()!="user notifications successfully fetched"){
+              Future.delayed(Duration.zero, (){
+                AppUtils.showInfoSnack("${state.errorResponse.data}", context);
+              });
+            }
+
           });
           bloc.initial();
         }
         if (state is UserNotifications){
           WidgetsBinding.instance.addPostFrameCallback((_) {
           userNotification = state.response;
-          numOfNotification = userNotification==null?0:userNotification!.data.length;
+          numOfNotification = userNotification==null?0:userNotification!.data?.length??0;
           MySharedPreference.saveNumOfNotification(numOfNotification.toString());
           });
           bloc.initial();
@@ -165,7 +169,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>  with TickerP
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      ...userNotification!.data.mapIndexed((element, index)=>
+                      ...?userNotification!.data?.mapIndexed((element, index)=>
                       GestureDetector(
                           onTap: (){
                             setState(() {

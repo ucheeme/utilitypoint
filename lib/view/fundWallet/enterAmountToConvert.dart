@@ -65,7 +65,7 @@ class _EnterUsdAmountScreenState extends State<EnterUsdAmountScreen> {
             ),
             Gap(16.h),
             Text(
-              "Amount must be between '\$2' and \$2000",
+              "Amount must be between '\$3' and \$2000",
               textAlign: TextAlign.center,
               style:CustomTextStyle.kTxtMedium.copyWith(color: AppColor.black80,
                   fontSize: 14.sp,fontWeight: FontWeight.w400),
@@ -242,11 +242,11 @@ class _EnterUsdAmountScreenState extends State<EnterUsdAmountScreen> {
               padding:  EdgeInsets.symmetric(horizontal: 34.w),
               child: CustomButton(
                 onTap: () async {
-                  if(double.parse(amount)>2){
+                  if(double.parse(amount)>2&&double.parse(amount)<=2000){
                     showSlidingModalCreate(context,amount);
                   }else{
                     AppUtils.showInfoSnack(
-                        "Amount must be greater than 2",
+                        "Amount must be greater than \$3 and less than \$2000",
                         context);
                   }
                 },

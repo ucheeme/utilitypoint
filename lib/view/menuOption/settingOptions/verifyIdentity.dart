@@ -132,6 +132,9 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
         }
         if(state is ValidateBvnOtp){
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              verificationStatus=1;
+            });
             showSuccessSlidingModal(context,successMessage: "",
             headerText: "Sent for Verification",
             onTap: (){
@@ -139,6 +142,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
              // Get.back();
             });
           });
+          bloc.initial();
         }
         if (state is UserKYCs) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -257,9 +261,22 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           children: [
             Gap(16.2.h),
             ( docImage==null||docImage.isEmpty)?
-           Image.asset("assets/image/images_png/no_doc_new.png",height: 79.h,width: 118.w,)
-               :
-            Image.network(docImage,height: 79.h,width: 118.w)
+                Container(
+                  height: 79.h,
+                  width: 118.w,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                    image: DecorationImage(image: AssetImage("assets/image/images_png/no_doc_new.png"),)
+                  ),
+                ):
+            Container(
+              height: 79.h,
+              width: 118.w,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image: NetworkImage(docImage),fit: BoxFit.cover)
+              ),
+            )
             ,
             Gap(15.h),
             Text(title==null?"Upload Document":title!,
@@ -449,16 +466,17 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
                       fontSize: 12.sp),
                 ),
               ),
-              userDetails!.bvnVerificationStatus.toLowerCase()=="pending"?
+              verificationStatus==null || verificationStatus==0?
               SizedBox(
                 height: 17.h,
                 width: 95.w,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                   Icon(Icons.pending,color: AppColor.secondary100,size: 18,),
+                   Icon(( verificationStatus==null || verificationStatus==0)?Icons.pending:
+                     Icons.check_circle,color:( verificationStatus==null || verificationStatus==0)?AppColor.secondary100:AppColor.success100,size: 18,),
                     Gap(8.w),
-                    Text("Pending",
+                    Text(( verificationStatus==null || verificationStatus==0)?"Pending":"Verified",
                       textAlign: TextAlign.center,
                       style: CustomTextStyle.kTxtMedium.copyWith(
                           color: AppColor.secondary100,

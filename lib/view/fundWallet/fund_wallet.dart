@@ -14,14 +14,20 @@ import 'package:utilitypoint/utils/constant.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 
+import '../../model/request/updateUserRequest.dart';
 import '../../model/response/nairaFundingOptions.dart';
 import '../../model/response/userVirtualAccounts.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
+import '../../utils/notice.dart';
+import '../../utils/pages.dart';
 import '../../utils/reuseable_widget.dart';
 import '../../utils/text_style.dart';
+import '../bottomNav.dart';
 import '../menuOption/convertFunds/convert.dart';
+import '../menuOption/settingOptions/verifyIdentity.dart';
+import '../profile/nextPersonalInformation.dart';
 import 'fundNairaOption.dart';
 
 class FundWalletScreen extends StatefulWidget {
@@ -52,13 +58,33 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
       //print(widget.isFundDollarWallet);
-    //  bloc.add(GetExchangeRateEvent());
-      if(widget.isFundDollarWallet==false){
-        bloc.add(GetUserVirtualAccountEvent(GetProductRequest(userId: loginResponse!.id,pin: userDetails!.pin)));
+      //  bloc.add(GetExchangeRateEvent());
+      if(verificationStatus == 0||verificationStatus ==null){
+        openBottomSheet(
+            context,
+            NoticeBottomSheet(
+              image:
+              "assets/image/icons/attentionAlert.png-removebg-preview.png",
+              title: "Update your KYC information",
+              body:
+              "Validate your KYC information and perform transaction",
+              onTap: () {
+                Get.to(UserIdentityVerification());
+              },
+            ), ).then((_){
+              Get.offAll(MyBottomNav());
+        });
       }else{
-        bloc.add(GetExchangeRateEvent());
+        if(widget.isFundDollarWallet==false){
+          bloc.add(GetUserVirtualAccountEvent(GetProductRequest(userId: loginResponse!.id,pin: userDetails!.pin)));
+        }else{
+          bloc.add(GetExchangeRateEvent());
+        }
       }
+
     });
+
+
     super.initState();
     // Initialize the SlideAnimationManager
     _animationManager = SlideAnimationManager(this);

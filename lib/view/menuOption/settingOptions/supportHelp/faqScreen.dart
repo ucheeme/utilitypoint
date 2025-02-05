@@ -92,7 +92,7 @@ class _FaqscreenState extends State<Faqscreen> {
                   topLeft: Radius.circular(30.r),
                   topRight: Radius.circular(30.r)),
             ),
-            child: Column(
+            child: ListView(
               children: [
                 ...settings.mapIndexed((element,index)=>
                     Padding(
@@ -168,7 +168,7 @@ class _AnimatedContainerExampleState extends State<AnimatedContainerExample> {
                     Text(
                      widget.response!.answer,
                       style:CustomTextStyle.kTxtRegular.copyWith(
-                          color: AppColor.secondary100,
+                          color: AppColor.black100,
                         fontWeight: FontWeight.w400,
                         fontSize: 12.sp
                       ) ,

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../utils/device_util.dart';
+
 UserAlertNotificationRequest userAlertNotificationRequestFromJson(String str) => UserAlertNotificationRequest.fromJson(json.decode(str));
 
 String userAlertNotificationRequestToJson(UserAlertNotificationRequest data) => json.encode(data.toJson());
@@ -14,6 +16,7 @@ class UserAlertNotificationRequest {
   String pushNotification;
   String smsAlert;
   String accountDeactivation;
+  String? idDevice=deviceId;
 
   UserAlertNotificationRequest({
     required this.userId,
@@ -21,6 +24,7 @@ class UserAlertNotificationRequest {
     required this.pushNotification,
     required this.smsAlert,
     required this.accountDeactivation,
+    this.idDevice
   });
 
   factory UserAlertNotificationRequest.fromJson(Map<String, dynamic> json) => UserAlertNotificationRequest(
@@ -29,6 +33,7 @@ class UserAlertNotificationRequest {
     pushNotification: json["push_notification"],
     smsAlert: json["sms_alert"],
     accountDeactivation: json["account_deactivation"],
+    idDevice: json["device_id"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +42,6 @@ class UserAlertNotificationRequest {
     "push_notification": pushNotification,
     "sms_alert": smsAlert,
     "account_deactivation": accountDeactivation,
+    "device_id": idDevice=deviceId,
   };
 }

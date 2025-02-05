@@ -144,3 +144,10 @@ class ValidateBVNOTPEvent extends ProductEvent {
   @override
   List<Object?> get props => [];
 }
+
+class GetUserWalletBalanceEvent extends ProductEvent {
+  final String request;
+  const GetUserWalletBalanceEvent(this.request);
+  @override
+  List<Object?> get props => [];
+}

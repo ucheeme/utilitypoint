@@ -34,52 +34,48 @@ class BuyBulkData extends StatefulWidget {
   State<BuyBulkData> createState() => _BuyBulkDataState();
 }
 
-class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin {
+class _BuyBulkDataState extends State<BuyBulkData>
+    with TickerProviderStateMixin {
   late SlideAnimationManager _animationManager;
   bool isMTN = true;
   bool isAirtel = false;
   bool isGlo = false;
   bool is9Mobile = false;
-  bool isLoadingContact=false;
-  String networkId ="";
-  String networkName ="";
-  List<String> firstAmount =["100","200","500","1000"];
-  List<String> secondAmount =["1500","2000","5000","10000"];
-  int selectedValue =0;
+  bool isLoadingContact = false;
+  String networkId = "";
+  String networkName = "";
+  List<String> firstAmount = ["100", "200", "500", "1000"];
+  List<String> secondAmount = ["1500", "2000", "5000", "10000"];
+  int selectedValue = 0;
   String networkValidation = "";
-  String dataCategotyId ="";
-  int selectedDataPlan =0;
-  String productPlanId ="";
+  String dataCategotyId = "";
+  int selectedDataPlan = 0;
+  String productPlanId = "";
   ProductPlanItemResponse? selectedProductPlan;
-  TextEditingController phoneNumberController =TextEditingController();
-  TextEditingController airtimeAmountController =TextEditingController();
-  List<ProductPlanCategoryItem> productPlanCategoryList=[];
-  List<ProductPlanItemResponse> productPlanList=[];
-  List<String> multiplePhoneNumbers=[];
-  List<TextEditingController> multipleTextController=[];
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController airtimeAmountController = TextEditingController();
+  List<ProductPlanCategoryItem> productPlanCategoryList = [];
+  List<ProductPlanItemResponse> productPlanList = [];
+  List<String> multiplePhoneNumbers = [];
+  List<TextEditingController> multipleTextController = [];
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(appAllNetworkList.isEmpty||appAllNetworkList==null){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (appAllNetworkList.isEmpty || appAllNetworkList == null) {
         bloc.add(GetAllNetworkEvent());
-      }
-      else{
-        networkName="MTN";
-        for(var item in appAllNetworkList){
-          if(item.networkName.toLowerCase() =="mtn"){
+      } else {
+        networkName = "MTN";
+        for (var item in appAllNetworkList) {
+          if (item.networkName.toLowerCase() == "mtn") {
             setState(() {
               networkId = item.id;
             });
           }
         }
-        bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-            networkId: networkId,
-            productSlug: "data"
-        )));
+        bloc.add(GetAllProductPlanCategoryEvent(
+            GetProductRequest(networkId: networkId, productSlug: "data")));
       }
-
-
-
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -92,58 +88,58 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
     _animationManager.dispose();
     super.dispose();
   }
+
   late ProductBloc bloc;
+
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProductBloc>(context);
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
-        if (state is ProductError){
+        if (state is ProductError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration.zero, (){
-              AppUtils.showSnack(state.errorResponse.message ?? "Error occurred", context);
+            Future.delayed(Duration.zero, () {
+              AppUtils.showSnack(
+                  state.errorResponse.message ?? "Error occurred", context);
             });
           });
           bloc.initial();
         }
-        if(state is ProductAllNetworks){
+        if (state is ProductAllNetworks) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            appAllNetworkList= state.response;
-            networkName="MTN";
-            for(var item in appAllNetworkList){
-              if(item.networkName.toLowerCase() =="mtn"){
+            appAllNetworkList = state.response;
+            networkName = "MTN";
+            for (var item in appAllNetworkList) {
+              if (item.networkName.toLowerCase() == "mtn") {
                 setState(() {
                   networkId = item.id;
                 });
               }
             }
-            bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-                networkId: networkId,
-                productSlug: "data"
-            )));
+            bloc.add(GetAllProductPlanCategoryEvent(
+                GetProductRequest(networkId: networkId, productSlug: "data")));
           });
           bloc.initial();
         }
-        if (state is AllProductPlanCategories){
+        if (state is AllProductPlanCategories) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            productPlanCategoryList= state.response;
-            dataCategotyId =productPlanCategoryList[0].id;
+            productPlanCategoryList = state.response;
+            dataCategotyId = productPlanCategoryList[0].id;
             bloc.add(GetAllProductPlanEvent(GetProductRequest(
                 userId: loginResponse!.id,
-                planCategoryId:dataCategotyId,
+                planCategoryId: dataCategotyId,
                 // amount: airtimeAmountController.text.trim(),
                 networkId: networkId,
-                productSlug: "data"
-            )));
+                productSlug: "data")));
           });
           bloc.initial();
         }
 
-        if (state is AllProductPlanSuccess){
+        if (state is AllProductPlanSuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            productPlanList= state.response;
-            productPlanId=productPlanList[0].productPlanId;
-            selectedProductPlan= productPlanList[0];
+            productPlanList = state.response;
+            productPlanId = productPlanList[0].productPlanId;
+            selectedProductPlan = productPlanList[0];
           });
           bloc.initial();
         }
@@ -155,7 +151,7 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
             child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   FocusScope.of(context).unfocus();
                 },
                 child: Scaffold(body: appBodyDesign(getBody()))));
@@ -172,8 +168,7 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
             child: Padding(
               padding: EdgeInsets.only(top: 52.h, left: 20.w, bottom: 17.h),
               child: SizedBox(
-                  height: 52.h,
-                  child: CustomAppBar(title: "Buy bulk data")),
+                  height: 52.h, child: CustomAppBar(title: "Buy bulk data")),
             ),
           ),
           Gap(20.h),
@@ -209,86 +204,94 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                               title: "MTN",
                               icon: "mtn_Icon",
                               onTap: () {
-                                for(var item in appAllNetworkList){
-                                  if(item.networkName.toLowerCase() =="mtn"){
+                                for (var item in appAllNetworkList) {
+                                  if (item.networkName.toLowerCase() == "mtn") {
                                     setState(() {
                                       networkId = item.id;
-                                      networkName="MTN";
+                                      networkName = "MTN";
                                       isMTN = true;
                                       isAirtel = false;
                                       isGlo = false;
-                                      is9Mobile=false;
+                                      is9Mobile = false;
                                     });
                                   }
                                 }
-                                bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-                                    networkId: networkId,
-                                    productSlug: "data"
-                                )));
-                                String networkType= getNetworkProvider(phoneNumberController.text);
-                                if(networkType.toLowerCase()!=networkName.toLowerCase()){
+                                bloc.add(GetAllProductPlanCategoryEvent(
+                                    GetProductRequest(
+                                        networkId: networkId,
+                                        productSlug: "data")));
+                                String networkType = getNetworkProvider(
+                                    phoneNumberController.text);
+                                if (networkType.toLowerCase() !=
+                                    networkName.toLowerCase()) {
                                   setState(() {
-                                    networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                    networkValidation =
+                                        "The number you entered is not an $networkName number, but a $networkType";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
-
                               },
                               isSelected: isMTN),
                           dashboardIcons(
                               title: "Airtel",
                               icon: "airtel_Icon",
                               onTap: () {
-                                for(var item in appAllNetworkList){
-                                  if(item.networkName.toLowerCase() =="airtel"){
+                                for (var item in appAllNetworkList) {
+                                  if (item.networkName.toLowerCase() ==
+                                      "airtel") {
                                     setState(() {
                                       networkId = item.id;
-                                      networkName="Airtel";
+                                      networkName = "Airtel";
                                       isMTN = false;
                                       isAirtel = true;
                                       isGlo = false;
-                                      is9Mobile=false;
+                                      is9Mobile = false;
                                     });
                                   }
                                 }
-                                bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-                                    networkId: networkId,
-                                    productSlug: "data"
-                                )));
-                                String networkType= getNetworkProvider(phoneNumberController.text);
-                                if(networkType.toLowerCase()!=networkName.toLowerCase()){
+                                bloc.add(GetAllProductPlanCategoryEvent(
+                                    GetProductRequest(
+                                        networkId: networkId,
+                                        productSlug: "data")));
+                                String networkType = getNetworkProvider(
+                                    phoneNumberController.text);
+                                if (networkType.toLowerCase() !=
+                                    networkName.toLowerCase()) {
                                   setState(() {
-                                    networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                    networkValidation =
+                                        "The number you entered is not an $networkName number, but a $networkType";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
-
                               },
                               isSelected: isAirtel),
                           dashboardIcons(
                               title: "Glo",
                               icon: "glo_Icon",
                               onTap: () {
-                                for(var item in appAllNetworkList){
-                                  if(item.networkName.toLowerCase() =="glo"){
+                                for (var item in appAllNetworkList) {
+                                  if (item.networkName.toLowerCase() == "glo") {
                                     setState(() {
                                       networkId = item.id;
-                                      networkName="Glo";
+                                      networkName = "Glo";
                                       isMTN = false;
                                       isAirtel = false;
                                       isGlo = true;
-                                      is9Mobile=false;
+                                      is9Mobile = false;
                                     });
                                   }
                                 }
-                                bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-                                    networkId: networkId,
-                                    productSlug: "data"
-                                )));
-                                String networkType= getNetworkProvider(phoneNumberController.text);
-                                if(networkType.toLowerCase()!=networkName.toLowerCase()){
+                                bloc.add(GetAllProductPlanCategoryEvent(
+                                    GetProductRequest(
+                                        networkId: networkId,
+                                        productSlug: "data")));
+                                String networkType = getNetworkProvider(
+                                    phoneNumberController.text);
+                                if (networkType.toLowerCase() !=
+                                    networkName.toLowerCase()) {
                                   setState(() {
-                                    networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                    networkValidation =
+                                        "The number you entered is not an $networkName number, but a $networkType";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
@@ -300,26 +303,30 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                               title: "9 Mobile",
                               icon: "9mobile_Icon",
                               onTap: () {
-                                for(var item in appAllNetworkList){
-                                  if(item.networkName.toLowerCase() =="9mobile"){
+                                for (var item in appAllNetworkList) {
+                                  if (item.networkName.toLowerCase() ==
+                                      "9mobile") {
                                     setState(() {
                                       networkId = item.id;
-                                      networkName="9MOBILE";
+                                      networkName = "9MOBILE";
                                       isMTN = false;
                                       isAirtel = false;
                                       isGlo = false;
-                                      is9Mobile=true;
+                                      is9Mobile = true;
                                     });
                                   }
                                 }
-                                bloc.add(GetAllProductPlanCategoryEvent(GetProductRequest(
-                                    networkId: networkId,
-                                    productSlug: "data"
-                                )));
-                                String networkType= getNetworkProvider(phoneNumberController.text);
-                                if(networkType.toLowerCase()!=networkName.toLowerCase()){
+                                bloc.add(GetAllProductPlanCategoryEvent(
+                                    GetProductRequest(
+                                        networkId: networkId,
+                                        productSlug: "data")));
+                                String networkType = getNetworkProvider(
+                                    phoneNumberController.text);
+                                if (networkType.toLowerCase() !=
+                                    networkName.toLowerCase()) {
                                   setState(() {
-                                    networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                    networkValidation =
+                                        "The number you entered is not an $networkName number, but a $networkType";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
@@ -341,97 +348,107 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                     Gap(6.h),
                     SizedBox(
                       width: Get.width,
-                      height: 200.h,
+                      height: 230.h,
                       child: GridView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4, // 4 items per row
-                           // crossAxisSpacing: 5.h, // Spacing between columns
+                            // crossAxisSpacing: 5.h, // Spacing between columns
                             mainAxisSpacing: 20.w, // Spacing between rows
                           ),
                           itemCount: productPlanCategoryList.length,
-                          itemBuilder: (context, index){
+                          itemBuilder: (context, index) {
                             return SingleChildScrollView(
                               physics: const NeverScrollableScrollPhysics(),
                               child: dashboardIcons(
-                                horizontal: 0.w,
-                                  title:getTitle(productPlanCategoryList[index].productPlanCategoryName,networkName),
+                                  horizontal: 0.w,
+                                  title: getTitle(
+                                      productPlanCategoryList[index]
+                                          .productPlanCategoryName,
+                                      networkName),
                                   icon: getNetworkIcon(networkName),
                                   onTap: () {
-                                    dataCategotyId=productPlanCategoryList[index].id;
-                                    bloc.add(GetAllProductPlanEvent(GetProductRequest(
-                                        userId: loginResponse!.id,
-                                        planCategoryId:dataCategotyId,
-                                        // amount: airtimeAmountController.text.trim(),
-                                        networkId: networkId,
-                                        productSlug: "data"
-                                    )));
+                                    dataCategotyId =
+                                        productPlanCategoryList[index].id;
+                                    bloc.add(GetAllProductPlanEvent(
+                                        GetProductRequest(
+                                            userId: loginResponse!.id,
+                                            planCategoryId: dataCategotyId,
+                                            // amount: airtimeAmountController.text.trim(),
+                                            networkId: networkId,
+                                            productSlug: "data")));
                                     setState(() {
-                                      selectedValue=index;
+                                      selectedValue = index;
                                     });
-                              
                                   },
-                                  isSelected:selectedValue==index),
+                                  isSelected: selectedValue == index),
                             );
                           }),
                     ),
                     Gap(20.h),
-
                     SizedBox(
-                        height: 180.h,
-                        child:productPlanList.isEmpty?
-                        Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/image/images_png/empty.png",
-                                height: 40.h,
-                                width: 60.w,
-                              ),
-                              Text(
-                                "Nothing here, yet ...",
-                                style: CustomTextStyle.kTxtBold.copyWith(
-                                    color: AppColor.black100,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16.sp),
-                              ),
-                              SizedBox(
-                                height: 49.h,
-                                width: 269.w,
-                                child: Text(
-                                  textAlign: TextAlign.center,
-                                  "There are no data plan(s) available for this category",
-                                  style: CustomTextStyle.kTxtMedium.copyWith(
-                                      color: AppColor.black80,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12.sp),),
+                        height: 230.h,
+                        child: productPlanList.isEmpty
+                            ? Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/image/images_png/empty.png",
+                                      height: 40.h,
+                                      width: 60.w,
+                                    ),
+                                    Text(
+                                      "Nothing here, yet ...",
+                                      style: CustomTextStyle.kTxtBold.copyWith(
+                                          color: AppColor.black100,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.sp),
+                                    ),
+                                    SizedBox(
+                                      height: 49.h,
+                                      width: 269.w,
+                                      child: Text(
+                                        textAlign: TextAlign.center,
+                                        "There are no data plan(s) available for this category",
+                                        style: CustomTextStyle.kTxtMedium
+                                            .copyWith(
+                                                color: AppColor.black80,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 12.sp),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               )
-                            ],
-                          ),
-                        ):
-                        GridView.builder(
-                            padding: EdgeInsets.zero,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4, // 4 items per row
-                              crossAxisSpacing: 10.h, // Spacing between columns
-                              mainAxisSpacing: 10.w, // Spacing between rows
-                            ),
-                            itemCount: productPlanList.length,
-                            itemBuilder: (context, index){
-                              return GestureDetector(
-                                  onTap: (){
-                                    setState(() {
-                                      selectedDataPlan=index;
-                                    });
-                                    productPlanId=productPlanList[index].productPlanId;
-                                    selectedProductPlan= productPlanList[index];
-                                  },
-                                  child: dataCard(productPlanList[index], selectedDataPlan==index)
-                              );
-                            })
-                    ),
+                            : GridView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4, // 4 items per row
+                                  crossAxisSpacing:
+                                      10.h, // Spacing between columns
+                                  mainAxisSpacing: 10.w, // Spacing between rows
+                                ),
+                                itemCount: productPlanList.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedDataPlan = index;
+                                        });
+                                        productPlanId = productPlanList[index]
+                                            .productPlanId;
+                                        selectedProductPlan =
+                                            productPlanList[index];
+                                      },
+                                      child: dataCard(productPlanList[index],
+                                          selectedDataPlan == index));
+                                })),
                     Gap(5.h),
                     SizedBox(
                       height: 103.h,
@@ -450,15 +467,19 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                                       fontSize: 16.sp),
                                 ),
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     _pickContact();
                                   },
-                                  child: Text(
-                                    "Select from contact",
-                                    style: CustomTextStyle.kTxtMedium.copyWith(
-                                        color: AppColor.primary100,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14.sp),
+                                  child: SizedBox(
+                                    height: 50.h,
+                                    child: Text(
+                                      "Select from contact",
+                                      style: CustomTextStyle.kTxtMedium
+                                          .copyWith(
+                                              color: AppColor.primary100,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14.sp),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -469,12 +490,15 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                             child: CustomizedTextField(
                                 textEditingController: phoneNumberController,
                                 keyboardType: TextInputType.phone,
-                                onChanged:(value){
-                                  if(value.length>6){
-                                    String networkType= getNetworkProvider(value);
-                                    if(networkType.toLowerCase()!=networkName.toLowerCase()){
+                                onChanged: (value) {
+                                  if (value.length > 6) {
+                                    String networkType =
+                                        getNetworkProvider(value);
+                                    if (networkType.toLowerCase() !=
+                                        networkName.toLowerCase()) {
                                       setState(() {
-                                        networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                        networkValidation =
+                                            "The number you entered is not $networkName number, if you are certain of the network then proceed";
                                       });
                                       // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                     }
@@ -493,60 +517,72 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                       ),
                     ),
                     SizedBox(
-                      height:multipleTextController.isEmpty?0.h:150.h,
-                      child: Column(
-                        children: [
-                          ...multipleTextController.mapIndexed((element,index)=>
-                              Container(
-                                //color: Colors.yellow,
-                                //width:295.w,
-                                height: 60.h,
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width:290.w,
-                                      child: CustomizedTextField(
-                                          keyboardType: TextInputType.phone,
-                                          textEditingController: multipleTextController[index],
-                                          onChanged: (value){
+                        height: multipleTextController.isEmpty
+                            ? 40.h
+                            : multipleTextController.length * 80.h,
+                        child: Column(
+                          children: [
+                            ...multipleTextController.mapIndexed((element,
+                                    index) =>
+                                Container(
+                                  //color: Colors.yellow,
+                                  //width:295.w,
+                                  height: 60.h,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 290.w,
+                                        child: CustomizedTextField(
+                                            keyboardType: TextInputType.phone,
+                                            textEditingController:
+                                                multipleTextController[index],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                multiplePhoneNumbers[index] =
+                                                    value;
+                                              });
+                                            },
+                                            isTouched: false),
+                                      ),
+                                      Gap(10.w),
+                                      GestureDetector(
+                                          onTap: () {
                                             setState(() {
-                                              multiplePhoneNumbers[index]=value;
+                                              multipleTextController
+                                                  .removeAt(index);
+                                              multiplePhoneNumbers
+                                                  .removeAt(index);
                                             });
                                           },
-                                          isTouched: false
-                                      ),
-                                    ),
-                                    Gap(10.w),
-                                    GestureDetector(
-                                        onTap: (){
-                                          setState(() {
-                                            multipleTextController.removeAt(index);
-                                            multiplePhoneNumbers.removeAt(index);
-                                          });
-                                        },
-                                        child: Image.asset("assets/image/icons/bulk_delete_Icon.png",
-                                          height: 24.h,width: 24.w,))
-                                  ],
-                                ),
-                              )
-                          )
-                        ],
-                      )
-                    ),
+                                          child: Image.asset(
+                                            "assets/image/icons/bulk_delete_Icon.png",
+                                            height: 24.h,
+                                            width: 24.w,
+                                          ))
+                                    ],
+                                  ),
+                                ))
+                          ],
+                        )),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           multipleTextController.add(TextEditingController());
-                          multiplePhoneNumbers.add(multipleTextController.last.text);
+                          multiplePhoneNumbers
+                              .add(multipleTextController.last.text);
                         });
                       },
                       child: Visibility(
-                        visible: phoneNumberController.text.isEmpty?false:true,
+                        visible:
+                            phoneNumberController.text.isEmpty ? false : true,
                         child: SizedBox(
                           height: 30.h,
                           child: Row(
                             children: [
-                              Icon(Icons.add_circle_outline,color: AppColor.primary100,),
+                              Icon(
+                                Icons.add_circle_outline,
+                                color: AppColor.primary100,
+                              ),
                               Gap(5.w),
                               Text(
                                 "Add another number",
@@ -565,23 +601,36 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
                       alignment: Alignment.bottomCenter,
                       child: CustomButton(
                         onTap: () async {
-                          if(phoneNumberController.text.isNotEmpty){
-                            Get.to(ConfirmBulkPaymentData(
-                              airtimeRecharge:AirtimeRecharge(
-                                  networkId: networkId,
-                                  number:  phoneNumberController.text,
-                                  productPlanCategoryId: dataCategotyId,
-                                  productPlanId: productPlanId,
-                                  networkName: networkName,
-                                  networkIcon:  getNetworkIcon(networkName),
-                                  amount:   airtimeAmountController.text.trim()),
-                              productPlanList: selectedProductPlan!,
-                              phonenumbers: multiplePhoneNumbers,));
-                          }else if(!phoneNumberController.text.isNumericOnly){
-                            AppUtils.showSnack("Please enter only digits", context);
-                          }else{
-                            AppUtils.showSnack("Please ensure no field is empty", context);
+                          if (multiplePhoneNumbers.length > 2||multiplePhoneNumbers.isEmpty) {
+                            AppUtils.showInfoSnack(
+                                "Please enter more than one(1) phone number",
+                                context);
+                          } else {
+                            if (phoneNumberController.text.isNotEmpty) {
+                              // multiplePhoneNumbers.add(phoneNumberController.text);
+                              //multiplePhoneNumbers.removeAt(0);
+                              Get.to(ConfirmBulkPaymentData(
+                                airtimeRecharge: AirtimeRecharge(
+                                    networkId: networkId,
+                                    number: phoneNumberController.text,
+                                    productPlanCategoryId: dataCategotyId,
+                                    productPlanId: productPlanId,
+                                    networkName: networkName,
+                                    networkIcon: getNetworkIcon(networkName),
+                                    amount: airtimeAmountController.text.trim()),
+                                productPlanList: selectedProductPlan!,
+                                phonenumbers: multiplePhoneNumbers,
+                              ));
+                            } else if (!phoneNumberController
+                                .text.isNumericOnly) {
+                              AppUtils.showSnack(
+                                  "Please enter only digits", context);
+                            } else {
+                              AppUtils.showSnack(
+                                  "Please ensure no field is empty", context);
+                            }
                           }
+
                         },
                         buttonText: "Next",
                         buttonColor: AppColor.primary100,
@@ -602,17 +651,31 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
 
   Future<void> _pickContact() async {
     setState(() {
-      isLoadingContact=true;
+      isLoadingContact = true;
     });
 
-    final PermissionStatus permissionStatus = await Permission.contacts.request();
+    final PermissionStatus permissionStatus =
+        await Permission.contacts.request();
     if (permissionStatus == PermissionStatus.granted) {
-
       final Contact? contact = await FlutterContacts.openExternalPick();
       if (contact != null) {
         setState(() {
           // _selectedContactName = contact.displayName ?? '';
-          phoneNumberController.text = contact.phones!.isNotEmpty ? contact.phones!.first.number! : '';
+          if (phoneNumberController.text.isEmpty) {
+            phoneNumberController.text = contact.phones!.isNotEmpty
+                ? contact.phones!.first.number.replaceAll(" ", "")!
+                : '';
+          }
+          if (phoneNumberController.text.isNotEmpty) {
+            print("this is the valueee.....  ${multipleTextController.length}");
+            setState(() {
+              multipleTextController.last.text = contact.phones!.isNotEmpty
+                  ? contact.phones!.first.number.replaceAll(" ", "")!
+                  : '';
+              multiplePhoneNumbers.last = multipleTextController.last.text;
+            });
+          }
+
           // contactName.text=_selectedContactName;
           // bloc.data.whatsappPhoneNumber(_selectedContactName);
           // bloc.data.setFullName(_selectedContactName);
@@ -646,25 +709,31 @@ class _BuyBulkDataState extends State<BuyBulkData> with TickerProviderStateMixin
     }
   }
 
-  String getNetworkIcon(String title){
-    switch (title){
-      case "MTN": return "mtn_Icon";
-      case "Airtel": return "airtel_Icon";
-      case "Glo": return "glo_Icon";
-      case "9MOBILE": return "9mobile_Icon";
-      default: return "mtn_Icon";
+  String getNetworkIcon(String title) {
+    switch (title) {
+      case "MTN":
+        return "mtn_Icon";
+      case "Airtel":
+        return "airtel_Icon";
+      case "Glo":
+        return "glo_Icon";
+      case "9MOBILE":
+        return "9mobile_Icon";
+      default:
+        return "mtn_Icon";
     }
   }
-  String getTitle(String title,String networkName){
+
+  String getTitle(String title, String networkName) {
     String response = "";
-    if(title.toLowerCase().contains("virtual top up")){
-      return title.replaceAll("(Virtual Top Up)","");
-    }else{
-      return    title.replaceAll("AIRTIME", "")
+    if (title.toLowerCase().contains("virtual top up")) {
+      return title.replaceAll("(Virtual Top Up)", "");
+    } else {
+      return title
+          .replaceAll("AIRTIME", "")
           .replaceAll(networkName.toUpperCase(), "")
           .replaceAll("(", "")
           .replaceAll(")", "");
     }
   }
 }
-

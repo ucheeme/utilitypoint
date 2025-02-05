@@ -19,6 +19,7 @@ import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
 import '../../utils/custom_keypad.dart';
 import '../../utils/height.dart';
+import '../../utils/mySharedPreference.dart';
 import '../../utils/reuseable_widget.dart';
 import '../../utils/text_style.dart';
 
@@ -112,6 +113,7 @@ class _ConfirmTransactionPinState extends State<ConfirmTransactionPin>with Ticke
             Get.back();
             Get.back();
             Get.back();
+            MySharedPreference.saveAnyStringValue(key:"transactionPin", value:pinValue);
             showSuccessSlidingModal(
                 context,
                 headerText: "PIN Updated!",
@@ -119,6 +121,13 @@ class _ConfirmTransactionPinState extends State<ConfirmTransactionPin>with Ticke
           });
           bloc.initial();
         }
+        if(state is AllUserDetails) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            userDetails = state.response;
+          });
+          bloc.initial();
+        }
+
         return OverlayLoaderWithAppIcon(
           isLoading:state is ProfileIsLoading,
           overlayBackgroundColor: AppColor.black40,

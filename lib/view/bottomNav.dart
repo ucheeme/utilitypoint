@@ -63,7 +63,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
         height: 83.h,
         color: Colors.white,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 12.r,
+        notchMargin: 10.r,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,47 +104,6 @@ class _MyBottomNavState extends State<MyBottomNav> {
           ],
         ),
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //   padding: const EdgeInsets.symmetric(horizontal: 10),
-      //   height: 60,
-      //   color: Colors.cyan.shade400,
-      //   shape: const CircularNotchedRectangle(),
-      //   notchMargin: 5,
-      //   child: Row(
-      //     mainAxisSize: MainAxisSize.max,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       IconButton(
-      //         icon: const Icon(
-      //           Icons.menu,
-      //           color: Colors.black,
-      //         ),
-      //         onPressed: () {},
-      //       ),
-      //       IconButton(
-      //         icon: const Icon(
-      //           Icons.search,
-      //           color: Colors.black,
-      //         ),
-      //         onPressed: () {},
-      //       ),
-      //       IconButton(
-      //         icon: const Icon(
-      //           Icons.print,
-      //           color: Colors.black,
-      //         ),
-      //         onPressed: () {},
-      //       ),
-      //       IconButton(
-      //         icon: const Icon(
-      //           Icons.people,
-      //           color: Colors.black,
-      //         ),
-      //         onPressed: () {},
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
@@ -179,7 +138,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
           height: 47.4.h,
           width: 78.w,
           child: ColoredBox(
-            color: AppColor.black0,
+            color: Colors.transparent,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

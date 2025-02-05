@@ -27,6 +27,7 @@ import '../../model/response/networksList.dart';
 import '../../model/response/products.dart';
 import '../../model/response/airtimeDatatransactionHistory.dart';
 import '../../model/response/userKYCResponse.dart';
+import '../../model/response/walletBalance.dart';
 import '../../repository/productsRepository.dart';
 import '../../utils/app_util.dart';
 
@@ -62,6 +63,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<UploadUserKYCEvent>((event,emit){handleUploadUserKYCEvent(event.request);});
     on<VerifyBVNEvent>((event,emit){handleVerifyBVNEvent(event.request);});
     on<ValidateBVNOTPEvent>((event,emit){handleValidateBVNOTPEvent(event.request);});
+    on<GetUserWalletBalanceEvent>((event,emit){handleGetUserWalletBalanceEvent(event);});
    // on<GetAllUserUploadedKYCEvent>((event,emit){handleGetAllUserUploadedKYCEvent(event.request);});
   }
 
@@ -442,6 +444,23 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final response = await productRepository.validateBVNOTP(event);
       if (response is BvnFinalVerified) {
         emit(ValidateBvnOtp(response) );
+        AppUtils.debug("success");
+      }else{
+        emit(ProductError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProductError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
+
+  void handleGetUserWalletBalanceEvent(event)async{
+    emit(ProductIsLoading());
+    try {
+      final response = await productRepository.getWalletBalance(event.request);
+      if (response is WalletBalanceResponse) {
+        emit(UserWalletBalance(response) );
         AppUtils.debug("success");
       }else{
         emit(ProductError(response as DefaultApiResponse));

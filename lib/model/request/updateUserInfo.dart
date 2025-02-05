@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:utilitypoint/utils/device_util.dart';
+
 UpdateUser updateUserFromJson(String str) => UpdateUser.fromJson(json.decode(str));
 
 String updateUserToJson(UpdateUser data) => json.encode(data.toJson());
@@ -14,7 +16,7 @@ class UpdateUser {
   String lastName;
   String otherNames;
   // String? userName;
-  // String? phoneNumber;
+  String? idDevice = deviceId;
   String? addressStreet;
   String? dob;
   String? city;
@@ -43,6 +45,7 @@ class UpdateUser {
     this.identificationType,
     this.identificationNumber,
     this.photo,
+    this.idDevice,
     this.identityType,
     this.identityNumber,
     this.identityImage,
@@ -53,6 +56,7 @@ class UpdateUser {
     firstName: json["first_name"],
     lastName: json["last_name"],
     otherNames: json["other_names"],
+    idDevice: json["id_device"],
     // userName: json["user_name"],
     // phoneNumber: json["phone_number"],
     addressStreet: json["address_street"]??"",
@@ -74,6 +78,7 @@ class UpdateUser {
     "first_name": firstName,
     "last_name": lastName,
     "other_names": otherNames,
+    "id_device": idDevice,
     // "user_name": userName,
     // "phone_number": phoneNumber,
     "address_street": addressStreet,

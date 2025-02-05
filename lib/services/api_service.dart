@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:utilitypoint/model/request/getProduct.dart';
+import 'package:utilitypoint/utils/device_util.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 // import 'package:dio_logging_interceptor/dio_logging_interceptor.dart';
 
@@ -166,6 +167,7 @@ class ApiService {
       request.fields.addAll({
         "user_id":requestBody.userId!,
         "document_category":requestBody.documentCategory!,
+        "device_id":deviceId
       });
       print("request: "+request.toString());
       var res = await request.send();

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
@@ -56,8 +57,6 @@ class _TransactionScreenState extends State<TransactionScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // transactionList =tempTransactionList;
-      // if(tempTransactionList.isEmpty){
       bloc.add(GetProductTransactionHistoryEvent(GetProductRequest(
         userId: loginResponse!.id,
         dateFrom: "${currentDateTime.year}-${currentDateTime.month}-01",
@@ -68,16 +67,6 @@ class _TransactionScreenState extends State<TransactionScreen>
       setState(() {
         isHomePageWallet=false;
       });
-      //   bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
-      //     userId: loginResponse!.id,
-      //     startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-      //     endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-      //   )));
-      //   bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
-      //     userId: loginResponse!.id,
-      //     startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-      //     endDate:"${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-      //   )));
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -102,15 +91,32 @@ class _TransactionScreenState extends State<TransactionScreen>
     super.dispose();
   }
 
-  searchList(String value) {
-    transactionList = tempTransactionList
-        .where((element) =>
-            element.description.toLowerCase().contains(value.toLowerCase()))
-        .toList();
+  void searchList(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        transactionList = tempTransactionList;
+      });
+      return;
+    }
+
+    String query = value.toLowerCase();
+
     setState(() {
-      transactionList = transactionList;
+      transactionList = tempTransactionList.where((element) {
+        AppUtils.debug("Searching in: ${element.description}, ${element.metreNumber}, ${element.phoneNumber}, ${element.smartCardNumber}");
+
+        return _containsQuery(element.metreNumber, query) ||
+            _containsQuery(element.phoneNumber, query) ||
+            _containsQuery(element.smartCardNumber, query) ||
+            _containsQuery(element.description, query);
+      }).toList();
     });
   }
+
+  bool _containsQuery(String? field, String query) {
+    return field != null && field.toLowerCase().contains(query);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +135,7 @@ class _TransactionScreenState extends State<TransactionScreen>
 
         if (state is AirtimeDataTransactionHistorySuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            tempAllTransactionList = state.response;
             for (var item in state.response) {
               transactionList.add(item);
             }
@@ -146,78 +153,6 @@ class _TransactionScreenState extends State<TransactionScreen>
           });
           bloc.initial();
         }
-
-        // if (state is AllNairaTransactions) {
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     for (var item in state.response) {
-        //       transactionList.add(UserTransactions(
-        //           isProduct: false,
-        //           userId: item.userId,
-        //           actionBy: item.actionBy,
-        //           transactionCategory: item.transactionCategory,
-        //           balanceBefore: item.balanceBefore,
-        //           balanceAfter: item.balanceAfter,
-        //           description: item.description,
-        //           transactionId: item.transactionId,
-        //           createdAt: item.createdAt,
-        //           updatedAt: item.updatedAt));
-        //       nairaTransactionList.add(UserTransactions(
-        //           isProduct: false,
-        //           userId: item.userId,
-        //           actionBy: item.actionBy,
-        //           transactionCategory: item.transactionCategory,
-        //           balanceBefore: item.balanceBefore,
-        //           balanceAfter: item.balanceAfter,
-        //           description: item.description,
-        //           transactionId: item.transactionId,
-        //           createdAt: item.createdAt,
-        //           updatedAt: item.updatedAt));
-        //     }
-        //
-        //     // transactionList=state.response;
-        //     tempUserTransactionList = transactionList;
-        //     bloc.add(GetAllDollarWalletTransactionsEvent(GetProductRequest(
-        //       userId: loginResponse!.id,
-        //       startDate: "${currentDateTime.year}-${currentDateTime.month}-01",
-        //       endDate:
-        //           "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-        //     )));
-        //   });
-        //   bloc.initial();
-        // }
-        // if (state is AllDollarTransactions) {
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     for (var item in state.response) {
-        //       transactionList.add(UserTransactions(
-        //           isProduct: false,
-        //           userId: item.userId,
-        //           actionBy: item.actionBy,
-        //           transactionCategory: item.transactionCategory,
-        //           balanceBefore: item.balanceBefore,
-        //           balanceAfter: item.balanceAfter,
-        //           description: item.description,
-        //           transactionId: item.transactionId,
-        //           createdAt: item.createdAt,
-        //           updatedAt: item.updatedAt));
-        //       dollarTransactionList.add(UserTransactions(
-        //           isProduct: false,
-        //           userId: item.userId,
-        //           actionBy: item.actionBy,
-        //           transactionCategory: item.transactionCategory,
-        //           balanceBefore: item.balanceBefore,
-        //           balanceAfter: item.balanceAfter,
-        //           description: item.description,
-        //           transactionId: item.transactionId,
-        //           createdAt: item.createdAt,
-        //           updatedAt: item.updatedAt));
-        //     }
-        //     // transactionList=state.response;
-        //     tempUserTransactionList = transactionList;
-        //     // nairaTransactionList = transactionList;
-        //   });
-        //   bloc.initial();
-        // }
-
         return OverlayLoaderWithAppIcon(
           isLoading: state is ProductIsLoading,
           overlayBackgroundColor: AppColor.black40,
@@ -290,33 +225,7 @@ class _TransactionScreenState extends State<TransactionScreen>
                                   )),
                               GestureDetector(
                                 onTap: () async {
-                                  StartDateEndDate? result =
-                                      await showCupertinoModalBottomSheet(
-                                          topRadius: Radius.circular(20.r),
-                                          context: context,
-                                          backgroundColor: AppColor.primary20,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(24.r),
-                                                topLeft: Radius.circular(24.r)),
-                                          ),
-                                          builder: (context) => SizedBox(
-                                              height: 400.h,
-                                              child: CustomDateRangePicker()));
-                                  if (result != null) {
-                                    // completionHandler(result);
-                                    AppUtils.debug(
-                                        "start Date ${result.startDate}");
-                                    AppUtils.debug(
-                                        "End Date ${result.endDate}");
-                                    bloc.add(GetProductTransactionHistoryEvent(
-                                        GetProductRequest(
-                                            userId: loginResponse!.id,
-                                            dateFrom: result.startDate,
-                                            dateTo: result.endDate,
-                                            pageSize: 40.toString(),
-                                            page: 1.toString())));
-                                  }
+                                  _showDateRangePicker();
                                 },
                                 child: Container(
                                   height: 41.h,
@@ -454,6 +363,7 @@ class _TransactionScreenState extends State<TransactionScreen>
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
+                    print("Transaction List: $element");
                     Get.to(TransactionReceiptScreen(
                       productTransactionList: element,
                     ));
@@ -473,6 +383,7 @@ class _TransactionScreenState extends State<TransactionScreen>
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
+                    print("Transaction List: $element");
                     Get.to(TransactionReceiptScreen(
                       productTransactionList: element,
                     ));
@@ -492,6 +403,7 @@ class _TransactionScreenState extends State<TransactionScreen>
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
+                    print("Transaction List: $element");
                     Get.to(TransactionReceiptScreen(
                       productTransactionList: element,
                     ));
@@ -528,4 +440,39 @@ class _TransactionScreenState extends State<TransactionScreen>
       ),
     );
   }
+  Future<void> _showDateRangePicker() async {
+    StartDateEndDate? result = await showCupertinoModalBottomSheet(
+      context: context,
+      backgroundColor: AppColor.primary20,
+      topRadius: Radius.circular(20.r),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) => SizedBox(
+        height: 400.h,
+        child: CustomDateRangePicker(),
+      ),
+    );
+
+    if (result != null) {
+      _filterTransactions(result);
+    }
+  }
+
+  void _filterTransactions(StartDateEndDate result) {
+    DateTime startDate = DateTime.parse(result.startDate);
+    DateTime endDate = DateTime.parse(result.endDate);
+
+    AppUtils.debug("Start Date: $startDate");
+    AppUtils.debug("End Date: $endDate");
+
+    setState(() {
+      transactionList = tempAllTransactionList.where((item) {
+        DateTime itemDate = item.createdAt;
+        return itemDate.isAfter(startDate.subtract(Duration(days: 1))) &&
+            itemDate.isBefore(endDate.add(Duration(days: 1)));
+      }).toList();
+    });
+  }
+
 }

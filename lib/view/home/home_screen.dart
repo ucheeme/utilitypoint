@@ -17,9 +17,11 @@ import 'package:utilitypoint/model/response/nairaDollarTransactionList.dart';
 import 'package:utilitypoint/model/response/userDetails.dart';
 import 'package:utilitypoint/model/response/userKYCStatusResponse.dart';
 import 'package:utilitypoint/model/response/userSetting.dart';
+import 'package:utilitypoint/model/response/walletBalance.dart';
 import 'package:utilitypoint/utils/mySharedPreference.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/home/moreOptions.dart';
+import 'package:utilitypoint/view/menuOption/cards/cardTransactionHistory.dart';
 import 'package:utilitypoint/view/menuOption/convertFunds/convert.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 import 'package:utilitypoint/view/profile/nextPersonalInformation.dart';
@@ -38,6 +40,7 @@ import '../../utils/route.dart';
 import '../bottomNav.dart';
 import '../fundWallet/fund_wallet.dart';
 import '../menuOption/cards/virtualCardScreens.dart';
+import '../menuOption/settingOptions/alertNotification.dart';
 import 'airtimePurchase/airtimeProductListScreen.dart';
 import 'cable/cableListView.dart';
 import 'dataPurchase/dataScreen.dart';
@@ -50,7 +53,10 @@ List<ProductTransactionList> airtimeDataTransactionHistory = [];
 UserDetails? userDetails;
 int? verificationStatus;
 bool isHomePageWallet = false;
+bool isCloseBioMetericAlert = false;
+List<ProductTransactionList> tempAllTransactionList = [];
 
+WalletBalanceResponse walletBalanceResponse = WalletBalanceResponse(nairaWallet: '0', dollarWallet: '0');
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
@@ -64,14 +70,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateTime currentDateTime = DateTime.now();
   List<ProductTransactionList> transactionList = [];
-  List<ProductTransactionList> dollarTransactionList = [];
+  List<NairaTransactionList> dollarTransactionList = [];
   bool isLoading = false;
   bool isCardRelated = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      print(loginResponse!.canDoCardTransaction);
+      print("the bvn status: ${verificationStatus}");
+      bloc.add(GetUserWalletBalanceEvent(loginResponse!.id));
       isNewAccount = MySharedPreference.getIsProfileUpdate();
+      if(useBiometeric==false && isCloseBioMetericAlert== false){
+        showBiometricBottomSheet(context);
+      }
       if (isNewAccount) {
         openBottomSheet(
             context,
@@ -136,7 +148,77 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool isVisibleAmount = false;
+  void showBiometricBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColor.black0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          height: 300,
+          //color: AppColor.black0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Biometric Image
+              const Icon(
+                Icons.fingerprint,
+                size: 80,
+                color: Colors.blue,
+              ),
+              SizedBox(height: 20),
+              // Text
+              const Text(
+                "Enable Biometric Authentication",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                "For faster and secure access and transactions, enable biometric authentication.",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 30),
+              // Enable Button
+              ElevatedButton(
+                onPressed: () {
+                  // Action to enable biometric
+                  Navigator.pop(context); // Close the bottom sheet
+                 Get.to(Alertnotification());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primary100,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                ),
+                child: Text(
+                  "Enable",
+                  style: TextStyle(
+                      color: AppColor.black0
+                  ,fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((value)=>setState(() {
+      isCloseBioMetericAlert = true;
+    })
 
+    );
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -171,6 +253,16 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           bloc.initial();
         }
+        if(state is UserWalletBalance){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            walletBalanceResponse = state.response;
+            print("this is the wallet balance: ${state.response.nairaWallet}");
+            setState(() {
+              walletBalanceResponse=state.response;;
+            });
+          });
+          bloc.initial();
+        }
         if (state is ProductAllNetworks) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             appAllNetworkList = state.response;
@@ -194,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (state is UserKYCVerificationStatus) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            verificationStatus = state.response.verificationStatus;
+            //verificationStatus = state.response.verificationStatus;
             if (userDetails == null) {
               isLoading = true;
               bloc.add(
@@ -240,6 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (state is AirtimeDataTransactionHistorySuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            tempAllTransactionList= state.response;
             for (var item in state.response) {
               if(transactionList.length<11){
                 transactionList.add(item);
@@ -274,18 +367,46 @@ class _HomeScreenState extends State<HomeScreen> {
         //   });
         //   bloc.initial();
         // }
-        // if (state is AllDollarTransactions) {
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     for (var item in state.response) {
-        //       dollarTransactionList.add(item);
-        //     }
-        //     if (isHomePageWallet) {
-        //       Get.back();
-        //       _showDollarWalletBottomSheet(context);
-        //     }
-        //   });
-        //   bloc.initial();
-        // }
+        if (state is AllDollarTransactions) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            dollarTransactionList.clear();
+            List<NairaTransactionList> value =state.response;
+            for (var item in value) {
+              dollarTransactionList.add(item);
+              // dollarTransactionList.add(
+              //   ProductTransactionList(id: item.id, userId: item.userId,
+              //       productPlanId: "",
+              //       transactionCategory: item.transactionCategory,
+              //       status: "Successful", walletCategory: "dollar_wallet",
+              //       phoneNumber: null, smartCardNumber: null,
+              //       metreNumber: null, cableTvSlots: "",
+              //       utilitySlots: "", amount: calculateDifference(item.balanceAfter, item.balanceBefore),
+              //       referralCommissionValue: null,
+              //       discountedAmount: "0",
+              //       balanceBefore: item.balanceBefore,
+              //       balanceAfter:  item.balanceAfter,
+              //       description: item.description,
+              //       userScreenMessage: "",
+              //       adminScreenMessage: "",
+              //       referralCommissionStatus: "",
+              //       createdAt: DateTime.now(),
+              //       updatedAt: DateTime.now(),
+              //       productPlan:null )
+              // );
+            }
+
+            // for (var item in tempAllTransactionList) {
+            //   print("this is the item: ${item.walletCategory}");
+            //   if(item.walletCategory.toLowerCase() == "dollar_wallet" ){
+            //   dollarTransactionList.add(item);
+            // }
+            if (isHomePageWallet) {
+              Get.back();
+              _showDollarWalletBottomSheet(context);
+            }
+          });
+          bloc.initial();
+        }
         if (state is ProductExchangeRate) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             currencyConversionRateFees = state.response;
@@ -317,43 +438,50 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     withdrawOnTap: () {
+                      dollarTransactionList.clear();
                       setState(() {
                         isHomePageWallet = true;
                       });
-                      bloc.add(
-                          GetAllDollarWalletTransactionsEvent(GetProductRequest(
-                        userId: loginResponse!.id,
-                        startDate:
-                            "${currentDateTime.year}-${currentDateTime.month}-01",
-                        endDate:
-                            "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-                      )));
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(24.r)),
-                        ),
-                        builder: (context) => DraggableScrollableSheet(
-                          expand: false,
-                          initialChildSize: 0.5,
-                          maxChildSize: 1.0,
-                          minChildSize: 0.3,
-                          builder: (context, scrollController) {
-                            return SizedBox(
-                              height: 300.h,
-                              child: Container(
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor.primary100,
+
+                      if(dollarTransactionList.isEmpty){
+                        bloc.add(
+                            GetAllDollarWalletTransactionsEvent(GetProductRequest(
+                              userId: loginResponse!.id,
+                              startDate:
+                              "${currentDateTime.year}-${currentDateTime.month}-01",
+                              endDate:
+                              "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+                            )));
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(24.r)),
+                          ),
+                          builder: (context) => DraggableScrollableSheet(
+                            expand: false,
+                            initialChildSize: 0.5,
+                            maxChildSize: 1.0,
+                            minChildSize: 0.3,
+                            builder: (context, scrollController) {
+                              return SizedBox(
+                                height: 300.h,
+                                child: Container(
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColor.primary100,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
+                              );
+                            },
+                          ),
+                        );
+                      }else{
+                        _showDollarWalletBottomSheet(context);
+                      }
+
                     },
                     onPressed: () {
                       setState(() {
@@ -603,8 +731,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double accountBalance() {
     return _currentWallet == 0
-        ? double.parse(userDetails == null ? "0" : userDetails!.nairaWallet)
-        : double.parse(userDetails == null ? "0" : userDetails!.dollarWallet);
+        ? double.parse(walletBalanceResponse.nairaWallet)
+        : double.parse( walletBalanceResponse.dollarWallet);
   }
 
   Function() depositOnTap() {
@@ -625,29 +753,35 @@ class _HomeScreenState extends State<HomeScreen> {
           };
   }
 
-  // void _showDollarWalletBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-  //     ),
-  //     builder: (context) => DraggableScrollableSheet(
-  //       expand: false,
-  //       initialChildSize: 0.5,
-  //       maxChildSize: 1.0,
-  //       minChildSize: 0.3,
-  //       builder: (context, scrollController) {
-  //         return SizedBox(
-  //           height: Get.height,
-  //           child: DollarWalletHistory(
-  //             transactionList: dollarTransactionList,
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
+  void _showDollarWalletBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        maxChildSize: 1.0,
+        minChildSize: 0.3,
+        builder: (context, scrollController) {
+          return SizedBox(
+            height: Get.height,
+            child: DollarWalletHistory(
+              transactionList: dollarTransactionList,
+            ),
+          );
+        },
+      ),
+    );
+  }
+  String calculateDifference(String a, String b) {
+    double firstNumber = double.parse(a);
+    double secondNumber = double.parse(b);
+     firstNumber - secondNumber;
+     return (firstNumber - secondNumber).toString();
+  }
 }
 
 class DollarWalletHistory extends StatefulWidget {
@@ -686,6 +820,19 @@ class _DollarWalletHistoryState extends State<DollarWalletHistory> {
                 fontWeight: FontWeight.w600),
           ),
           Gap(10.h),
+          widget.transactionList.isEmpty?
+              SizedBox(
+                height: 300.h,
+                child: Center(
+                  child: Text(
+                    "No transaction history found",
+                    style: CustomTextStyle.kTxtMedium.copyWith(
+                        color: AppColor.black100,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ):
           Expanded(
             child: ListView.builder(
                 controller: scrollController,

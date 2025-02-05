@@ -31,7 +31,7 @@ class ProductTransactionList {
   String referralCommissionStatus;
   DateTime createdAt;
   DateTime updatedAt;
-  ProductPlan productPlan;
+  ProductPlan? productPlan;
 
   ProductTransactionList({
     required this.id,
@@ -56,7 +56,7 @@ class ProductTransactionList {
     required this.referralCommissionStatus,
     required this.createdAt,
     required this.updatedAt,
-    required this.productPlan,
+     this.productPlan,
   });
 
   factory ProductTransactionList.fromJson(Map<String, dynamic> json) => ProductTransactionList(
@@ -82,7 +82,7 @@ class ProductTransactionList {
     referralCommissionStatus: json["referral_commission_status"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
-    productPlan: ProductPlan.fromJson(json["product_plan"]),
+    productPlan: json["product_plan"]==null?null:ProductPlan.fromJson(json["product_plan"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -108,7 +108,7 @@ class ProductTransactionList {
     "referral_commission_status": referralCommissionStatus,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
-    "product_plan": productPlan.toJson(),
+    "product_plan": productPlan?.toJson(),
   };
 }
 

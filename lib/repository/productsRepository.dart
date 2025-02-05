@@ -28,14 +28,16 @@ import '../model/response/kycValidated.dart';
 import '../model/response/nairaDollarTransactionList.dart';
 import '../model/response/userKYCResponse.dart';
 import '../model/response/validateBVNOTPResponse.dart';
+import '../model/response/walletBalance.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
+import '../utils/device_util.dart';
 
 class Productsrepository extends DefaultRepository {
   Future<Object> getTransactionHistory(GetProductRequest request) async {
     var response = await postRequest(
-        null,
-        "${AppUrls.getTransactionHistory}?user_id=${request.userId}&date_from=${request.dateFrom}&date_to=${request.dateTo}",
+        request,
+        "${AppUrls.getTransactionHistory}?user_id=${request.userId}&date_from=${request.dateFrom}&date_to=${request.dateTo}&device_id=$deviceId",
         true,
         HttpMethods.get);
     var r = handleSuccessResponse(response);
@@ -55,7 +57,7 @@ class Productsrepository extends DefaultRepository {
   Future<Object> getUserDetails(GetProductRequest request) async {
     var response = await postRequest(
         null,
-        "${AppUrls.getUserDetails}?user_id=${request.userId}",
+        "${AppUrls.getUserDetails}?user_id=${request.userId}&device_id=$deviceId",
         true,
         HttpMethods.get);
     var r = handleSuccessResponse(response);
@@ -75,7 +77,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getNetwork() async {
     var response = await postRequest(
-        null, AppUrls.getNetworks, true, HttpMethods.get);
+        null, "${AppUrls.getNetworks}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -92,7 +94,7 @@ class Productsrepository extends DefaultRepository {
   }
   Future<Object> getUserSetting() async {
     var response = await postRequest(
-        null, AppUrls.getUserSettings, true, HttpMethods.get);
+        null, "${AppUrls.getUserSettings}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -110,7 +112,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getProduct() async {
     var response = await postRequest(
-        null, AppUrls.getProduct, true, HttpMethods.get);
+    null, "${AppUrls.getProduct}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -128,7 +130,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getProductPlanCategory(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getProductDataPlanCategory}?network_id=${request.networkId}&product_slug=${request.productSlug}", true, HttpMethods.get);
+        null, "${AppUrls.getProductDataPlanCategory}?network_id=${request.networkId}&product_slug=${request.productSlug}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -146,7 +148,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getProductPlans(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getProductPlans}?network_id=${request.networkId}&plan_category_id=${request.planCategoryId}&amount=${request.amount}&product_slug=${request.productSlug}&user_id=${request.userId}", true, HttpMethods.get);
+        null, "${AppUrls.getProductPlans}?network_id=${request.networkId}&plan_category_id=${request.planCategoryId}&amount=${request.amount}&product_slug=${request.productSlug}&user_id=${request.userId}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -266,7 +268,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getExchangeRate() async {
     var response = await postRequest(
-        null, AppUrls.getExchangeRate, true, HttpMethods.get);
+        null, "${AppUrls.getExchangeRate}", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -284,7 +286,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getNairaTransactions(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getNairaTransactions}?user_id=${request.userId}&start_date=${request.startDate}&end_date=${request.endDate}", true, HttpMethods.get);
+        null, "${AppUrls.getNairaTransactions}?user_id=${request.userId}&start_date=${request.startDate}&end_date=${request.endDate}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -301,7 +303,7 @@ class Productsrepository extends DefaultRepository {
   }
   Future<Object> getDollarsTransactions(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getDollarsTransactions}?user_id=${request.userId}&start_date=${request.startDate}&end_date=${request.endDate}", true, HttpMethods.get);
+        null, "${AppUrls.getDollarsTransactions}?user_id=${request.userId}&start_date=${request.startDate}&end_date=${request.endDate}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -319,7 +321,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object> getUserKYCUploads(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
+        null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -349,7 +351,7 @@ class Productsrepository extends DefaultRepository {
 
   Future<Object?> getUserKYCStatus(GetProductRequest request) async {
     var response = await postRequest(
-        null, "${AppUrls.getUSerKYCVerificationStatus}?user_id=${request.userId}", true, HttpMethods.get);
+        null, "${AppUrls.getUSerKYCVerificationStatus}?user_id=${request.userId}&device_id=$deviceId", true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
@@ -428,4 +430,23 @@ class Productsrepository extends DefaultRepository {
       return errorResponse!;
     }
   }
+
+  Future<Object> getWalletBalance(String request)async{
+    var response = await postRequest(
+        null, "${AppUrls.getUserWalletBalance}?user_id=$request&device_id=$deviceId", true, HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if(r is DefaultApiResponse){
+      if(r.status == true){
+        WalletBalanceResponse res = walletBalanceResponseFromJson(json.encode(r.data));
+        return res;
+      }else{
+        return r;
+      }
+    }else{
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
 }
+GetProductRequest getProductRequest = GetProductRequest();

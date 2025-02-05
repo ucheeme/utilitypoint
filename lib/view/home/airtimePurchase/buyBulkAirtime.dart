@@ -472,15 +472,18 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                                     String networkType= getNetworkProvider(value);
                                     if(networkType.toLowerCase()!=networkName.toLowerCase()){
                                       setState(() {
-                                        networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                        networkValidation="The number you entered is not a/an $networkName number, please proceed if you are certain of the network type";
                                       });
                                       // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                     }
                                   }
+                                  setState(() {
+
+                                  });
                                 },
                                 isTouched: false),
                           ),
-                          Text(
+                            Text(
                             networkValidation,
                             style: CustomTextStyle.kTxtMedium.copyWith(
                                 color: AppColor.Error100,
@@ -491,7 +494,7 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                       ),
                     ),
                     SizedBox(
-                        height:multipleTextController.isEmpty?0.h:150.h,
+                        height:multipleTextController.isEmpty?0.h:multipleTextController.length*80.h,
                         child: Column(
                           children: [
                             ...multipleTextController.mapIndexed((element,index)=>
@@ -563,19 +566,26 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
                       alignment: Alignment.bottomCenter,
                       child: CustomButton(
                         onTap: () async {
-                          if(airtimeAmountController.text.isNotEmpty&&phoneNumberController.text.isNotEmpty){
-                            bloc.add(GetAllProductPlanEvent(GetProductRequest(
-                                userId: loginResponse!.id,
-                                planCategoryId:airtimeCategotyId,
-                                amount: airtimeAmountController.text.trim(),
-                                networkId: networkId,
-                                productSlug: "airtime"
-                            )));
-                          }else if(!airtimeAmountController.text.isNumericOnly||!phoneNumberController.text.isNumericOnly){
-                            AppUtils.showSnack("Please enter only digits", context);
+                          if(multiplePhoneNumbers.length>2||multiplePhoneNumbers.isEmpty){
+                            AppUtils.showInfoSnack("Please enter more than one(1) phone number",  context);
                           }else{
-                            AppUtils.showSnack("Please ensure no field is empty", context);
+                            print("You have ${multiplePhoneNumbers.length} phone numbers");
+                            if(airtimeAmountController.text.isNotEmpty&&phoneNumberController.text.isNotEmpty){
+                              // multiplePhoneNumbers.removeAt(0);
+                              bloc.add(GetAllProductPlanEvent(GetProductRequest(
+                                  userId: loginResponse!.id,
+                                  planCategoryId:airtimeCategotyId,
+                                  amount: airtimeAmountController.text.trim(),
+                                  networkId: networkId,
+                                  productSlug: "airtime"
+                              )));
+                            }else if(!airtimeAmountController.text.isNumericOnly||!phoneNumberController.text.isNumericOnly){
+                              AppUtils.showSnack("Please enter only digits", context);
+                            }else{
+                              AppUtils.showSnack("Please ensure no field is empty", context);
+                            }
                           }
+
                         },
                         buttonText: "Next",
                         buttonColor: AppColor.primary100,
@@ -605,13 +615,21 @@ class _BulkAirtimeScreenState extends State<BulkAirtimeScreen>  with TickerProvi
       final Contact? contact = await FlutterContacts.openExternalPick();
       if (contact != null) {
         setState(() {
-          // _selectedContactName = contact.displayName ?? '';
-          phoneNumberController.text = contact.phones.isNotEmpty ? contact.phones!.first.number! : '';
-          // contactName.text=_selectedContactName;
-          // bloc.data.whatsappPhoneNumber(_selectedContactName);
-          // bloc.data.setFullName(_selectedContactName);
-          // whatsappNumbe.text =_selectedContactPhoneNumber.replaceAll(" ", "");
-          //  isLoadingContact =false;
+
+          if(phoneNumberController.text.isEmpty){
+            phoneNumberController.text = contact.phones!.isNotEmpty ?
+            contact.phones!.first.number.replaceAll(" ", "")! : '';
+          }
+          if( phoneNumberController.text.isNotEmpty){
+            print("this is the valueee.....  ${multipleTextController.length}");
+            setState(() {
+              multipleTextController.last.text = contact.phones!.isNotEmpty ?
+              contact.phones!.first.number.replaceAll(" ", "")! : '';
+              // multiplePhoneNumbers.add(multipleTextController.last.text);
+              multiplePhoneNumbers.last=multipleTextController.last.text;
+            });
+          }
+
         });
       }
     } else {

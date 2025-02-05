@@ -520,9 +520,9 @@ Container appBodyDesign(Widget bodyDesign) {
 }
 
 Future<dynamic> openBottomSheet(BuildContext context, Widget bottomScreen,
-    {background = AppColor.black0}) {
+    {background = AppColor.black0,bool isDismissible=true}) {
   return showModalBottomSheet(
-      isDismissible: true,
+      isDismissible: isDismissible,
       isScrollControlled: true,
       context: context,
       backgroundColor: background,

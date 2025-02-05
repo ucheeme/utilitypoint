@@ -216,8 +216,13 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
     try {
       final   response = await cardRepository.createVirtualAccount(event);
       if (response is CreateVirtualAccountNumberSuccess) {
-        emit(UserVirtualAccountGenerated(response));
-        AppUtils.debug("success");
+        if(response.success){
+          emit(UserVirtualAccountGenerated(response));
+          AppUtils.debug("success");
+        }else{
+          emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: response.message)));
+        }
+
       }else{
         emit(VirtualcardError(response as DefaultApiResponse));
         AppUtils.debug("error");

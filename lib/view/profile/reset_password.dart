@@ -60,9 +60,16 @@ class _ResetPasswordState extends State<ResetPassword> with TickerProviderStateM
   builder: (context, state) {
     if (state is ProfileError){
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(Duration.zero, (){
-          AppUtils.showSnack("${state.errorResponse.message} ", context);
-        });
+        if(state.errorResponse.data.runtimeType==String){
+          Future.delayed(Duration.zero, (){
+            AppUtils.showSnack("${state.errorResponse.message}\n${state.errorResponse.data} ", context);
+          });
+        }else{
+          Future.delayed(Duration.zero, (){
+            AppUtils.showSnack("${state.errorResponse.message} ", context);
+          });
+        }
+
       });
       bloc.initial();
     }

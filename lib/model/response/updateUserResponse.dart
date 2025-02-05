@@ -26,7 +26,7 @@ class UpdateUserDetailResponse {
   String identificationNumber;
   String photo;
   String identityType;
-  String identityNumber;
+  String? identityNumber;
   String identityImage;
   String bvnVerificationStatus;
   dynamic bvnJson;
@@ -59,7 +59,7 @@ class UpdateUserDetailResponse {
     required this.identificationNumber,
     required this.photo,
     required this.identityType,
-    required this.identityNumber,
+     this.identityNumber,
     required this.identityImage,
     required this.bvnVerificationStatus,
     required this.bvnJson,

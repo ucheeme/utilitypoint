@@ -150,9 +150,14 @@ class ProfileRepository extends DefaultRepository{
      var r = handleSuccessResponse(response);
      if (r is DefaultApiResponse) {
        if (r.status == true) {
-         AllUserNotification res =
-         allUserNotificationFromJson(json.encode(r.data));
-         return res;
+         print("this is the response ${r.data},${r.data.runtimeType}");
+         if(r.data.runtimeType==List<dynamic>){
+           return r;
+         }else{
+           AllUserNotification res =
+           allUserNotificationFromJson(json.encode(r.data));
+           return res;
+         }
        } else {
          return r;
        }
@@ -199,7 +204,7 @@ class ProfileRepository extends DefaultRepository{
    }
    Future<Object?> getUserKYCUploads(GetProductRequest request) async {
      var response = await postRequest(
-         null, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
+         request, "${AppUrls.getUserUploadedKYC}?user_id=${request.userId}", true, HttpMethods.get);
      var r = handleSuccessResponse(response);
      if (r is DefaultApiResponse) {
        if (r.status == true) {

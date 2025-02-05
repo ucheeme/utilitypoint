@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/bloc/onboarding_new/onBoardingValidator.dart';
 import 'package:utilitypoint/services/api_service.dart';
 import 'package:utilitypoint/utils/mySharedPreference.dart';
@@ -24,6 +25,9 @@ import '../../../utils/image_paths.dart';
 import '../../../utils/pages.dart';
 import '../../../utils/reuseable_widget.dart';
 import '../../../utils/text_style.dart';
+import '../../bottomsheet/supportInfor.dart';
+import '../../home/home_screen.dart';
+import '../../splashScreen/splashScreen.dart';
 bool useBiometeric =false;
 UserInfoUpdated? loginResponse;
 class SignInPage extends StatefulWidget {
@@ -69,9 +73,13 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
+      setState(() {
+        userName.text = userNameBio;
+      });
       if(useBiometeric){
         _showBottomSheet(context);
       }
+      bloc.validation.setLoginUserName(userNameBio);
     });
     super.initState();
     // Initialize the SlideAnimationManager
@@ -152,10 +160,12 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         userId = state.response.id;
         accessToken = state.response.token;
         loginResponse = state.response;
-        if(state.response.requireOtp=="1"){
+        verificationStatus=int.parse(loginResponse!.canDoCardTransaction);
+        if(state.response.requireOtp==1){
           Get.toNamed(Pages.twoFactorAuthentication);
         }else{
-          Get.toNamed(Pages.bottomNav);
+          // Get.toNamed(Pages.bottomNav);
+          Get.offAllNamed(Pages.bottomNav, predicate: (route) => false);
         }
 
       });
@@ -268,27 +278,56 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                       }
                     ),
                     height35,
-                    StreamBuilder<Object>(
-                        stream: bloc.validation.loginCompleteRegistrationFormValidation,
-                        builder: (context, snapshot) {
-                          return CustomButton(
-                            onTap: (){
-                            if (snapshot.hasData==true && snapshot.data!=null) {
-                              MySharedPreference.saveAnyStringValue(key:isUserName,value:userName.text);
-                              MySharedPreference.saveAnyStringValue(key:isUserPassword,value:userPassword.text);
-                              bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
-                              //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
+                    Row(
+                      children: [
+                        StreamBuilder<Object>(
+                            stream: bloc.validation.loginCompleteRegistrationFormValidation,
+                            builder: (context, snapshot) {
+                              return CustomButton(
+                                width:useBiometeric ? 250.w: 316.w,
+                                onTap: (){
+                                  if (snapshot.hasData==true && snapshot.data!=null) {
+                                    MySharedPreference.saveAnyStringValue(key:isUserName,value:userName.text);
+                                    MySharedPreference.saveAnyStringValue(key:isUserPassword,value:userPassword.text);
+                                    bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
+                                    //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
+                                  }
+                                },
+                                buttonText: "Log In",
+                                textColor: AppColor.black0,
+                                buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
+                                AppColor.primary100 :AppColor.primary40,
+                                borderRadius: 8.r,
+                                height: 58.h,
+                                textfontSize:16.sp,);
                             }
-                          },
-                            buttonText: "Log In",
-                            textColor: AppColor.black0,
-                            buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
-                            AppColor.primary100 :AppColor.primary40,
-                            borderRadius: 8.r,
-                            height: 58.h,
-                            textfontSize:16.sp,);
-                        }
+                        ),
+                        Gap(10.w),
+                        Visibility(
+                          visible: useBiometeric,
+                          child: GestureDetector(
+                            onTap: (){
+                              _authenticate();
+                            },
+                            child: Container(
+                              height: 58.h,
+                              width: 58.w,
+
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color:  AppColor.primary100,
+                              ),
+                              child:  Icon(
+                                Icons.fingerprint,
+                                size: 50,
+                                color: AppColor.black0,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
+
                     height10,
                     Padding(
                       padding:  EdgeInsets.symmetric(horizontal: 24.w),
@@ -322,7 +361,18 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                             textfontSize: 13.sp,
                             textColor:AppColor.primary100 ,
                             buttonColor: Colors.transparent,borderRadius: 8.r,),
+
+
+
                         ],
+                      ),
+                    ),
+                   Gap(60.h),
+                    Center(
+                      child: GestureDetector(onTap: (){
+                        _openSupportNoticeSheet();
+                      },
+                        child: resetText("having issues?", " Contact Us"),
                       ),
                     ),
                   ],
@@ -333,5 +383,47 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+  RichText resetText(text1, text2) {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        text: text1,
+        style: TextStyle(
+          color: AppColor.black100,
+          fontSize: 12.sp,
+          fontFamily: 'actionSansRegular',
+          fontWeight: FontWeight.w500,
+          letterSpacing: -0.25.sp,
+          //decoration: TextDecoration.underline
+        ),
+
+        children: [
+          TextSpan(
+            text: text2,
+            style: TextStyle(color: AppColor.primary100,
+              fontWeight: FontWeight.w500,
+              fontSize: 13.sp,
+            ),
+            // Add onTap handler if needed
+          ),
+        ],
+      ),);
+  }
+
+  _openSupportNoticeSheet()async{
+    var result= await openBottomSheet22( context, const SupportBottomSheet(title: "Contact us", body: "send us a mail:utilitypointsolution@gmail.com\ncall us: +2347073459839\nVisit us: Head Office",));
+    if(result!= null){
+      if(result ==1){
+        if (!await launchUrl(Uri.parse("utilitypointsolution@gmail.com"))) {
+          throw Exception('Could not launch ');
+        }
+      }
+      if(result ==2){
+        if (!await launchUrl(Uri.parse("tel:+2347073459839"))) {
+          throw Exception('Could not launch ');
+        }
+      }
+    }
   }
 }

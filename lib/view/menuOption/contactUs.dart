@@ -136,9 +136,9 @@ cTA(int index, String title){
       case 0: return callNumber(title);
       case 1: return sendEmail(emailAddress: title,);
       case 2: return AppUtils.showInfoSnack("COMING SOON", context);
-      case 3: return openSocialMedia("https://www.facebook.com/$title/");
-      case 4: return openSocialMedia("https://www.x.com/$title/");
-      case 5: return openSocialMedia("https://www.instagram.com/$title/");
+      case 3: return openSocialMedia("https://www.facebook.com/profile.php?id=61570061244745");
+      case 4: return openSocialMedia("https://www.x.com/utilitypointng");
+      case 5: return openSocialMedia("https://www.instagram.com/utility_point/");
     }
 }
   Future<void> openSocialMedia(String url) async {
