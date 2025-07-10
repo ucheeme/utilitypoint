@@ -30,7 +30,7 @@ class ChangePinRequest {
     currentPin: json["current_pin"],
     newPin: json["new_pin"],
     confirmNewPin: json["confirm_new_pin"],
-    idDevice: json["id_device"]
+    idDevice: json["device_id"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +38,6 @@ class ChangePinRequest {
     "current_pin": currentPin,
     "new_pin": newPin,
     "confirm_new_pin": confirmNewPin,
-    "id_device": idDevice
+    "device_id": deviceId
   };
 }

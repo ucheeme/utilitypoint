@@ -135,7 +135,7 @@ class _ConfirmTransactionPinState extends State<ConfirmTransactionPin>with Ticke
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -158,7 +158,7 @@ class _ConfirmTransactionPinState extends State<ConfirmTransactionPin>with Ticke
           SlideTransition(
             position: _slideAnimation,
             child: Container(
-              height: 668.72.h,
+             height:MediaQuery.of(context).size.height,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,

@@ -46,7 +46,8 @@ class _ConvertToUSDFundState extends State<ConvertToUSDFund> {
         }
         if (state is SuccessfullyBoughtDollar) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            if(state.response.message.toLowerCase()=="incorrect pin entered"){
+            if(state.response.message.toLowerCase()=="incorrect pin entered")
+            {
               Get.back();
               showFailureSlidingModal(context,
               headerText: "Failed",
@@ -70,7 +71,33 @@ class _ConvertToUSDFundState extends State<ConvertToUSDFund> {
                   }
                 }
               );
-            }else{
+            }
+            else if(state.response.message.toLowerCase()=="insufficient naira wallet balance"){
+              Get.back();
+              showFailureSlidingModal(context,
+                  headerText: "Failed",
+                  successMessage: state.response.message,
+                  onTap: () async {
+                    List<dynamic> response =
+                    await Get.to(() => TransactionPin());
+                    if (response[0]) {
+                      // userPin=response[1];
+                      bloc.validation.setPin(response[1]);
+                      bloc.add(
+                          BuyDollarEvent(ConvertNairaToDollarRequest(
+                            userId: loginResponse!.id,
+                            amountInDollar:widget.amount,
+                            pin: response[1],
+                            totalChargeFee:
+                            (double.parse(widget.amount) *
+                                double.parse(currencyConversionRateFees!.feeRatePerCurrency))
+                                .toString(),
+                          )));
+                    }
+                  }
+              );
+            }
+            else{
               Get.back();
               Get.back();
               showSuccessSlidingModal(context,

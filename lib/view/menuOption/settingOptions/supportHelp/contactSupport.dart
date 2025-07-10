@@ -49,7 +49,7 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -120,8 +120,8 @@ class _ContactsupportScreenState extends State<ContactsupportScreen> {
       throw 'Could not launch $url';
     }
   }
-  Future<void> openWhatsApp(String phoneNumber, {String message = ''}) async {
-    final Uri whatsappUri = Uri.parse("https://wa.me/234=7073459839?text=${Uri.encodeComponent(message)}");
+  Future<void> openWhatsApp(String phoneNumber, {String message = 'Hello, UtilityPoint'}) async {
+    final Uri whatsappUri = Uri.parse("https://wa.me/2347073459839?text=${Uri.encodeComponent(message)}");
 
     if (await canLaunchUrl(whatsappUri)) {
       await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);

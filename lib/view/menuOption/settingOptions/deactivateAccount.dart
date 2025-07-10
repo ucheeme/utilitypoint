@@ -87,7 +87,7 @@ class _DeactivateAcctScreenState extends State<DeactivateAcctScreen>  with Ticke
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }

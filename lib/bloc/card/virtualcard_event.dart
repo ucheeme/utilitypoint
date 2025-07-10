@@ -24,6 +24,12 @@ class GetExchangeRateEvent extends VirtualcardEvent {
   @override
   List<Object?> get props => [];
 }
+class GetExchangeRateEvent2 extends VirtualcardEvent {
+
+  const GetExchangeRateEvent2();
+  @override
+  List<Object?> get props => [];
+}
 
 class CreateCardEvent extends VirtualcardEvent {
   final CreateCardRequest request;

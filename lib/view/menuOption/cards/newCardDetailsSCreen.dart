@@ -232,7 +232,7 @@ class _NewCardInformationState extends State<NewCardInformation>
                 bloc.initial();
               }
               return Scaffold(
-                body: appBodyDesign(getBody()),
+                body: appBodyDesign(getBody(),context: context),
               );
             },
           ),
@@ -325,6 +325,15 @@ class _NewCardInformationState extends State<NewCardInformation>
                     information: singeCardDetails,)),
             ),
           ),
+                    Center(
+                      child: Text(
+                        "Flip Card to right for more information",
+                        style: CustomTextStyle.kTxtBold.copyWith(
+                            color: AppColor.primary100,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
                     // Gap(24.h),
                     Gap(24.h),
                     GestureDetector(

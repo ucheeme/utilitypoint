@@ -8,4 +8,5 @@ part of 'env.dart';
 
 class _Env {
   static const String baseUrlStaging = 'https://app.zennalfinance.com/vdc/api/';
+  static const String baseUrlProduction = 'https://utilitypointng.com/api/';
 }

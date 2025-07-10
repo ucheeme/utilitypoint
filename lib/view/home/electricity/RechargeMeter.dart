@@ -86,7 +86,7 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody(state))));
+            child: Scaffold(body: appBodyDesign(getBody(state),context: context)));
       },
     );
   }
@@ -108,7 +108,7 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -157,24 +157,51 @@ class _RechargeMeterState extends State<RechargeMeter> with TickerProviderStateM
                         ),
                         SizedBox(
                           height: 58.h,
-                          child: CustomizedTextField(
-                              textEditingController: meterNumber,
-                              keyboardType: TextInputType.text,
-                              //maxLength: 11,
-                              onChanged: (value){
-                                if(value.length==11||value.length==13){
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 58.h,
+                                width: 260.w,
+                                child: CustomizedTextField(
+                                    textEditingController: meterNumber,
+                                    keyboardType: TextInputType.text,
+                                    //maxLength: 11,
+                                    onChanged: (value){
+                                      if(value.length==11||value.length==13){
+
+                                      }
+                                    },
+                                    readOnly: false,
+                                    isTouched: false),
+                              ),
+                              Gap(10.w),
+                              GestureDetector(
+                                onTap: (){
                                   bloc.add(ConfirmMeterNameEvent(
                                       ConfirmMeterOrCableNameRequest(
                                           userId: loginResponse!.id,
                                           pin:userDetails!.pin,
-                                          metreNumber: value,
+                                          metreNumber: meterNumber.text,
                                           productPlanId:widget.productPlanId
                                       )
                                   ));
-                                }
-                              },
-                              readOnly: false,
-                              isTouched: false),
+                                },
+                                child: Container(
+                                  height: 50.h,
+                                  width: 50.w,
+                                  margin: EdgeInsets.only(bottom: 10.h),
+                                  decoration: BoxDecoration(
+                                    color: AppColor.primary100,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Center(child: Text("Validate",
+                                    style: CustomTextStyle.kTxtBold.copyWith(
+                                        color: AppColor.black0,fontSize: 10.sp),
+                                    textAlign: TextAlign.center,)),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
 
                       ],

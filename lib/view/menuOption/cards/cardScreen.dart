@@ -76,7 +76,7 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
       appIconSize: 60.h,
       appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
       child: Scaffold(
-        body: appBodyDesign(getBody(context)),
+        body: appBodyDesign(getBody(context),context: context),
       ),
     );
   },
@@ -99,7 +99,8 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h,horizontal: 24.w),
               decoration: BoxDecoration(
@@ -154,7 +155,7 @@ class _CardscreenState extends State<Cardscreen> with TickerProviderStateMixin {
                     //       ),
                     //     ):
                         SizedBox(
-                          height: 400.h,
+                          height: 420.h,
                           child: ListView.builder(
                               padding: EdgeInsets.zero,
                               itemCount: 2,

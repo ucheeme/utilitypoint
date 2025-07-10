@@ -148,7 +148,7 @@ class _CardInformationState extends State<CardInformation>
               }
 
               return Scaffold(
-                body: appBodyDesign(getBody()),
+                body: appBodyDesign(getBody(),context: context),
               );
             },
           ),

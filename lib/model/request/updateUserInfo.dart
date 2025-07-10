@@ -15,7 +15,7 @@ class UpdateUser {
   String firstName;
   String lastName;
   String otherNames;
-  // String? userName;
+  String? userName;
   String? idDevice = deviceId;
   String? addressStreet;
   String? dob;
@@ -34,7 +34,7 @@ class UpdateUser {
     required this.firstName,
     required this.lastName,
     required this.otherNames,
-    // this.userName,
+    this.userName,
     // this.phoneNumber,
     this.addressStreet,
     this.dob,
@@ -56,8 +56,8 @@ class UpdateUser {
     firstName: json["first_name"],
     lastName: json["last_name"],
     otherNames: json["other_names"],
-    idDevice: json["id_device"],
-    // userName: json["user_name"],
+    idDevice: json["device_id"],
+    userName: json["user_name"],
     // phoneNumber: json["phone_number"],
     addressStreet: json["address_street"]??"",
     dob: json["dob"]??"",
@@ -78,8 +78,8 @@ class UpdateUser {
     "first_name": firstName,
     "last_name": lastName,
     "other_names": otherNames,
-    "id_device": idDevice,
-    // "user_name": userName,
+    "device_id": deviceId,
+    "user_name": userName,
     // "phone_number": phoneNumber,
     "address_street": addressStreet,
     "dob": dob,

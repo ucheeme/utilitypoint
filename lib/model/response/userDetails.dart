@@ -10,7 +10,7 @@ String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
 
 class UserDetails {
   String id;
-  String bvn;
+  String? bvn;
   String? identityImage;
   String? identityNumber;
   String? identityType;
@@ -56,7 +56,7 @@ class UserDetails {
 
   UserDetails({
     required this.id,
-    required this.bvn,
+     this.bvn,
     this.country,
     this.state,
     this.city,
@@ -103,7 +103,7 @@ class UserDetails {
 
   factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
     id: json["id"],
-    bvn: json["bvn"],
+    bvn: json["bvn"]??"",
     identityImage: json["identity_image"],
    identityNumber: json[ "identity_number"],
     identityType: json["identity_type"],
@@ -119,8 +119,8 @@ class UserDetails {
     bvnJson: json["bvn_json"],
     bvnVerificationStatus: json["bvn_verification_status"],
     kycVerificationStatus: json["kyc_verification_status"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
+    firstName: json["first_name"]??"",
+    lastName: json["last_name"]??"",
     otherNames: json["other_names"]??"",
     userName: json["user_name"]??"",
     pin: json["pin"],

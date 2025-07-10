@@ -24,8 +24,8 @@ class UserAlertResponse {
   String identificationType;
   String identificationNumber;
   String photo;
-  String identityType;
-  String identityNumber;
+  String? identityType;
+  String? identityNumber;
   String identityImage;
   String bvnVerificationStatus;
   dynamic bvnJson;
@@ -56,8 +56,8 @@ class UserAlertResponse {
     required this.identificationType,
     required this.identificationNumber,
     required this.photo,
-    required this.identityType,
-    required this.identityNumber,
+     this.identityType,
+     this.identityNumber,
     required this.identityImage,
     required this.bvnVerificationStatus,
     required this.bvnJson,

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:utilitypoint/utils/app_color_constant.dart';
 import 'package:utilitypoint/utils/text_style.dart';
@@ -19,9 +20,11 @@ import '../../model/request/logOutRequest.dart';
 import '../../model/response/allUserNotification.dart';
 import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
+import '../../utils/myCustomCamera/secondCamera.dart';
 import '../../utils/pages.dart';
 import '../../utils/reuseable_widget.dart';
 import '../../utils/route.dart';
+import '../menuOption/settingOptions/checkImageQuality.dart';
 import '../profile/personalInformation.dart';
 
 class Moreoptions extends StatefulWidget {
@@ -177,19 +180,66 @@ class _MoreoptionsState extends State<Moreoptions>
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      height: 70.h,
-                                      width: 70.w,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(image: getProfileImage() ),
-                                          border: Border.all(
-                                              color: AppColor.black0,
-                                              width: 1.5.w)
-                                      ),
+                                    Spacer(),
+                                    SizedBox(
+                                      width: 150.w,
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            height: 70.h,
+                                            width: 70.w,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(image: getProfileImage(),fit: BoxFit.cover),
+                                                border: Border.all(
+                                                    color: AppColor.black0,
+                                                    width: 1.5.w)
+                                            ),
 
+                                          ),
+                                          // Positioned(
+                                          //   top: 40,
+                                          //   left: 60,
+                                          //   child: GestureDetector(
+                                          //     onTap:() async {
+                                          //       // Get.to(CameraOverlayScreen(camera: camera,));
+                                          //       // Get.to(CameraOption());
+                                          //       List<dynamic>response=   await showCupertinoModalBottomSheet(
+                                          //           topRadius:
+                                          //           Radius.circular(20.r),
+                                          //           context: context,
+                                          //           backgroundColor:AppColor.primary20,
+                                          //           shape:RoundedRectangleBorder(
+                                          //             borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                          //           ),
+                                          //           builder: (context) => SizedBox(
+                                          //               height: 313.h,
+                                          //               child:CameraOption(hasCamera: true,))
+                                          //       );
+                                          //       if(response[0]!=null){
+                                          //         print(response[0]);
+                                          //         Get.to(CheckImageQuality(image:response[0],title: "profile_picture",),curve: Curves.easeIn)?.then((_){
+                                          //           setState(() {
+                                          //           });
+                                          //         });
+                                          //       }
+                                          //     },
+                                          //     child: Container(
+                                          //       height:30.h,
+                                          //       width: 30.w,
+                                          //       decoration: BoxDecoration(
+                                          //           shape: BoxShape.circle,
+                                          //         color: AppColor.primary100
+                                          //       ),
+                                          //       child: Icon(Icons.edit, color: AppColor.black0, size: 18.sp,),
+                                          //     ),
+                                          //   ),
+                                          // )
+                                        ]
+                                      ),
                                     ),
-                                    SizedBox(width: 50.w,)
+                                    // SizedBox(width: 70.w,)
+                                    Spacer(),
                                   ],
                                 ),
                                 Gap(9.h),
@@ -223,7 +273,7 @@ class _MoreoptionsState extends State<Moreoptions>
                         child: Container(
                             height: 600.h,
                             width: Get.width,
-                            padding: EdgeInsets.only(top: 16.h, bottom: 10.h),
+                            padding: EdgeInsets.only(top: 16.h, bottom: 10.h, left: 20.w, right: 20.w),
                             decoration: BoxDecoration(
                                 color: AppColor.primary20,
                                 borderRadius: BorderRadius.only(
@@ -274,6 +324,10 @@ class _MoreoptionsState extends State<Moreoptions>
   }
 
   ImageProvider<Object> getProfileImage() {
+    if(userImage.value.isNotEmpty){
+     // setState(() {});
+      return FileImage(tempImageP,);
+    }
     if(userDetails == null){
       return Image.asset(
           "assets/image/images_png/tempImage.png").image;

@@ -539,10 +539,7 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
                     style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         fontSize: 14.sp,
-                        color: (transactionList.userScreenMessage
-                                    .contains("Successful") ||
-                                transactionList.userScreenMessage
-                                    .contains("successful"))
+                        color: checkIfSuccessful(transactionList.userScreenMessage)
                             ? AppColor.success100
                             : AppColor.Error100),
                   ),
@@ -550,27 +547,18 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
                   Container(
                     height: 20.h,
                     width: 110.w,
-                    color: (transactionList.userScreenMessage
-                                .contains("Successful") ||
-                            transactionList.userScreenMessage
-                                .contains("successful"))
+                    color: checkIfSuccessful(transactionList.userScreenMessage)
                         ? AppColor.success20
                         : AppColor.Error20,
                     child: Center(
                       child: Text(
-                        (transactionList.userScreenMessage
-                                    .contains("Successful") ||
-                                transactionList.userScreenMessage
-                                    .contains("successful"))
+                        checkIfSuccessful(transactionList.userScreenMessage)
                             ? "Successful"
                             : "Failed",
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w400,
                             fontSize: 12.sp,
-                            color: (transactionList.userScreenMessage
-                                        .contains("Successful") ||
-                                    transactionList.userScreenMessage
-                                        .contains("successful"))
+                            color:checkIfSuccessful(transactionList.userScreenMessage)
                                 ? AppColor.success100
                                 : AppColor.Error100),
                       ),
@@ -610,11 +598,19 @@ class NairaTransactionWidgetDesgin extends StatelessWidget {
           : income_Image,
       height: 48.h,
       width: 48.w,
-      color: (transactionList.userScreenMessage.contains("Successful") ||
-              transactionList.userScreenMessage.contains("successful"))
+      color:
+          checkIfSuccessful(transactionList.userScreenMessage)
           ? AppColor.success100
           : AppColor.Error100,
     );
+  }
+
+  bool checkIfSuccessful(String message) {
+    if(message.contains("UnSuccessful") || message.contains("unsuccessful")
+        ||message.contains("failed")||message.contains("Failed")){
+      return false;
+    }
+    return message.contains("Successful") || message.contains("successful");
   }
 }
 
@@ -670,15 +666,11 @@ class DollarTransactionWidgetDesgin extends StatelessWidget {
             width: 90.w,
             child: Text(
               textAlign: TextAlign.end,
-              NumberFormat.currency(symbol: '\$', name: 'USD', decimalDigits: 0)
-                  .format(double.parse(transactionList.balanceBefore) -
-                      double.parse(transactionList.balanceAfter)),
+              getAmount(),
               style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
-                  color: transactionList.transactionCategory
-                          .toLowerCase()
-                          .contains("purchase")
+                  color: checkIfCreditDebit()
                       ? AppColor.Error100
                       : AppColor.success100),
             ),
@@ -688,9 +680,36 @@ class DollarTransactionWidgetDesgin extends StatelessWidget {
     );
   }
 
+  bool checkIfCreditDebit() {
+    return transactionList.transactionCategory
+                       .toLowerCase().contains("purchase")||transactionList.transactionCategory
+                    .toLowerCase().contains("create")||
+        transactionList.description.toLowerCase().contains("top up dollar card from dollar wallet");
+    ;
+  }
+
+  String getAmount(){
+    if (double.parse(transactionList.balanceBefore) >
+        double.parse(transactionList.balanceAfter)) {
+      double amount = double.parse(transactionList.balanceBefore) -
+          double.parse(transactionList.balanceAfter);
+      return NumberFormat.currency(symbol: '\$', name: 'USD', decimalDigits: 0)
+          .format(amount);
+    } else {
+      double amount = double.parse(transactionList.balanceAfter) -
+          double.parse(transactionList.balanceBefore);
+      print(amount);
+      print("amount");
+      return NumberFormat.currency(symbol: '\$', name: 'USD', decimalDigits: 0)
+          .format(amount);
+    }
+  }
+
   Widget imageContainer(String transactionType) {
+    print("transactionType: $transactionType");
     return Image.asset(
-      transactionType.toLowerCase().contains("purchase")
+      transactionType.toLowerCase().contains("purchase")||transactionType.toLowerCase().contains("create")||
+          transactionList.description.toLowerCase().contains("top up dollar card from dollar wallet")
           ? expenses_Image
           : income_Image,
       height: 48.h,

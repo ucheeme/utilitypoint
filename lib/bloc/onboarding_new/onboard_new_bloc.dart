@@ -152,6 +152,7 @@ class OnboardNewBloc extends Bloc<OnboardNewEvent, OnboardNewState> {
       }
     }catch(e,trace){
       print(trace);
+      print(e);
       emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }

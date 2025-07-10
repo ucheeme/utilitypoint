@@ -20,7 +20,7 @@ import 'package:utilitypoint/utils/text_style.dart';
 import '../app_color_constant.dart';
 
 
-
+File tempImageP=File("");
 class CameraOption extends StatefulWidget {
   bool? hasCamera;
    CameraOption({super.key, this.hasCamera}) ;
@@ -72,6 +72,7 @@ class _CameraOptionState extends State<CameraOption> {
 
       setState(() {
         _image = File(tempPath);
+        tempImageP=File(tempPath);
       });
       _cropImage(_image!,tempPath);
     } else {

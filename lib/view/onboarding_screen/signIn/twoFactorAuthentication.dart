@@ -46,7 +46,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
   bool activateKeyboard = false;
   String requiredNumber = "";
   late Timer _timer;
-  int _start = 300;
+  int _start = 120;
   bool isLoading = false;
   bool isWrongOTP = false;
   bool isCompleteOTP = false;
@@ -111,6 +111,12 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
         if (state is TwoFactorAuthenticationCodeResent) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             AppUtils.showInfoSnack(state.response.message, context);
+
+              setState(() {
+                _start = 120;
+              });
+              startTimer();
+
           });
           bloc.initial();
         }
@@ -126,7 +132,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
             child: Scaffold(
-              body: appBodyDesign(getBody()),
+              body: appBodyDesign(getBody(),context: context),
             ),
           ),
         );
@@ -189,9 +195,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
                   ),
                   Gap(44.h),
                   CustomButton(
-                    onTap: () {
-                      _logIn();
-                    },
+                    onTap: () => _logIn(),
                     buttonText: "Log In",
                     textfontSize: 16.sp,
                     borderRadius: 8.r,
@@ -224,11 +228,7 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
                       Gap(10.w),
                       InkWell(
                         onTap: () {
-                          if (_start == 0) {
-                            setState(() {
-                              _start = 300;
-                            });
-                            startTimer();
+                          if (_start <= 60) {
                             bloc.add(ResendTwoFactorAuthenticatorEvent(
                                 VerifiedEmailRequest(userId: userId)));
                           }
@@ -236,11 +236,11 @@ class _TwofactorauthenticationState extends State<Twofactorauthentication>
                         child: Text(
                           "Resend",
                           style: CustomTextStyle.kTxtMedium.copyWith(
-                              fontWeight: _start <= 240
+                              fontWeight: _start <= 60
                                   ? FontWeight.w600
                                   : FontWeight.w400,
                               fontSize: 14.sp,
-                              color: _start <= 240
+                              color: _start <= 60
                                   ? AppColor.primary100
                                   : AppColor.primary40),
                           textAlign: TextAlign.center,

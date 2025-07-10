@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -144,7 +145,7 @@ class _SetTransactionPinState extends State<SetTransactionPin>
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -266,6 +267,10 @@ class _SetTransactionPinState extends State<SetTransactionPin>
   }
 
   _setTransactionPin() {
+    FirebaseAnalytics.instance.logEvent(
+      name: 'set_transaction_pin',
+      parameters: {'set_transaction_pin': 'clicked'},
+    );
     bloc.add(SetTransactionEvent(
         bloc.validation.setTransactionPinRequest(textEditingController)));
   }

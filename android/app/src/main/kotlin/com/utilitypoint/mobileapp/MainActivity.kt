@@ -1,4 +1,4 @@
-package com.example.utilitypoint
+package com.utilitypoint.mobileapp
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

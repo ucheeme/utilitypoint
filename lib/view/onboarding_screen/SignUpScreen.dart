@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:utilitypoint/utils/reuseable_widget.dart';
 import 'package:utilitypoint/utils/text_style.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
 import 'package:utilitypoint/view/onboarding_screen/signUp/verifyemail.dart';
+import 'package:utilitypoint/view/splashScreen/splashScreen.dart';
 
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
@@ -193,7 +195,7 @@ _handlePress(){
         appIconSize: 60.h,
         appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
         child: Scaffold(
-          body: appBodyDesign(getBody()),
+          body: appBodyDesign(getBody(),context: context),
         ),
       ),
     );
@@ -218,7 +220,8 @@ _handlePress(){
           SlideTransition(
             position: _slideAnimation,
             child: Container(
-              height: 678.72.h,
+              width: MediaQuery.of(context).size.width,
+              height:MediaQuery.of(context).size.height,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
@@ -467,8 +470,8 @@ _handlePress(){
                               ),
                             ),
                             SizedBox(
-                              height: 66.h,
-                              width: 269.w,
+                              height: 86.h,
+                               width: MediaQuery.of(context).size.width-100,
                               child: RichText(
                                 text: TextSpan(
                                     text: "I certify that I am 18 years of age or older, and I agree to the ",
@@ -501,6 +504,10 @@ _handlePress(){
                             return CustomButton(
                               height:58.h,
                               onTap: (){
+                                FirebaseAnalytics.instance.logEvent(
+                                  name: 'SignUpButton',
+                                  parameters: {'SignUpButton': 'clicked'},
+                                );
                                 (snapshot.hasData == true && snapshot.data != null)?
                                 validateUserPassword(isAgreedPolicy, context):null;
                               }, buttonText: "Next",
@@ -565,6 +572,7 @@ _handlePress(){
     print(request!.email);
     print(request!.password);
     print(request!.passwordConfirmation);
+    MySharedPreference.saveAnyStringValue(key:isUserPassword,value:request!.passwordConfirmation);
     bloc.add(CreateUserAccountEvent(request!));
   }
 }

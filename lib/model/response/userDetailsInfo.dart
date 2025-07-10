@@ -10,18 +10,18 @@ String userDetailsInfoToJson(UserDetailsInfo data) => json.encode(data.toJson())
 
 class UserDetailsInfo {
   String id;
-  String bvn;
+  dynamic bvn;
   dynamic sendchampJson;
-  String termiiJson;
-  String termiiPinId;
-  String sendchampSuccessStatus;
-  String sendchampChannel;
+  dynamic termiiJson;
+  dynamic termiiPinId;
+  dynamic sendchampSuccessStatus;
+  dynamic sendchampChannel;
   dynamic sendchampOtp;
   dynamic sendchampReference;
-  String sendchampAttempts;
+  dynamic sendchampAttempts;
   String canDoCardTransactions;
   String identityImage;
-  String identityNumber;
+  dynamic identityNumber;
   String identityType;
   String photo;
   String identificationNumber;

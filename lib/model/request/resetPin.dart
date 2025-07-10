@@ -15,7 +15,7 @@ class ResetUserPinRequest {
   String currentPin;
   String newPin;
   String confirmNewPin;
-  String? idDevice=deviceId;
+  String? idDevice;
 
   ResetUserPinRequest({
     required this.userId,
@@ -38,6 +38,6 @@ class ResetUserPinRequest {
     "current_pin": currentPin,
     "new_pin": newPin,
     "confirm_new_pin": confirmNewPin,
-    "device_id": idDevice=deviceId
+    "device_id": deviceId
   };
 }

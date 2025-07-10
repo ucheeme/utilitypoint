@@ -155,7 +155,7 @@ class _ElectricTokenScreenState extends State<ElectricTokenScreen> with TickerPr
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody(context)),
+            body: appBodyDesign(getBody(context),context: context),
           ),
         );
       },

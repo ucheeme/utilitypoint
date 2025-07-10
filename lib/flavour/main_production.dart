@@ -5,7 +5,7 @@ import 'flavour.dart';
 Future<void> main() async {
   final devConfig = AppFlavorConfig(
     name: 'Production',
-    apiBaseUrl: Env.baseUrlStaging,
+    apiBaseUrl: Env.baseUrlProduction,
   );
   mainCommon(devConfig);
 }

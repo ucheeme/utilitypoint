@@ -45,6 +45,7 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
     on<FreezeCardEvent>((event,emit){handleFreezeCardEvent(event.request);});
     on<UnFreezeCardEvent>((event,emit){handleUnFreezeCardEvent(event.request);});
     on<GetExchangeRateEvent>((event,emit){handleGetExchangeRateEvent();});
+    on<GetExchangeRateEvent2>((event,emit){handleGetExchangeRateEvent2();});
     on<BuyDollarEvent>((event,emit){handleBuyDollarEvent(event.request);});
     on<GetUserVirtualAccountEvent>((event,emit){handleGetUserVirtualAccountEvent(event.request);});
     on<CreateUserVirtualAccountEvent>((event,emit){handleCreateUserVirtualAccountEvent(event.request);});
@@ -99,6 +100,23 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
       emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
+  void handleGetExchangeRateEvent2()async{
+    emit(VirtualcardIsLoading());
+    try {
+      final   response = await cardRepository.getExchangeRate();
+      if (response is FetchCurrencyConversionRate) {
+        emit(ExchangeRate2(response));
+        AppUtils.debug("success");
+      }else{
+        emit(VirtualcardError(response as DefaultApiResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
+
   void handleGetUserCardEvent(GetUserIdRequest event)async{
     emit(VirtualcardIsLoading());
     try {
@@ -127,7 +145,8 @@ class VirtualcardBloc extends Bloc<VirtualcardEvent, VirtualcardState> {
         AppUtils.debug("error");
       }
     }catch(e,trace){
-      // print(trace);
+      print(trace);
+      print(e);
       emit(VirtualcardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }

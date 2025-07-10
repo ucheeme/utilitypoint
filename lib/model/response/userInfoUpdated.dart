@@ -42,6 +42,7 @@ class UserInfoUpdated {
   DateTime lastLogIn;
   String? deviceId;
   int? requireOtp;
+  dynamic emailOtp;
   String token;
 
   UserInfoUpdated({
@@ -78,18 +79,21 @@ class UserInfoUpdated {
     this.deviceId,
     required this.lastLogIn,
     this.requireOtp,
+    this.emailOtp,
     required this.token,
   });
 
   factory UserInfoUpdated.fromJson(Map<String, dynamic> json) => UserInfoUpdated(
     id: json["id"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    userName: json["user_name"],
+    firstName: json["first_name"]??"Utility Point",
+    lastName: json["last_name"]??"Utility Point",
+    userName: json["user_name"]??"utilityPoint",
     email: json["email"],
     bvn: json["bvn"]??"",
     addressStreet: json["address_street"] ?? "",
-    dob: json["dob"]==null?DateTime.now():DateTime.parse(json["dob"]),
+    dob: json["dob"]==null?DateTime.now():
+    isValidIsoDate(json["dob"])?
+    DateTime.parse(json["dob"]):DateTime.now(),
     city: json["city"]??"",
     state: json["state"]??"",
     country: json["country"]??"",
@@ -98,9 +102,9 @@ class UserInfoUpdated {
     identificationNumber: json["identification_number"]??"",
     photo: json["photo"]??"",
     identityType: json["identity_type"]??"",
-    identityNumber: json["identity_number"],
-    identityImage: json["identity_image"],
-    bvnVerificationStatus: json["bvn_verification_status"],
+    identityNumber: json["identity_number"]??"",
+    identityImage: json["identity_image"]??"",
+    bvnVerificationStatus: json["bvn_verification_status"]??"",
     bvnJson: json["bvn_json"].runtimeType==int?
     json["bvn_json"]:json["bvn_json"]==null
         ?null: BvnJson.fromJson(json["bvn_json"]),
@@ -117,6 +121,7 @@ class UserInfoUpdated {
     lastLogIn:  DateTime.parse(json["last_login_at"]),
     deviceId: json["device_id"],
     requireOtp: json["require_otp"],
+    emailOtp: json["email_otp"],
     token: json["token"],
   );
 
@@ -154,11 +159,19 @@ class UserInfoUpdated {
     "last_log_in": lastLogIn.toIso8601String(),
     "device_id": deviceId,
     "require_otp": requireOtp,
+    "email_otp": emailOtp,
     "token": token,
   };
 }
 
-
+bool isValidIsoDate(String input) {
+  try {
+    DateTime.parse(input);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 BvnJson bvnJsonFromJson(String str) => BvnJson.fromJson(json.decode(str));
 
 String bvnJsonToJson(BvnJson data) => json.encode(data.toJson());
@@ -183,13 +196,14 @@ class BvnJson {
   });
 
   factory BvnJson.fromJson(Map<String, dynamic> json) => BvnJson(
-    status: json["status"],
-    detail: json["detail"],
-    responseCode: json["response_code"],
-    data: Data.fromJson(json["data"]),
+    status: json["status"]??"",
+    detail: json["detail"]??"",
+    responseCode: json["response_code"]??"",
+    data: json["data"]==null?Data(firstName: '', lastName: '', middleName: '', dateOfBirth: '', phoneNumber: ''):
+    Data.fromJson(json["data"]),
     verification: Verification.fromJson(json["verification"]),
     session: List<dynamic>.from(json["session"].map((x) => x)),
-    endpointName: json["endpoint_name"],
+    endpointName: json["endpoint_name"]??"",
   );
 
   Map<String, dynamic> toJson() => {

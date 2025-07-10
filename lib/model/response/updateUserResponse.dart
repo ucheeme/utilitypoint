@@ -15,7 +15,7 @@ class UpdateUserDetailResponse {
   dynamic userName;
   String email;
   dynamic phoneNumber;
-  String bvn;
+  String? bvn;
   String addressStreet;
   DateTime dob;
   String city;
@@ -48,7 +48,7 @@ class UpdateUserDetailResponse {
     required this.userName,
     required this.email,
     required this.phoneNumber,
-    required this.bvn,
+     this.bvn,
     required this.addressStreet,
     required this.dob,
     required this.city,
@@ -82,7 +82,7 @@ class UpdateUserDetailResponse {
     userName: json["user_name"],
     email: json["email"],
     phoneNumber: json["phone_number"],
-    bvn: json["bvn"],
+    bvn: json["bvn"]??"",
     addressStreet: json["address_street"],
     dob: DateTime.parse(json["dob"]),
     city: json["city"],

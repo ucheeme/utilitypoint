@@ -40,7 +40,7 @@ class _CardDesignState extends State<CardDesign> {
         }
       },
       child: Container(
-          height: 167.h,
+          height: 177.h,
           width: 335.w,
           margin: EdgeInsets.symmetric(vertical: 16.h),
           padding: EdgeInsets.symmetric(vertical: 20.h,),
@@ -73,7 +73,7 @@ class _CardDesignState extends State<CardDesign> {
               ),
            Gap(20.h),
            SizedBox(
-             height:86.h,
+             height:96.h,
              width: 335.w,
              child: Row(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -456,6 +456,48 @@ class CardBackView extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(information!.message.details.billing.postalCode??"no postal code",
+                                    style: CustomTextStyle.kTxtMedium.copyWith(
+                                        color: AppColor.black0,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400
+                                    ),
+                                  ),
+                                  Gap(3.w),
+                                  GestureDetector(
+                                    onTap: (){
+                                      copyToClipboard(
+                                          context,information!.message.details.billing.postalCode??"");
+                                    },
+                                    child: Image.asset(
+                                      "assets/image/icons/fi_copy.png",
+                                      height: 12.h,
+                                      color: AppColor.black0,
+                                      width: 12.w,
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        Gap(12.h),
+                        SizedBox(
+                          height: 25.h,
+                          width: 172.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Address:",
+                                style: CustomTextStyle.kTxtMedium.copyWith(
+                                    color: AppColor.black0,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w800
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(information!.message.details.billing.address??"no postal code",
+                                    maxLines: 2,
                                     style: CustomTextStyle.kTxtMedium.copyWith(
                                         color: AppColor.black0,
                                         fontSize: 14.sp,

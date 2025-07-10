@@ -392,7 +392,7 @@ void showSuccessSlidingModal(BuildContext context,{String successMessage="",Stri
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
+                      Get.offAll(MyBottomNav(position: 0,), predicate: (route) => false);
                     },
                     child: SizedBox(
                         height: 24.h,
@@ -758,7 +758,7 @@ class LogOut extends StatelessWidget {
         effects: [SlideEffect()],
         child: Container(
           margin: EdgeInsets.only(top: Get.height/2,left: 12.w,right: 12.w),
-          height: 222.h,
+          height: MediaQuery.of(context).size.height/2,
           width: Get.width,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30.r),

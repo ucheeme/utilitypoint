@@ -1,17 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:utilitypoint/view/onboarding_screen/signIn/login_screen.dart';
+import 'package:utilitypoint/view/onboarding_screen/signIn/reset_password.dart';
 
 import '../../bloc/onboarding_new/onboard_new_bloc.dart';
 import '../../utils/app_color_constant.dart';
 import '../../utils/app_util.dart';
 import '../../utils/customAnimation.dart';
 import '../../utils/height.dart';
+import '../../utils/reOccurringWidgets/transactionPin.dart';
 import '../../utils/reuseable_widget.dart';
 import '../../utils/text_style.dart';
 
@@ -56,8 +61,8 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
     if (state is ForgotPasswordSuccess){
       WidgetsBinding.instance.addPostFrameCallback((_) {
         loginResponse = state.response;
-        showSlidingModal(context);
-
+     //   showSlidingModal(context);
+        _showBottomSheet2(context,state.response.emailOtp.toString()??"");
       });
       bloc.initial();
     }
@@ -69,7 +74,7 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
       appIconSize: 60.h,
       appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
       child: Scaffold(
-        body: appBodyDesign(getBody()),
+        body: appBodyDesign(getBody(),context: context),
       ),
     );
   },
@@ -169,7 +174,73 @@ class _ForgotpasswordScreenState extends State<ForgotpasswordScreen>  with Ticke
   }
 }
 
+void _showBottomSheet2(BuildContext context,String title,) {
+  showModalBottomSheet(
+    context: context,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+    ),
+    builder: (context) {
+      String textToCopy = "This is your otp: $title";
+      bool isCopied = false;
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
+          height: 200.h,
+          child: Column(
+            children: [
+              // Text(
+              //   "Please click on the copy icon first before done",
+              //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      textToCopy,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.copy),
+                    onPressed: () {
 
+                      Clipboard.setData(ClipboardData(text: textToCopy));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Copied to clipboard!")),
+                      );
+                      isCopied = true;
+                    },
+                  ),
+                ],
+              ),
+              Spacer(),
+              CustomButton(
+                height:58.h,
+                onTap: () async {
+                  if(isCopied){
+                    Get.back();
+                    List<dynamic> response = await Get.to(TransactionPin(header:"Enter OTP",));
+                    if(response[0] == true){
+                      resetPasswordOTP = response[1];
+                      Get.to(ResetPasswordSignIn());
+                    }
+                  }else{
+                    AppUtils.showInfoSnack("Please copy the otp first", context);
+                  }
+
+                }, buttonText:"Done",
+                textfontSize: 13.sp,
+                textColor:AppColor.black0 ,
+                buttonColor: AppColor.primary100,borderRadius: 8.r,),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 Future<void> openEmailApp() async {
   final Uri emailUri = Uri(scheme: 'mailto'); // No recipient or query parameters
 

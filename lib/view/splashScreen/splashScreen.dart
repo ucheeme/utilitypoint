@@ -198,98 +198,101 @@ class _SplashscreenState extends State<Splashscreen>  with TickerProviderStateMi
             child: SlideTransition(
               position: _slideAnimation,
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20.h,),
-                    ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: SlideTransition(
-                        position:  _moveAnimation,
-                        child: Container(
-                          padding: EdgeInsets.only(left: 78.w,right: 78.w,top: 170.h),
-                          child: Center(
-                            child: Image.asset(utilityPointLogo,height: 206.h,),
+                child: SizedBox(
+                  height: Get.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20.h,),
+                      ScaleTransition(
+                        scale: _scaleAnimation,
+                        child: SlideTransition(
+                          position:  _moveAnimation,
+                          child: Container(
+                            padding: EdgeInsets.only(left: 78.w,right: 78.w,top: 170.h),
+                            child: Center(
+                              child: Image.asset(utilityPointLogo,height: 206.h,),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    height30,
-                    SlideTransition(
+                      height10,
+                      SlideTransition(
 
-                      position: _slideAnimationB,
+                        position: _slideAnimationB,
 
-                      child: Container(
+                        child: Container(
 
-                        height: 400.h,
-                        decoration: BoxDecoration(
-                          color: AppColor.primary20,
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
-                        ),
-                        child: SingleChildScrollView(
-                          physics: NeverScrollableScrollPhysics(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              height40,
-                              SizedBox(
-                                height: 100.h,
-                                width: 314.w,
-                                child: Text(
-                                    "Your Everyday Financial Hub!",
-                                    textAlign: TextAlign.center,
-                                    style: CustomTextStyle.kTxtBold.copyWith(
-                                        color: AppColor.black100,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 32.sp
-                                    )
-                                ),
-                              ),
-                              Gap(20.h),
-                              SizedBox(
-                                height: 70.h,
-                                width: 314.w,
-                                child: Text(
-                                  "Shop online, subscribe to global services, or handle international payments securely with your virtual dollar card.",
-                                  textAlign: TextAlign.center,
-                                  style: CustomTextStyle.kTxtMedium.copyWith(
-                                      color: AppColor.black100,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14.sp
+                          height: 400.h,
+                          decoration: BoxDecoration(
+                            color: AppColor.primary20,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
+                          ),
+                          child: SingleChildScrollView(
+                            physics: NeverScrollableScrollPhysics(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                height40,
+                                SizedBox(
+                                  height: 100.h,
+                                  width: 314.w,
+                                  child: Text(
+                                      "Your Everyday Financial Hub!",
+                                      textAlign: TextAlign.center,
+                                      style: CustomTextStyle.kTxtBold.copyWith(
+                                          color: AppColor.black100,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 32.sp
+                                      )
                                   ),
                                 ),
-                              ),
-                              height35,
-                              Padding(
-                                padding:  EdgeInsets.symmetric(horizontal: 24.w),
-                                child: CustomButton(
-                                  height:58.h,
-                                  onTap: (){
-                                    Get.toNamed(Pages.signup,);
-                                  }, buttonText: "Register Now",
-                                  textColor:AppColor.black0 ,
-                                  buttonColor: AppColor.primary100,borderRadius: 8.r,),
-                              ),
-                              height10,
-                              Padding(
-                                padding:  EdgeInsets.symmetric(horizontal: 24.w),
-                                child: CustomButton(
-                                  height:58.h,
-                                  onTap: (){
-                                    Get.toNamed(Pages.login);
-                                    //Get.to(HomeScreen());
-                                  }, buttonText: "Already have an account",
-                                  textColor:AppColor.secondary100 ,
-                                  buttonColor: Colors.transparent,borderRadius: 8.r,),
-                              ),
-                              height40
-                            ],
+                                Gap(20.h),
+                                SizedBox(
+                                  height: 70.h,
+                                  width: 314.w,
+                                  child: Text(
+                                    "Shop online, subscribe to global services, or handle international payments securely with your virtual dollar card.",
+                                    textAlign: TextAlign.center,
+                                    style: CustomTextStyle.kTxtMedium.copyWith(
+                                        color: AppColor.black100,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14.sp
+                                    ),
+                                  ),
+                                ),
+                                height35,
+                                Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                                  child: CustomButton(
+                                    height:58.h,
+                                    onTap: (){
+                                      Get.toNamed(Pages.signup,);
+                                    }, buttonText: "Register Now",
+                                    textColor:AppColor.black0 ,
+                                    buttonColor: AppColor.primary100,borderRadius: 8.r,),
+                                ),
+                                height10,
+                                Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                                  child: CustomButton(
+                                    height:58.h,
+                                    onTap: (){
+                                      Get.toNamed(Pages.login);
+                                      //Get.to(HomeScreen());
+                                    }, buttonText: "Already have an account",
+                                    textColor:AppColor.secondary100 ,
+                                    buttonColor: Colors.transparent,borderRadius: 8.r,),
+                                ),
+                                height40
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

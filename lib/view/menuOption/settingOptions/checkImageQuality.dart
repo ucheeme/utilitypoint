@@ -123,6 +123,7 @@ class _CheckImageQualityState extends State<CheckImageQuality>
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if(state.response.documentCategory.toLowerCase()=="profile_picture"){
               userImage.value= state.response.imageUrl;
+              print("this is the user image: ${userImage.value}");
             }
             showSuccessSlidingModal(context,
                 successMessage: "Document uploaded", onTap: () {
@@ -138,7 +139,7 @@ class _CheckImageQualityState extends State<CheckImageQuality>
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -158,7 +159,8 @@ class _CheckImageQualityState extends State<CheckImageQuality>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(

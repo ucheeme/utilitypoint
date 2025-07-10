@@ -1,5 +1,6 @@
 import 'package:carousel_indicator/carousel_indicator.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,8 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print(loginResponse!.canDoCardTransaction);
-      print("the bvn status: ${verificationStatus}");
       bloc.add(GetUserWalletBalanceEvent(loginResponse!.id));
       isNewAccount = MySharedPreference.getIsProfileUpdate();
       if(useBiometeric==false && isCloseBioMetericAlert== false){
@@ -148,6 +147,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool isVisibleAmount = false;
+
+ Future<void> onRefresh ()async {
+  bloc.add(GetUserWalletBalanceEvent(loginResponse!.id));
+  }
   void showBiometricBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -353,53 +356,13 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           bloc.initial();
         }
-
-        // if (state is AllNairaTransactions) {
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     for (var item in state.response) {
-        //       transactionList.add(item);
-        //     }
-        //     if (userDetails == null) {
-        //       isLoading = true;
-        //       bloc.add(
-        //           GetUserDetails(GetProductRequest(userId: loginResponse!.id)));
-        //     }
-        //   });
-        //   bloc.initial();
-        // }
         if (state is AllDollarTransactions) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             dollarTransactionList.clear();
             List<NairaTransactionList> value =state.response;
             for (var item in value) {
               dollarTransactionList.add(item);
-              // dollarTransactionList.add(
-              //   ProductTransactionList(id: item.id, userId: item.userId,
-              //       productPlanId: "",
-              //       transactionCategory: item.transactionCategory,
-              //       status: "Successful", walletCategory: "dollar_wallet",
-              //       phoneNumber: null, smartCardNumber: null,
-              //       metreNumber: null, cableTvSlots: "",
-              //       utilitySlots: "", amount: calculateDifference(item.balanceAfter, item.balanceBefore),
-              //       referralCommissionValue: null,
-              //       discountedAmount: "0",
-              //       balanceBefore: item.balanceBefore,
-              //       balanceAfter:  item.balanceAfter,
-              //       description: item.description,
-              //       userScreenMessage: "",
-              //       adminScreenMessage: "",
-              //       referralCommissionStatus: "",
-              //       createdAt: DateTime.now(),
-              //       updatedAt: DateTime.now(),
-              //       productPlan:null )
-              // );
             }
-
-            // for (var item in tempAllTransactionList) {
-            //   print("this is the item: ${item.walletCategory}");
-            //   if(item.walletCategory.toLowerCase() == "dollar_wallet" ){
-            //   dollarTransactionList.add(item);
-            // }
             if (isHomePageWallet) {
               Get.back();
               _showDollarWalletBottomSheet(context);
@@ -427,301 +390,317 @@ class _HomeScreenState extends State<HomeScreen> {
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
             backgroundColor: AppColor.primary20,
-            body: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                dashboardHeader(
-                    initialPage: _currentWallet,
-                    onPageChanged: (integer, page) {
-                      setState(() {
-                        _currentWallet = integer;
-                      });
-                    },
-                    withdrawOnTap: () {
-                      dollarTransactionList.clear();
-                      setState(() {
-                        isHomePageWallet = true;
-                      });
-
-                      if(dollarTransactionList.isEmpty){
-                        bloc.add(
-                            GetAllDollarWalletTransactionsEvent(GetProductRequest(
-                              userId: loginResponse!.id,
-                              startDate:
-                              "${currentDateTime.year}-${currentDateTime.month}-01",
-                              endDate:
-                              "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
-                            )));
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(24.r)),
-                          ),
-                          builder: (context) => DraggableScrollableSheet(
-                            expand: false,
-                            initialChildSize: 0.5,
-                            maxChildSize: 1.0,
-                            minChildSize: 0.3,
-                            builder: (context, scrollController) {
-                              return SizedBox(
-                                height: 300.h,
-                                child: Container(
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColor.primary100,
+            body: CustomMaterialIndicator(
+              onRefresh: onRefresh, // Your refresh logic
+              backgroundColor: Colors.white,
+              indicatorBuilder: (context, controller) {
+                return const Padding(
+                  padding: EdgeInsets.all(6.0),
+                  child: CircularProgressIndicator(
+                    color: Colors.redAccent,
+                   // value: ,
+                  ),
+                );
+              },
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  dashboardHeader(
+                      initialPage: _currentWallet,
+                      onPageChanged: (integer, page) {
+                        setState(() {
+                          _currentWallet = integer;
+                        });
+                      },
+                      withdrawOnTap: () {
+                        dollarTransactionList.clear();
+                        setState(() {
+                          isHomePageWallet = true;
+                        });
+              
+                        if(dollarTransactionList.isEmpty){
+                          bloc.add(
+                              GetAllDollarWalletTransactionsEvent(GetProductRequest(
+                                userId: loginResponse!.id,
+                                startDate:
+                                "${currentDateTime.year}-${currentDateTime.month}-01",
+                                endDate:
+                                "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+                              )));
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(24.r)),
+                            ),
+                            builder: (context) => DraggableScrollableSheet(
+                              expand: false,
+                              initialChildSize: 0.5,
+                              maxChildSize: 1.0,
+                              minChildSize: 0.3,
+                              builder: (context, scrollController) {
+                                return SizedBox(
+                                  height: 300.h,
+                                  child: Container(
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColor.primary100,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
+                          );
+                        }else{
+                          _showDollarWalletBottomSheet(context);
+                        }
+              
+                      },
+                      onPressed: () {
+                        setState(() {
+                          isVisibleAmount = !isVisibleAmount;
+                        });
+                      },
+                      isVisibleAmount: isVisibleAmount,
+                      depositOnTap: depositOnTap(),
+                      accountBalance: accountBalance(),
+                      isNaira: _currentWallet == 0 ? true : false,
+                      sideBarOnTap: () {
+                        //Navigator.of(context).push(createFlipRoute(Moreoptions()));
+                        // Get.to(Moreoptions(), curve: Curves.easeIn);
+                        Get.to(PersonInformation(), curve: Curves.easeIn);
+                      }),
+                  Center(
+                    child: CarouselIndicator(
+                      color: AppColor.black00,
+                      count: 2,
+                      activeColor: AppColor.primary100,
+                      index: _currentWallet,
+                    ),
+                  ),
+                  Gap(32.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Quick Access",
+                          style: CustomTextStyle.kTxtBold.copyWith(
+                            color: AppColor.black100,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.sp,
                           ),
-                        );
-                      }else{
-                        _showDollarWalletBottomSheet(context);
-                      }
-
-                    },
-                    onPressed: () {
-                      setState(() {
-                        isVisibleAmount = !isVisibleAmount;
-                      });
-                    },
-                    isVisibleAmount: isVisibleAmount,
-                    depositOnTap: depositOnTap(),
-                    accountBalance: accountBalance(),
-                    isNaira: _currentWallet == 0 ? true : false,
-                    sideBarOnTap: () {
-                      //Navigator.of(context).push(createFlipRoute(Moreoptions()));
-                      // Get.to(Moreoptions(), curve: Curves.easeIn);
-                      Get.to(PersonInformation(), curve: Curves.easeIn);
-                    }),
-                Center(
-                  child: CarouselIndicator(
-                    color: AppColor.black00,
-                    count: 2,
-                    activeColor: AppColor.primary100,
-                    index: _currentWallet,
-                  ),
-                ),
-                Gap(32.h),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Quick Access",
-                        style: CustomTextStyle.kTxtBold.copyWith(
-                          color: AppColor.black100,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16.sp,
                         ),
-                      ),
-                      Gap(18.h),
-                      SizedBox(
-                        width: Get.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            dashboardIcons(
-                                horizontal: 0,
-                                title: "Fund Dollar Wallet",
-                                onTap: () async {
-                                  setState(() {
-                                    isCardRelated = true;
-                                  });
-                                  if (verificationStatus == 0||verificationStatus ==null) {
-                                    var result = await openBottomSheet(
-                                        context,
-                                        NoticeBottomSheet(
-                                          image:
-                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
-                                          title: "Update your KYC information",
-                                          body:
-                                              "Validate your KYC information and perform transaction",
-                                        ));
-                                  } else {
-                                    Get.to(
-                                        FundWalletScreen(
-                                          isFundDollarWallet: true,
-                                        ),
-                                        curve: Curves.easeIn);
-                                  }
-                                }),
-                            dashboardIcons(
-                                title: "Buy Data",
-                                icon: "data_Icon",
-                                onTap: () {
-                                  Get.to(AllData(), curve: Curves.easeIn);
-                                }),
-                            dashboardIcons(
-                                title: "Dollar Card",
-                                icon: "dollardCard",
-                                onTap: () async {
-                                  setState(() {
-                                    isCardRelated = true;
-                                  });
-                                  if (verificationStatus == 0||verificationStatus ==null) {
-                                    var result = await openBottomSheet(
-                                        context,
-                                        NoticeBottomSheet(
-                                          image:
-                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
-                                          title: "Update your KYC information",
-                                          body:
-                                              "Validate your KYC information and perform transaction",
-                                        ));
-                                  } else {
-                                    Get.to(
-                                        VirtualCards(
-                                          isNaira: false,
-                                        ),
-                                        curve: Curves.easeIn);
-                                  }
-                                }),
-                            dashboardIcons(
-                                title: "Convert",
-                                icon: "convert",
-                                onTap: () async {
-                                  setState(() {
-                                    isCardRelated = true;
-                                  });
-                                  if (verificationStatus == 0||verificationStatus ==null) {
-                                    var result = await openBottomSheet(
-                                        context,
-                                        NoticeBottomSheet(
-                                          image:
-                                              "assets/image/icons/attentionAlert.png-removebg-preview.png",
-                                          title: "Update your KYC information",
-                                          body:
-                                              "Validate your KYC information and perform transaction",
-                                        ));
-                                  } else {
-                                    if (userDetails == null) {
-                                      openBottomSheet(
+                        Gap(18.h),
+                        SizedBox(
+                          width: Get.width,
+                          // height: Get.height * 0.3,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              dashboardIcons(
+                                  horizontal: 0,
+                                  title: "Fund Wallet",
+                                  onTap: () async {
+                                    setState(() {
+                                      isCardRelated = true;
+                                    });
+                                    if (loginResponse!.kycVerificationStatus=="0") {
+                                      var result = await openBottomSheet(
                                           context,
-                                          Container(
-                                            height: 300.h,
-                                            child: const Center(
-                                              child: CircularProgressIndicator(
-                                                color: AppColor.primary100,
-                                              ),
-                                            ),
+                                          NoticeBottomSheet(
+                                            image:
+                                                "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                            title: "Update your KYC information",
+                                            body:
+                                                "Validate your KYC information and perform transaction",
                                           ));
-                                      bloc.add(GetUserDetails(GetProductRequest(
-                                          userId: loginResponse!.id)));
+                                    } else {
+                                      Get.to(
+                                          FundWalletScreen(
+                                            isFundDollarWallet: true,
+                                          ),
+                                          curve: Curves.easeIn);
                                     }
-                                    if (userDetails != null) {
-                                      Get.to(ConvertScreen(
-                                        isTopUpCard: false,
-                                        isCreateCard: false,
-                                      ));
-                                    }
-                                  }
-                                }),
-                          ],
-                        ),
-                      ),
-                      Gap(18.h),
-                      SizedBox(
-                        width: Get.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            dashboardIcons(
-                                horizontal: 0,
-                                title: "Buy Airtime",
-                                icon: "buyAirtime",
-                                onTap: () {
-                                  Get.to(BuySingleAirtime());
-                                }),
-                            dashboardIcons(
-                                title: "Cable TV",
-                                icon: "cableTv",
-                                onTap: () {
-                                  Get.to(CableListView());
-                                }),
-                            dashboardIcons(
-                                title: "Electricity",
-                                icon: "electricity",
-                                onTap: () {
-                                  Get.to(ElectricityListView());
-                                }),
-                            dashboardIcons(
-                                title: "More",
-                                icon: "more_Icon",
-                                onTap: () {
-                                  Get.to(const Moreoptions(),
-                                      curve: Curves.easeIn);
-                                }),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Gap(28.h),
-                transactionList.isEmpty
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: Image.asset("assets/image/images_png/Card.png"),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Transaction History",
-                                  style: CustomTextStyle.kTxtMedium.copyWith(
-                                      color: AppColor.black100,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16.sp),
-                                ),
-                                GestureDetector(
+                                  }),
+                              dashboardIcons(
+                                  title: "Buy Data",
+                                  icon: "data_Icon",
                                   onTap: () {
-                                    Get.offAll(
-                                        MyBottomNav(
-                                          position: 1,
-                                        ),
-                                        predicate: (route) => false);
-                                  },
-                                  child: Text(
-                                    "View all",
+                                    Get.to(AllData(), curve: Curves.easeIn);
+                                  }),
+                              dashboardIcons(
+                                  title: "Dollar Card",
+                                  icon: "dollardCard",
+                                  onTap: () async {
+                                    setState(() {
+                                      isCardRelated = true;
+                                    });
+                                    if (loginResponse!.kycVerificationStatus=="0") {
+                                      var result = await openBottomSheet(
+                                          context,
+                                          NoticeBottomSheet(
+                                            image:
+                                                "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                            title: "Update your KYC information",
+                                            body:
+                                                "Validate your KYC information and perform transaction",
+                                          ));
+                                    } else {
+                                      Get.to(
+                                          VirtualCards(
+                                            isNaira: false,
+                                          ),
+                                          curve: Curves.easeIn);
+                                    }
+                                  }),
+                              dashboardIcons(
+                                  title: "Convert",
+                                  icon: "convert",
+                                  onTap: () async {
+                                    setState(() {
+                                      isCardRelated = true;
+                                    });
+                                    print("kycVerificationStatus "+loginResponse!.kycVerificationStatus);
+                                    if (loginResponse!.kycVerificationStatus=="0") {
+                                      var result = await openBottomSheet(
+                                          context,
+                                          NoticeBottomSheet(
+                                            image:
+                                                "assets/image/icons/attentionAlert.png-removebg-preview.png",
+                                            title: "Update your KYC information",
+                                            body:
+                                                "Validate your KYC information and perform transaction",
+                                          ));
+                                    } else {
+                                      if (userDetails == null) {
+                                        openBottomSheet(
+                                            context,
+                                            Container(
+                                              height: 300.h,
+                                              child: const Center(
+                                                child: CircularProgressIndicator(
+                                                  color: AppColor.primary100,
+                                                ),
+                                              ),
+                                            ));
+                                        bloc.add(GetUserDetails(GetProductRequest(
+                                            userId: loginResponse!.id)));
+                                      }
+                                      if (userDetails != null) {
+                                        Get.to(ConvertScreen(
+                                          isTopUpCard: false,
+                                          isCreateCard: false,
+                                        ));
+                                      }
+                                    }
+                                  }),
+                            ],
+                          ),
+                        ),
+                        Gap(18.h),
+                        SizedBox(
+                          width: Get.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              dashboardIcons(
+                                  horizontal: 0,
+                                  title: "Buy Airtime",
+                                  icon: "buyAirtime",
+                                  onTap: () {
+                                    Get.to(BuySingleAirtime());
+                                  }),
+                              dashboardIcons(
+                                  title: "Cable TV",
+                                  icon: "cableTv",
+                                  onTap: () {
+                                    Get.to(CableListView());
+                                  }),
+                              dashboardIcons(
+                                  title: "Electricity",
+                                  icon: "electricity",
+                                  onTap: () {
+                                    Get.to(ElectricityListView());
+                                  }),
+                              dashboardIcons(
+                                  title: "More",
+                                  icon: "more_Icon",
+                                  onTap: () {
+                                    Get.to(const Moreoptions(),
+                                        curve: Curves.easeIn);
+                                  }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Gap(28.h),
+                  transactionList.isEmpty
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Image.asset("assets/image/images_png/Card.png"),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14.w),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Transaction History",
                                     style: CustomTextStyle.kTxtMedium.copyWith(
-                                        color: AppColor.primary100,
+                                        color: AppColor.black100,
                                         fontWeight: FontWeight.w800,
                                         fontSize: 16.sp),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 500.h,
-                              child: ListView.builder(
-                                  padding: EdgeInsets.only(top: 10.h),
-                                  itemCount: transactionList.length > 10
-                                      ? 10
-                                      : transactionList.length,
-                                  itemBuilder: (context, index) {
-                                    ProductTransactionList element =
-                                        transactionList[index];
-                                    return Padding(
-                                      padding: EdgeInsets.only(bottom: 12.h),
-                                      child: NairaTransactionWidgetDesgin(
-                                        transactionList: element,
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ],
-                        ),
-                      )
-              ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.offAll(
+                                          MyBottomNav(
+                                            position: 1,
+                                          ),
+                                          predicate: (route) => false);
+                                    },
+                                    child: Text(
+                                      "View all",
+                                      style: CustomTextStyle.kTxtMedium.copyWith(
+                                          color: AppColor.primary100,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 16.sp),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 500.h,
+                                child: ListView.builder(
+                                    padding: EdgeInsets.only(top: 10.h),
+                                    itemCount: transactionList.length > 10
+                                        ? 10
+                                        : transactionList.length,
+                                    itemBuilder: (context, index) {
+                                      ProductTransactionList element =
+                                          transactionList[index];
+                                      return Padding(
+                                        padding: EdgeInsets.only(bottom: 12.h),
+                                        child: NairaTransactionWidgetDesgin(
+                                          transactionList: element,
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        )
+                ],
+              ),
             ),
           ),
         );

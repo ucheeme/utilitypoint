@@ -153,7 +153,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
                 onTap: (){
                   FocusScope.of(context).unfocus();
                 },
-                child: Scaffold(body: appBodyDesign(getBody()))));
+                child: Scaffold(body: appBodyDesign(getBody(),context: context))));
       },
     );
   }
@@ -175,7 +175,7 @@ class _BuySingeDataScreenState extends State<BuySingeDataScreen>  with TickerPro
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: Get.height + 100.h,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(

@@ -80,7 +80,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>with TickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: appBodyDesign(getBody()),
+      body: appBodyDesign(getBody(),context: context),
     );
   }
   getBody(){

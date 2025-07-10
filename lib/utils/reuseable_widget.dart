@@ -500,10 +500,10 @@ class BorderlessTextField extends StatelessWidget {
   }
 }
 
-Container appBodyDesign(Widget bodyDesign) {
+Container appBodyDesign(Widget bodyDesign,{BuildContext? context}) {
   return Container(
-    width: Get.width,
-    height: Get.height,
+    width:MediaQuery.of(context!).size.width,
+    height:MediaQuery.of(context!).size.height,
     decoration: BoxDecoration(
       gradient: LinearGradient(
         colors: [AppColor.primary100, AppColor.primary10],
@@ -914,7 +914,7 @@ Widget listButtons(
     Function(bool)? onChanged}) {
   return Container(
       height: 50.h,
-      width: 335.w,
+      width: Get.width,
       margin: EdgeInsets.symmetric(vertical: 14.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
@@ -995,10 +995,10 @@ Widget cardDesign(
   return GestureDetector(
     onTap: cardCTA,
     child: Container(
-      height: 128.h,
+      height: 130.h,
       width: 335.w,
       margin: EdgeInsets.symmetric(vertical: 16.h),
-      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+      padding: EdgeInsets.symmetric(vertical: 13.h, horizontal: 20.w),
       decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [AppColor.primary100, AppColor.primary10],

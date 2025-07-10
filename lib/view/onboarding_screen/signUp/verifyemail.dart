@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,8 @@ import '../../../utils/mySharedPreference.dart';
 import '../../../utils/reuseable_widget.dart';
 
 class VerifyEmail extends StatefulWidget {
-  const VerifyEmail({super.key});
+  bool isFromSignInPage = false;
+   VerifyEmail({super.key, this.isFromSignInPage=false});
 
   @override
   State<VerifyEmail> createState() => _VerifyEmailState();
@@ -49,6 +51,11 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   bool activateKeyboard = false;
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(widget.isFromSignInPage){
+        _resendVerificationCodeEmail();
+      }
+    });
     MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
     errorController = StreamController<ErrorAnimationType>();
     startTimer();
@@ -93,7 +100,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   String requiredNumber="";
 
   late Timer _timer;
-  int _start = 60;
+  int _start = 120;
   bool isLoading = false;
   bool isWrongOTP = false;
   bool isCompleteOTP=false;
@@ -127,6 +134,8 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
     }
     if (state is ReSentEmailVerification){
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        setState(() {_start=120;});
+        startTimer();
         AppUtils.showInfoSnack(state.response.message, context);
       });
       bloc.initial();
@@ -156,7 +165,7 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
         appIconSize: 60.h,
         appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
         child: Scaffold(
-          body: appBodyDesign(getBody()),
+          body: appBodyDesign(getBody(),context: context),
         ),
       ),
     );
@@ -229,18 +238,16 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
                       Gap(10.w),
                       InkWell(
                         onTap:(){
-                          if(_start ==0){
-                            setState(() {_start=60;});
-                            startTimer();
+                          if(_start <=60){
                             _resendVerificationCodeEmail();
                           }
 
                         },
                         child: Text("Resend",
                           style: CustomTextStyle.kTxtMedium.copyWith(
-                              fontWeight: _start ==0?FontWeight.bold:FontWeight.w400,
+                              fontWeight: _start <=60?FontWeight.bold:FontWeight.w400,
                               fontSize: 14.sp,
-                              color: _start ==0? AppColor.primary100: AppColor.primary40 ),textAlign: TextAlign.center,),
+                              color: _start <=60? AppColor.primary100: AppColor.primary40 ),textAlign: TextAlign.center,),
                       ),
                     ],
                   ),
@@ -336,7 +343,10 @@ class _VerifyEmailState extends State<VerifyEmail> with TickerProviderStateMixin
   }
 
   _verifyEmail(){
-
+    FirebaseAnalytics.instance.logEvent(
+      name: 'verify_email',
+      parameters: {'verify_email': 'clicked'},
+    );
     bloc.add(VerifyUserEmailEvent(bloc.validation.verifiedEmailRequest()));
   }
   _resendVerificationCodeEmail(){

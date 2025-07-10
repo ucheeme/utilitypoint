@@ -94,7 +94,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
             userDetails!.firstName = state.response.firstName;
             userDetails!.lastName = state.response.lastName;
             userDetails!.otherNames = widget.updateUserDetailRequest.otherNames;
-            userDetails!.userName = state.response.userName;
+            userDetails!.userName =loginResponse!.userName;
             userDetails!.email = state.response.email;
             userDetails!.phoneNumber = state.response.phoneNumber;
             userDetails!.country="NG";
@@ -124,7 +124,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                 onTap: (){
                   FocusScope.of(context).unfocus();
                 },
-                child: Scaffold(body: appBodyDesign(getBody(context)))));
+                child: Scaffold(body: appBodyDesign(getBody(context),context: context))));
       },
     );
   }
@@ -146,9 +146,9 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
+              padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 16.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,
                 borderRadius: BorderRadius.only(
@@ -167,7 +167,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                       children: [
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width:MediaQuery.of(context).size.width*0.40,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -188,9 +188,10 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                             ],
                           ),
                         ),
+                        // Gap(20.w),
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width: MediaQuery.of(context).size.width*0.40,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -220,14 +221,14 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                   ),
                   Gap(14.h),
                   SizedBox(
-                    height: 85.h,
+                    height: 88.h,
                     width: Get.width,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          height: 85.h,
-                          width: 157.w,
+                          height: 88.h,
+                         width: MediaQuery.of(context).size.width*0.4,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -248,9 +249,10 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                             ],
                           ),
                         ),
+
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                         width: MediaQuery.of(context).size.width*0.4,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -298,51 +300,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                       ],
                     ),
                   ),
-                  // SizedBox(
-                  //   height: 88.h,
-                  //   child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Text(
-                  //         "Enter BVN",
-                  //         style: CustomTextStyle.kTxtBold.copyWith(
-                  //             color: AppColor.black100,
-                  //             fontWeight: FontWeight.w400,
-                  //             fontSize: 16.sp),
-                  //       ),
-                  //       Gap(2.h),
-                  //       SizedBox(
-                  //           height: 58.h,
-                  //           child: CustomizedTextField(
-                  //             textEditingController: bvnController,
-                  //             keyboardType: TextInputType.number,
-                  //             maxLength: 11,
-                  //             readOnly: enableEdit,
-                  //             surffixWidget: GestureDetector(
-                  //               onTap: (){
-                  //                 setState(() {
-                  //                   maskText=!maskText;
-                  //                 });
-                  //               },
-                  //               child:Padding(
-                  //                 padding:  EdgeInsets.only(right: 16.w),
-                  //                 child:  maskText? Image.asset(
-                  //                   ic_eye_open,
-                  //                   height: 24.h,
-                  //                   width: 24.h,
-                  //                 ):Image.asset(
-                  //                   ic_eye_close,
-                  //                   height: 24.h,
-                  //                   width: 24.h,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //             obsec:  maskText,
-                  //             hintTxt: "22222222222",
-                  //           )),
-                  //     ],
-                  //   ),
-                  // ),
+                  Gap(14.h),
                   SizedBox(
                     height: 88.h,
                     child: Column(
@@ -388,6 +346,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                       ],
                     ),
                   ),
+                  Gap(14.h),
                   SizedBox(
                     height: 88.h,
                     child: Column(
@@ -415,8 +374,7 @@ class _NextpersonalinformationState extends State<Nextpersonalinformation>  with
                       ],
                     ),
                   ),
-                  Gap(40.h),
-
+                  Gap(64.h),
                   !enableEdit?
                   CustomButton(
                     onTap: () {

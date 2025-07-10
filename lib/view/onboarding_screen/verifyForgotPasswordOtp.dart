@@ -130,6 +130,9 @@ class _VerifyforgotpasswordotpState extends State<Verifyforgotpasswordotp>
         if (state is ReSentEmailVerification) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             AppUtils.showInfoSnack(state.response.message, context);
+            setState(() {
+              _start = 120;
+            });
           });
           bloc.initial();
         }
@@ -159,7 +162,7 @@ class _VerifyforgotpasswordotpState extends State<Verifyforgotpasswordotp>
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
             child: Scaffold(
-              body: appBodyDesign(getBody()),
+              body: appBodyDesign(getBody(),context: context),
             ),
           ),
         );
@@ -258,11 +261,8 @@ class _VerifyforgotpasswordotpState extends State<Verifyforgotpasswordotp>
                       Gap(10.w),
                       InkWell(
                         onTap: () {
-                          if (_start == 0) {
-                            setState(() {
-                              _start = 60;
-                            });
-                            startTimer();
+                          if (_start <= 60) {
+
                             _resendVerificationCodeEmail();
                           }
                         },

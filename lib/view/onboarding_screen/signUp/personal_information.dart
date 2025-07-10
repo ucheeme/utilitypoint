@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:utilitypoint/model/response/userDetails.dart';
 import 'package:utilitypoint/utils/app_util.dart';
 import 'package:utilitypoint/utils/pages.dart';
 import 'package:utilitypoint/view/home/home_screen.dart';
+import 'package:utilitypoint/view/splashScreen/splashScreen.dart';
 
 import '../../../bloc/onboarding_new/onBoardingValidator.dart';
 import '../../../bloc/onboarding_new/onboard_new_bloc.dart';
@@ -159,7 +161,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
         loginResponse?.userName =state.response.userName;
         userDetails?.userName=state.response.userName;
         userDetails?.phoneNumber=state.response.phoneNumber;
-
+        MySharedPreference.saveAnyStringValue(key:isUserName,value:state.response.userName);
         print("This is the username: ${state.response.userName}");
         print("This is the phone: ${state.response.phoneNumber}");
         Get.toNamed(Pages.transactionPin);
@@ -185,7 +187,7 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
         appIconSize: 60.h,
         appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
         child: Scaffold(
-          body: appBodyDesign(getBody()),
+          body: appBodyDesign(getBody(),context: context),
         ),
       ),
     );
@@ -422,7 +424,10 @@ class _PersonalInformationState extends State<PersonalInformation>  with TickerP
     );
   }
   _createUserInfo(){
-
+    FirebaseAnalytics.instance.logEvent(
+      name: 'create_user_info',
+      parameters: {'create_user_info': 'clicked'},
+    );
     bloc.add(SetUserInfoEvent(bloc.validation.userInfo()));
   }
 }

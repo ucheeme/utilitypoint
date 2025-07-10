@@ -154,7 +154,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
                 onTap: () {
                   FocusScope.of(context).unfocus();
                 },
-                child: Scaffold(body: appBodyDesign(getBody()))));
+                child: Scaffold(body: appBodyDesign(getBody(),context: context))));
       },
     );
   }
@@ -175,7 +175,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+               height: Get.height + 100.h,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -259,7 +259,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
                                     networkName.toLowerCase()) {
                                   setState(() {
                                     networkValidation =
-                                        "The number you entered is not an $networkName number, but a $networkType";
+                                        "The number you entered is not a/an $networkName number, if you are of the number you can proceed";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
@@ -291,7 +291,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
                                     networkName.toLowerCase()) {
                                   setState(() {
                                     networkValidation =
-                                        "The number you entered is not an $networkName number, but a $networkType";
+                                        "The number you entered is not a/an $networkName number, if you are of the number you can proceed";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
@@ -326,7 +326,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
                                     networkName.toLowerCase()) {
                                   setState(() {
                                     networkValidation =
-                                        "The number you entered is not an $networkName number, but a $networkType";
+                                        "The number you entered is not a/an $networkName number, if you are of the number you can proceed";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
@@ -654,9 +654,7 @@ class _BuyBulkDataState extends State<BuyBulkData>
       isLoadingContact = true;
     });
 
-    final PermissionStatus permissionStatus =
-        await Permission.contacts.request();
-    if (permissionStatus == PermissionStatus.granted) {
+    if (await FlutterContacts.requestPermission()) {
       final Contact? contact = await FlutterContacts.openExternalPick();
       if (contact != null) {
         setState(() {
@@ -697,8 +695,8 @@ class _BuyBulkDataState extends State<BuyBulkData>
               child: Text("OK"),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                await FlutterContacts.requestPermission();
               },
               child: Text("Grant Permission"),
             )

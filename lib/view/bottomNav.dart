@@ -60,7 +60,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
-        height: 83.h,
+        height: 93.h,
         color: Colors.white,
         shape: const CircularNotchedRectangle(),
         notchMargin: 10.r,
@@ -135,7 +135,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
     return GestureDetector(
         onTap: onTap,
         child: SizedBox(
-          height: 47.4.h,
+          height: 49.4.h,
           width: 78.w,
           child: ColoredBox(
             color: Colors.transparent,

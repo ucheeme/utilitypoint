@@ -128,7 +128,7 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
                 //     height: 58.h,
                 //   ),
                 // ),
-                body: appBodyDesign(getBody())));
+                body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -150,7 +150,8 @@ class _BuySingleAirtimeState extends State<BuySingleAirtime>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
               decoration: BoxDecoration(

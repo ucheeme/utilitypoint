@@ -13,26 +13,29 @@ class DefaultApiResponse {
   String message;
   dynamic data;
   dynamic errors;
-
+  dynamic code;
   DefaultApiResponse({
      this.status,
     required this.message,
      this.data,
-    this.errors
+    this.errors,
+    this.code
   });
 
   factory DefaultApiResponse.fromJson(Map<String, dynamic> json) => DefaultApiResponse(
     status: json["status"],
     message: json["message"],
     data: json["data"],
-    errors: json["errors"]
+    errors: json["errors"],
+    code: json["code"]
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "message": message,
     "data": data,
-    "errors":errors
+    "errors":errors,
+    "code":code
   };
 }
 

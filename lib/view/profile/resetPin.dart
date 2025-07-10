@@ -102,7 +102,7 @@ class _ResetTransactionPinState extends State<ResetTransactionPin>with TickerPro
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },

@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: appBodyDesign(getBody()));
+    return Scaffold(body: appBodyDesign(getBody(),context: context));
   }
 
   Widget getBody() {
@@ -68,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(

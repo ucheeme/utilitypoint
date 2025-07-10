@@ -31,7 +31,8 @@ class _NoticeBottomSheetState extends State<NoticeBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return  Container(
-      height:widget.size ?? 376.h,width: double.infinity,
+      height:widget.size ?? 376.h,
+      width: MediaQuery.of(context).size.width,
       color: AppColor.primary20,
       padding: EdgeInsets.symmetric(horizontal: 19.w,vertical: 19.h),
       child: Column(

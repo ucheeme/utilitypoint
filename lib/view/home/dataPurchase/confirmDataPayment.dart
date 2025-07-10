@@ -63,7 +63,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
           WidgetsBinding.instance.addPostFrameCallback((_) {
            // Future.delayed(Duration.zero, () {
               AppUtils.showSnack(
-                  "${state.errorResponse.message } ${state.errorResponse.data??""}", context);
+                  "${state.errorResponse.message }", context);
            // });
           });
           bloc.initial();
@@ -93,7 +93,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -115,7 +115,7 @@ class _ConfirmDataPaymentState extends State<ConfirmDataPayment>with TickerProvi
         SlideTransition(
           position: _animationManager.slideAnimation,
           child: Container(
-            height: 668.72.h,
+            height:MediaQuery.of(context).size.height,
             width: Get.width,
             padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
             decoration: BoxDecoration(

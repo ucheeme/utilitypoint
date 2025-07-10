@@ -11,10 +11,10 @@ String userVirtualCardsToJson(List<UserVirtualCards> data) => json.encode(List<d
 class UserVirtualCards {
   String id;
   String userId;
-  String postalCode;
-  String country;
-  String state;
-  String city;
+  dynamic postalCode;
+  dynamic country;
+  dynamic state;
+  dynamic city;
   String cardCcv;
   String cardExpiry;
   String cardNumber;
@@ -132,8 +132,8 @@ class User {
   String id;
   String bvn;
   String identityImage;
-  String identityNumber;
-  String identityType;
+  String? identityNumber;
+  String? identityType;
   String photo;
   String identificationNumber;
   String identificationType;
@@ -177,7 +177,7 @@ class User {
     required this.id,
     required this.bvn,
     required this.identityImage,
-    required this.identityNumber,
+     this.identityNumber,
     required this.identityType,
     required this.photo,
     required this.identificationNumber,
@@ -223,7 +223,7 @@ class User {
     id: json["id"],
     bvn: json["bvn"],
     identityImage: json["identity_image"],
-    identityNumber: json["identity_number"],
+    identityNumber:json["identity_number"],
     identityType: json["identity_type"],
     photo: json["photo"],
     identificationNumber: json["identification_number"],

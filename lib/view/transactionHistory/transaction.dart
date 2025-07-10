@@ -50,7 +50,7 @@ class _TransactionScreenState extends State<TransactionScreen>
   late ProductBloc bloc;
   List<ProductTransactionList> transactionList = [];
   List<ProductTransactionList> nairaTransactionList = [];
-  List<ProductTransactionList> dollarTransactionList = [];
+  List<NairaTransactionList> dollarTransactionList = [];
   TextEditingController searchController = TextEditingController();
   DateTime currentDateTime = DateTime.now();
 
@@ -132,7 +132,16 @@ class _TransactionScreenState extends State<TransactionScreen>
           });
           bloc.initial();
         }
-
+        if (state is AllDollarTransactions) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            dollarTransactionList.clear();
+            List<NairaTransactionList> value =state.response;
+            for (var item in value) {
+              dollarTransactionList.add(item);
+            }
+          });
+          bloc.initial();
+        }
         if (state is AirtimeDataTransactionHistorySuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             tempAllTransactionList = state.response;
@@ -141,7 +150,7 @@ class _TransactionScreenState extends State<TransactionScreen>
             }
             // transactionList=state.response;
             tempTransactionList = state.response;
-            dollarTransactionList = tempTransactionList.where((element)=>element.walletCategory.toLowerCase()=="dollar_wallet").toList();
+           // dollarTransactionList = tempTransactionList.where((element)=>element.walletCategory.toLowerCase()=="dollar_wallet").toList();
             nairaTransactionList = tempTransactionList.where((element)=>element.walletCategory.toLowerCase()=="naira_wallet").toList();
             // tempUserTransactionList = transactionList;
             // bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
@@ -160,7 +169,7 @@ class _TransactionScreenState extends State<TransactionScreen>
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -187,7 +196,7 @@ class _TransactionScreenState extends State<TransactionScreen>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height:MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 14.w),
               decoration: BoxDecoration(
@@ -298,7 +307,7 @@ class _TransactionScreenState extends State<TransactionScreen>
                               isAll = false;
                               isDollarTransactions = false;
                               selectionChoice = 1;
-                              // transactionList= tempUserTransactionList.where((element)=>element.isProduct==false && element.walletCategory=="dollar_wallet").toList();
+                              transactionList= tempTransactionList.where((element)=>element.walletCategory=="naira_wallet").toList();
                             });
                             // bloc.add(GetAllNairaWalletTransactionsEvent(GetProductRequest(
                             //   userId: loginResponse!.id,
@@ -315,8 +324,16 @@ class _TransactionScreenState extends State<TransactionScreen>
                               isNairaTransactions = false;
                               isAll = false;
                               selectionChoice = 2;
-                              // transactionList= tempUserTransactionList.where((element)=>element.isProduct==false && element.walletCategory=="dollar_wallet").toList();
+                            // transactionList= tempTransactionList.where((element)=>element.walletCategory=="dollar_wallet").toList();
                             });
+                            bloc.add(
+                                GetAllDollarWalletTransactionsEvent(GetProductRequest(
+                                  userId: loginResponse!.id,
+                                  startDate:
+                                  "${currentDateTime.year}-${currentDateTime.month}-01",
+                                  endDate:
+                                  "${currentDateTime.year}-${currentDateTime.month}-${_getLastDayOfTheMonth()}",
+                                )));
                           }),
                         ],
                       ),
@@ -378,19 +395,19 @@ class _TransactionScreenState extends State<TransactionScreen>
           padding: EdgeInsets.only(top: 10.h),
           itemCount: dollarTransactionList.length,
           itemBuilder: (context, index) {
-            ProductTransactionList element = dollarTransactionList[index];
+            NairaTransactionList element = dollarTransactionList[index];
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
-                    print("Transaction List: $element");
-                    Get.to(TransactionReceiptScreen(
-                      productTransactionList: element,
-                    ));
+                    print("Transaction List 234: $element");
+                    // Get.to(TransactionReceiptScreen(
+                    //   productTransactionList: element,
+                    // ));
                   },
-                  child: NairaTransactionWidgetDesgin(
+                  child:DollarTransactionWidgetDesgin(
                     transactionList: element,
-                  )),
+                  ),),
             );
           });
     } else {
@@ -403,7 +420,7 @@ class _TransactionScreenState extends State<TransactionScreen>
               padding: EdgeInsets.only(bottom: 12.h),
               child: GestureDetector(
                   onTap: () {
-                    print("Transaction List: $element");
+                   // print("Transaction List: $element");
                     Get.to(TransactionReceiptScreen(
                       productTransactionList: element,
                     ));

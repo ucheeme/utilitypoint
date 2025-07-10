@@ -183,7 +183,7 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -205,7 +205,7 @@ class _FundWalletScreeState extends State<FundWalletScreen>  with TickerProvider
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height:MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(

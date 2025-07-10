@@ -1,6 +1,8 @@
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -50,7 +52,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
       bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
       bool isAuthenticated = false;
 
-      if (canCheckBiometrics) {
+      if (canCheckBiometrics&&userNameBio.isNotEmpty&&passwordBio.isNotEmpty) {
         isAuthenticated = await _localAuth.authenticate(
           localizedReason: 'Authenticate to access the app',
           options: AuthenticationOptions(
@@ -62,7 +64,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         _isAuthenticated = isAuthenticated;
       });
       if(_isAuthenticated){
-        Get.back();
+        // Get.back();
         bloc.add(LoginUserEvent(bloc.validation.loginUserRequestBio()));
       }
 
@@ -72,13 +74,14 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   }
   @override
   void initState() {
+    _authenticate();
     WidgetsBinding.instance.addPostFrameCallback((_){
       setState(() {
         userName.text = userNameBio;
       });
-      if(useBiometeric){
-        _showBottomSheet(context);
-      }
+      // if(useBiometeric){
+      //   _showBottomSheet(context);
+      // }
       bloc.validation.setLoginUserName(userNameBio);
     });
     super.initState();
@@ -95,7 +98,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding:  EdgeInsets.all(20.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -161,8 +164,10 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         accessToken = state.response.token;
         loginResponse = state.response;
         verificationStatus=int.parse(loginResponse!.canDoCardTransaction);
+    // Get.offAllNamed(Pages.bottomNav, predicate: (route) => false);
         if(state.response.requireOtp==1){
-          Get.toNamed(Pages.twoFactorAuthentication);
+          _showBottomSheet2(context,state.response.emailOtp.toString()??"");
+          // Get.toNamed(Pages.twoFactorAuthentication);
         }else{
           // Get.toNamed(Pages.bottomNav);
           Get.offAllNamed(Pages.bottomNav, predicate: (route) => false);
@@ -180,7 +185,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
       appIconSize: 60.h,
       appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
       child: Scaffold(
-        body: appBodyDesign(getBody()),
+        body: appBodyDesign(getBody(),context: context),
       ),
     );
   },
@@ -188,199 +193,213 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
   }
   getBody(){
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          SlideTransition(
-            position: _animationManager.slideAnimationTop,
-            child: Padding(
-              padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
-              child: SizedBox(
-                  height: 52.h,
-                  child: CustomAppBar(title: "Welcome back")),
-            ),
-          ),
-          Gap(20.h),
-          SlideTransition(
-            position: _animationManager.slideAnimation,
-            child: Container(
-              height: 668.72.h,
-              padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
-              decoration: BoxDecoration(
-                color: AppColor.primary20,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: ListView(
+          children: [
+            SlideTransition(
+              position: _animationManager.slideAnimationTop,
+              child: Padding(
+                padding:  EdgeInsets.only(top: 52.h,left: 20.w,bottom: 17.h),
+                child: SizedBox(
+                    height: 52.h,
+                    child: CustomAppBar(title: "Welcome back")),
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
-                        color: AppColor.black100,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16.sp
-                    ),),
-                    height8,
-                    StreamBuilder<Object>(
-                        stream: bloc.validation.loginUserName,
+            ),
+            Gap(20.h),
+            SlideTransition(
+              position: _animationManager.slideAnimation,
+              child: Container(
+                height: Get.height,
+                padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
+                decoration: BoxDecoration(
+                  color: AppColor.primary20,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r),topRight: Radius.circular(30.r)),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Username", style: CustomTextStyle.kTxtBold.copyWith(
+                          color: AppColor.black100,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16.sp
+                      ),),
+                      height8,
+                      StreamBuilder<Object>(
+                          stream: bloc.validation.loginUserName,
+                          builder: (context, snapshot) {
+                            return CustomizedTextField(
+                              textEditingController: userName,
+                              error: snapshot.error?.toString(),
+                              keyboardType: TextInputType.name,
+                              hintTxt: "Enter username/email",
+                              isTouched: bloc.validation.isLoginUserNameSelected,
+                              onTap: (){
+                                setState(() {
+
+                                  bloc.validation.isLoginUserNameSelected=!bloc.validation.isLoginUserNameSelected;
+                                });
+                              },
+                              onChanged:  bloc.validation.setLoginUserName,
+                            );
+                          }
+                      ),
+                      height16,
+                      Text("Password", style: CustomTextStyle.kTxtMedium.copyWith(
+                          color: AppColor.black100,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp
+                      ),),
+                      height8,
+                      StreamBuilder<Object>(
+                        stream: bloc.validation.loginPassword,
                         builder: (context, snapshot) {
                           return CustomizedTextField(
-                            textEditingController: userName,
+                            textEditingController:userPassword ,
                             error: snapshot.error?.toString(),
-                            keyboardType: TextInputType.name,
-                            hintTxt: "Enter username/email",
-                            isTouched: bloc.validation.isLoginUserNameSelected,
-                            onTap: (){
-                              setState(() {
-
-                                bloc.validation.isLoginUserNameSelected=!bloc.validation.isLoginUserNameSelected;
-                              });
-                            },
-                            onChanged:  bloc.validation.setLoginUserName,
+                            onChanged: bloc.validation.setLoginPassword,
+                            hintTxt: "Enter password",
+                            surffixWidget: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  passwordVisible=!passwordVisible;
+                                });
+                              },
+                              child:Padding(
+                                padding:  EdgeInsets.only(right: 16.w),
+                                child:  passwordVisible? Image.asset(
+                                  ic_eye_open,
+                                  height: 24.h,
+                                  width: 24.h,
+                                ):Image.asset(
+                                  ic_eye_close,
+                                  height: 24.h,
+                                  width: 24.h,
+                                ),
+                              ),
+                            ),
+                            obsec:  passwordVisible,
+                           isTouched: bloc.validation.isLoginPasswordSelected,
                           );
                         }
-                    ),
-                    height16,
-                    Text("Password", style: CustomTextStyle.kTxtMedium.copyWith(
-                        color: AppColor.black100,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp
-                    ),),
-                    height8,
-                    StreamBuilder<Object>(
-                      stream: bloc.validation.loginPassword,
-                      builder: (context, snapshot) {
-                        return CustomizedTextField(
-                          textEditingController:userPassword ,
-                          error: snapshot.error?.toString(),
-                          onChanged: bloc.validation.setLoginPassword,
-                          hintTxt: "Enter password",
-                          surffixWidget: GestureDetector(
-                            onTap: (){
-                              setState(() {
-                                passwordVisible=!passwordVisible;
-                              });
-                            },
-                            child:Padding(
-                              padding:  EdgeInsets.only(right: 16.w),
-                              child:  passwordVisible? Image.asset(
-                                ic_eye_open,
-                                height: 24.h,
-                                width: 24.h,
-                              ):Image.asset(
-                                ic_eye_close,
-                                height: 24.h,
-                                width: 24.h,
-                              ),
-                            ),
-                          ),
-                          obsec:  passwordVisible,
-                         isTouched: bloc.validation.isLoginPasswordSelected,
-                        );
-                      }
-                    ),
-                    height35,
-                    Row(
-                      children: [
-                        StreamBuilder<Object>(
-                            stream: bloc.validation.loginCompleteRegistrationFormValidation,
-                            builder: (context, snapshot) {
-                              return CustomButton(
-                                width:useBiometeric ? 250.w: 316.w,
-                                onTap: (){
-                                  if (snapshot.hasData==true && snapshot.data!=null) {
-                                    MySharedPreference.saveAnyStringValue(key:isUserName,value:userName.text);
-                                    MySharedPreference.saveAnyStringValue(key:isUserPassword,value:userPassword.text);
-                                    bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
-                                    //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
-                                  }
-                                },
-                                buttonText: "Log In",
-                                textColor: AppColor.black0,
-                                buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
-                                AppColor.primary100 :AppColor.primary40,
-                                borderRadius: 8.r,
-                                height: 58.h,
-                                textfontSize:16.sp,);
-                            }
-                        ),
-                        Gap(10.w),
-                        Visibility(
-                          visible: useBiometeric,
-                          child: GestureDetector(
-                            onTap: (){
-                              _authenticate();
-                            },
-                            child: Container(
-                              height: 58.h,
-                              width: 58.w,
-
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color:  AppColor.primary100,
-                              ),
-                              child:  Icon(
-                                Icons.fingerprint,
-                                size: 50,
-                                color: AppColor.black0,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-
-                    height10,
-                    Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 24.w),
-                      child: CustomButton(
-                        height:58.h,
-                        onTap: (){
-                          Get.toNamed(Pages.forgotPassword);
-                        }, buttonText:"Forgot Password?",
-                        textColor:AppColor.primary100 ,
-                        buttonColor: Colors.transparent,borderRadius: 8.r,),
-                    ),
-
-                    Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Row(
+                      ),
+                      height35,
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account?",
-                            style: CustomTextStyle.kTxtMedium.copyWith(
-                              color: AppColor.black100,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13.sp
-                            ),
+                          StreamBuilder<Object>(
+                              stream: bloc.validation.loginCompleteRegistrationFormValidation,
+                              builder: (context, snapshot) {
+                                return Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal: 13.w),
+                                  child: CustomButton(
+                                   // width:useBiometeric ? 250.w: 316.w,
+                                    width:useBiometeric ? Get.width*0.5: Get.width*0.8,
+                                    onTap: (){
+                                      if (snapshot.hasData==true && snapshot.data!=null) {
+                                        FirebaseAnalytics.instance.logEvent(
+                                          name: 'loginButton',
+                                          parameters: {'loginButton': 'clicked'},
+                                        );
+                                        MySharedPreference.saveAnyStringValue(key:isUserName,value:userName.text);
+                                        MySharedPreference.saveAnyStringValue(key:isUserPassword,value:userPassword.text);
+                                        bloc.add(LoginUserEvent(bloc.validation.loginUserRequest()));
+                                        //AppUtils.showInfoSnackFromBottom2("Please no field should be empty", context);
+                                      }
+                                    },
+                                    buttonText: "Log In",
+                                    textColor: AppColor.black0,
+                                    buttonColor: (snapshot.hasData==true && snapshot.data!=null)?
+                                    AppColor.primary100 :AppColor.primary40,
+                                    borderRadius: 8.r,
+                                    height: 58.h,
+                                    textfontSize:16.sp,),
+                                );
+                              }
                           ),
-                          Gap(4.w),
-                          CustomButton(
-                            height:58.h,
-                            onTap: (){
-                             Get.to(SignUpCreateAccountScreen());
-                            }, buttonText:"SignUp",
-                            textfontSize: 13.sp,
-                            textColor:AppColor.primary100 ,
-                            buttonColor: Colors.transparent,borderRadius: 8.r,),
+                          Visibility(
+                              visible: useBiometeric,
+                              child: Gap(10.w)),
+                          Visibility(
+                            visible: useBiometeric,
+                            child: GestureDetector(
+                              onTap: (){
+                                _authenticate();
+                              },
+                              child: Container(
+                                height: 58.h,
+                                width: 58.w,
 
-
-
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  color:  AppColor.primary100,
+                                ),
+                                child:  Icon(
+                                  Icons.fingerprint,
+                                  size: 50,
+                                  color: AppColor.black0,
+                                ),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                    ),
-                   Gap(60.h),
-                    Center(
-                      child: GestureDetector(onTap: (){
-                        _openSupportNoticeSheet();
-                      },
-                        child: resetText("having issues?", " Contact Us"),
+
+                      height10,
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                        child: CustomButton(
+                          height:58.h,
+                          onTap: (){
+                            Get.toNamed(Pages.forgotPassword);
+                          }, buttonText:"Forgot Password?",
+                          textColor:AppColor.primary100 ,
+                          buttonColor: Colors.transparent,borderRadius: 8.r,),
                       ),
-                    ),
-                  ],
+
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Don't have an account?",
+                              style: CustomTextStyle.kTxtMedium.copyWith(
+                                color: AppColor.black100,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.sp
+                              ),
+                            ),
+                            Gap(4.w),
+                            CustomButton(
+                              height:58.h,
+                              onTap: (){
+                               Get.to(SignUpCreateAccountScreen());
+                              }, buttonText:"SignUp",
+                              textfontSize: 13.sp,
+                              textColor:AppColor.primary100 ,
+                              buttonColor: Colors.transparent,borderRadius: 8.r,),
+
+
+
+                          ],
+                        ),
+                      ),
+                     Gap(60.h),
+                      Center(
+                        child: GestureDetector(onTap: (){
+                          _openSupportNoticeSheet();
+                        },
+                          child: resetText("having issues?", " Contact Us"),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -410,7 +429,70 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
         ],
       ),);
   }
+  void _showBottomSheet2(BuildContext context,String title,) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (context) {
+        String textToCopy = "This is your otp: $title";
+        bool isCopied = false;
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: 200.h,
+            child: Column(
+              children: [
+                // Text(
+                //   "Please click on the copy icon first before done",
+                //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        textToCopy,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.copy),
+                      onPressed: () {
 
+                        Clipboard.setData(ClipboardData(text: textToCopy));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Copied to clipboard!")),
+                        );
+                        isCopied = true;
+                      },
+                    ),
+                  ],
+                ),
+                Spacer(),
+                CustomButton(
+                  height:58.h,
+                  onTap: () async {
+                    if(isCopied){
+                      Get.back();
+                      Get.back();
+                      Get.toNamed(Pages.twoFactorAuthentication);
+                    }else{
+                      AppUtils.showInfoSnack("Please copy the otp first", context);
+                    }
+
+                  }, buttonText:"Done",
+                  textfontSize: 13.sp,
+                  textColor:AppColor.black0 ,
+                  buttonColor: AppColor.primary100,borderRadius: 8.r,),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   _openSupportNoticeSheet()async{
     var result= await openBottomSheet22( context, const SupportBottomSheet(title: "Contact us", body: "send us a mail:utilitypointsolution@gmail.com\ncall us: +2347073459839\nVisit us: Head Office",));
     if(result!= null){

@@ -61,7 +61,7 @@ class _ConvertScreenState extends State<ConvertScreen>
 
       }
       //if(currencyConversionRateFees==null){
-        bloc.add(GetExchangeRateEvent());
+        bloc.add(GetExchangeRateEvent2());
       // }else{
       //   exchangeRate = currencyConversionRateFees?.nairaRate??"1700";
       //   amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
@@ -132,8 +132,9 @@ class _ConvertScreenState extends State<ConvertScreen>
          bloc.initial();
         }
 
-        if (state is ExchangeRate){
+        if (state is ExchangeRate2){
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            print("hhhhhhhhhh");
             currencyConversionRateFees =state.response;
            exchangeRate = state.response.nairaRate;
            amountConvertedController.text = (double.parse(widget.amountToConvert!)/double.parse(exchangeRate)).toString();
@@ -154,7 +155,7 @@ class _ConvertScreenState extends State<ConvertScreen>
 
             },
             child: Scaffold(
-              body: appBodyDesign(getBody()),
+              body: appBodyDesign(getBody(),context: context),
             ),
           ),
         );
@@ -178,7 +179,7 @@ class _ConvertScreenState extends State<ConvertScreen>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -456,7 +457,7 @@ class _ConvertScreenState extends State<ConvertScreen>
                             );
                           }
                         }else if(currencyConvertingFrom =="NGN"){
-                         if(double.parse(amountToConvertController.text.replaceAll(",", ""))>double.parse(userDetails?.nairaWallet??"0")){
+                         if(double.parse(amountToConvertController.text.replaceAll(",", ""))>double.parse(walletBalanceResponse.nairaWallet??"0")){
                            AppUtils.showInfoSnack("Insufficient Balance", context);
 
                          }else{

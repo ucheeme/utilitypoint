@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "618302226865",
+    "project_id": "utilitypoint-2",
+    "storage_bucket": "utilitypoint-2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618302226865:android:7d1ab260f057666615bd90",
+        "android_client_info": {
+          "package_name": "com.utilitypoint.mobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs68o-5rEqPbG5dUr3hRz3MZ8xB3uU1Ao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

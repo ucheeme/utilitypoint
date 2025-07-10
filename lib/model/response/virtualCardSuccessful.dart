@@ -97,7 +97,9 @@ class Card {
     number: json["number"],
     expiry: json["expiry"],
     ccv: json["ccv"],
-    billing: Billing.fromJson(json["billing"]),
+    billing: json["billing"] is Map<String, dynamic>
+        ? Billing.fromJson(json["billing"])
+        : Billing.empty(json["billing"]),
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );
@@ -141,6 +143,14 @@ class Billing {
     state: json["state"],
     country: json["country"],
     postalCode: json["postal_code"],
+  );
+
+  factory Billing.empty(dynamic billing) => Billing(
+    street: billing?.toString() ?? '',
+    city: '',
+    state: '',
+    country: '',
+    postalCode: '',
   );
 
   Map<String, dynamic> toJson() => {

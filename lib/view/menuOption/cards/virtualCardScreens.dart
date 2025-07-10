@@ -131,7 +131,7 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -154,7 +154,8 @@ class _VirtualCardsState extends State<VirtualCards> with TickerProviderStateMix
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h,horizontal: 24.w),
               decoration: BoxDecoration(
@@ -312,7 +313,7 @@ class _AllCardsState extends State<AllCards> with TickerProviderStateMixin {
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -335,7 +336,8 @@ class _AllCardsState extends State<AllCards> with TickerProviderStateMixin {
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h,horizontal: 24.w),
               decoration: BoxDecoration(

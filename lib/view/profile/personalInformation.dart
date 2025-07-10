@@ -111,7 +111,7 @@ class _PersonInformationState extends State<PersonInformation>
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -133,7 +133,7 @@ class _PersonInformationState extends State<PersonInformation>
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height:MediaQuery.of(context).size.height-150.h,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -184,7 +184,7 @@ class _PersonInformationState extends State<PersonInformation>
                             shape: BoxShape.circle,
                             border: Border.all(
                                 color: AppColor.primary100, width: 1.5.w),
-                            image: DecorationImage(image: imageValue()),
+                            image: DecorationImage(image: imageValue(),fit: BoxFit.cover),
                           ),
 
                         ),
@@ -215,7 +215,7 @@ class _PersonInformationState extends State<PersonInformation>
                       children: [
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width: MediaQuery.of(context).size.width*0.45,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -238,7 +238,7 @@ class _PersonInformationState extends State<PersonInformation>
                         ),
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width: MediaQuery.of(context).size.width*0.45,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -271,7 +271,7 @@ class _PersonInformationState extends State<PersonInformation>
                       children: [
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width: MediaQuery.of(context).size.width*0.45,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -294,7 +294,7 @@ class _PersonInformationState extends State<PersonInformation>
                         ),
                         SizedBox(
                           height: 88.h,
-                          width: 157.w,
+                          width: MediaQuery.of(context).size.width*0.45,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -341,6 +341,7 @@ class _PersonInformationState extends State<PersonInformation>
                       ],
                     ),
                   ),
+                  Gap(14.h),
                   SizedBox(
                     height: 88.h,
                     child: Column(
@@ -370,7 +371,7 @@ class _PersonInformationState extends State<PersonInformation>
                       ],
                     ),
                   ),
-                  Gap(24.h),
+                 Spacer(),
                   CustomButton(
                     onTap: () {
 
@@ -404,11 +405,11 @@ class _PersonInformationState extends State<PersonInformation>
 File? selectedImage;
   ImageProvider<Object> imageValue() {
     if(userDetails!.profilePic != null&&selectedImage ==null){
-      return  Image.network(userDetails!.profilePic!,fit: BoxFit.cover,).image;
+      return  NetworkImage(userDetails!.profilePic!,);
     }else if(selectedImage != null){
-      return Image.file(selectedImage!).image;
+      return FileImage(selectedImage!);
     }else{
-      return Image.asset("assets/image/images_png/tempImage.png").image;
+      return const AssetImage("assets/image/images_png/tempImage.png");
     }
   }
   //

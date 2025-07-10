@@ -50,7 +50,10 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+
       if(widget.isTransactionScreen==null || widget.isTransactionScreen==false){
+
+        print("This is first entry 0$pin");
         if(useBiometeric){
 
         _isAuthenticated =await  authenticate(_localAuth);
@@ -58,12 +61,16 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
           _isAuthenticated=_isAuthenticated;
         });
         if(_isAuthenticated){
-           pin =  MySharedPreference.getStringValue("transactionPin");
-          if(pin.isEmpty){
-            bloc.add(GetSingleUserDetailEvent(loginResponse?.id??""));
-          }else{
-            Get.back(result:  [true,pin]);
-          }
+          bloc.add(GetSingleUserDetailEvent(loginResponse?.id??""));
+           //pin =  MySharedPreference.getStringValue("transactionPin");
+
+          // if(pin.isEmpty){
+          //   print("This is empty $pin");
+          //   bloc.add(GetSingleUserDetailEvent(loginResponse?.id??""));
+          // }else{
+          //   print("This is empty3 $pin");
+          //   Get.back(result:  [true,pin]);
+          // }
 
         }
         }else{
@@ -128,9 +135,11 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
         if(state is SingleUserDetailsState){
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             pin= state.response.pin;
+            print("This is the pin $pin");
             MySharedPreference.saveAnyStringValue(key:"transactionPin", value:pin);
             Get.back(result:  [true,pin]);
           });
+          bloc.initial();
         }
         return OverlayLoaderWithAppIcon(
           isLoading:state is OnboardingIsLoading,
@@ -139,7 +148,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
           appIconSize: 60.h,
           appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
           child: Scaffold(
-            body: appBodyDesign(getBody()),
+            body: appBodyDesign(getBody(),context: context),
           ),
         );
       },
@@ -164,7 +173,7 @@ class _TransactionPinState extends State<TransactionPin>with TickerProviderState
           SlideTransition(
             position: _slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height:MediaQuery.of(context).size.height,
               padding: EdgeInsets.symmetric(vertical: 36.h,horizontal: 24.w),
               decoration: BoxDecoration(
                 color: AppColor.primary20,

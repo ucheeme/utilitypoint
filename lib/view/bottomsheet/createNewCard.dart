@@ -278,8 +278,8 @@ class _CreateNewCardScreenState extends State<CreateNewCardScreen> {
                             onTap: () async {
                               // Navigator.pop(context);
                               if (snapshot.hasData) {
-                                if (widget.isNaira == false && double.parse(userDetails!.dollarWallet) == 0) {
-                                  if((double.parse(userDetails!.nairaWallet) != 0))
+                                if (widget.isNaira == false && double.parse(walletBalanceResponse!.dollarWallet) == 0) {
+                                  if((double.parse(walletBalanceResponse!.nairaWallet) != 0))
                                   {
                                     Get.to(() => ConvertScreen(
                                         amountToConvert: amountController.text,

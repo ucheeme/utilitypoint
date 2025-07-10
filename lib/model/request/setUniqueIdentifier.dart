@@ -34,6 +34,6 @@ class SetUniqueIdentifierRequest {
     "user_id": userId,
     "user_name": userName,
     "phone_number": phoneNumber,
-    "device_id": idDevice,
+    "device_id": deviceId,
   };
 }

@@ -15,7 +15,7 @@ class UniqueIdentifierResponse {
   String userName;
   String email;
   String phoneNumber;
-  String bvn;
+  String? bvn;
   dynamic addressStreet;
   dynamic dob;
   dynamic city;
@@ -48,7 +48,7 @@ class UniqueIdentifierResponse {
     required this.userName,
     required this.email,
     required this.phoneNumber,
-    required this.bvn,
+    this.bvn,
     required this.addressStreet,
     required this.dob,
     required this.city,

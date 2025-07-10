@@ -75,6 +75,12 @@ class ExchangeRate extends VirtualcardState{
   @override
   List<Object?> get props => [response];
 }
+class ExchangeRate2 extends VirtualcardState{
+  final FetchCurrencyConversionRate response;
+  const ExchangeRate2(this.response);
+  @override
+  List<Object?> get props => [response];
+}
 
 class SuccessfullyBoughtDollar extends VirtualcardState{
   final DefaultApiResponse response;

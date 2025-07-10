@@ -20,6 +20,7 @@ import '../model/response/userDetailsInfo.dart';
 import '../model/response/userInfoUpdated.dart';
 import '../services/api_service.dart';
 import '../services/appUrl.dart';
+import '../utils/device_util.dart';
 
 class OnboardingRepository extends DefaultRepository {
   Future<Object> createUser(request) async {
@@ -45,7 +46,7 @@ class OnboardingRepository extends DefaultRepository {
   Future<Object> verifyUserEmail(VerifiedEmailRequest request) async {
     var response = await postRequest(null,
         "${AppUrls.emailVerification}?user_id=${request.userId}&otp=${request
-            .otp}",
+            .otp}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -64,7 +65,7 @@ class OnboardingRepository extends DefaultRepository {
 
   Future<Object> resendVerificationCode(VerifiedEmailRequest request) async {
     var response = await postRequest(null,
-        "${AppUrls.resendEmailVerification}?user_id=${request.userId}",
+        "${AppUrls.resendEmailVerification}?user_id=${request.userId}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -85,7 +86,7 @@ class OnboardingRepository extends DefaultRepository {
       VerifiedEmailRequest request) async {
     var response = await postRequest(null,
         "${AppUrls.resendCompleteTwoFactorAuthentication}?user_id=${request
-            .userId}",
+            .userId}&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -212,7 +213,7 @@ class OnboardingRepository extends DefaultRepository {
 
   Future<Object> forgotPassword(String request) async {
     var response = await postRequest(
-        null, "${AppUrls.forgotPassword}?email=$request",
+        null, "${AppUrls.forgotPassword}?email=$request&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
@@ -251,7 +252,7 @@ class OnboardingRepository extends DefaultRepository {
 
   Future<Object> getSingleUserDetails(String request) async {
     var response = await postRequest(
-        null, "${AppUrls.getSingleUserDetails}?user_id=$request",
+        null, "${AppUrls.getSingleUserDetails}?user_id=$request&device_id=$deviceId",
         true, HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {

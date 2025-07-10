@@ -272,9 +272,14 @@ class Productsrepository extends DefaultRepository {
     var r = handleSuccessResponse(response);
     if (r is DefaultApiResponse) {
       if (r.status == true) {
-        FetchCurrencyConversionRate res =
-        fetchCurrenctConversionRateFromJson(json.encode(r.data));
-        return res;
+        if(r.data != null){
+          FetchCurrencyConversionRate res =
+          fetchCurrenctConversionRateFromJson(json.encode(r.data));
+          return res;
+        }else{
+          return r;
+        }
+
       } else {
         return r;
       }

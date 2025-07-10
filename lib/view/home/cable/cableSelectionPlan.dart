@@ -105,7 +105,7 @@ int maxLentgh = 0;
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -127,7 +127,8 @@ int maxLentgh = 0;
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              // height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -157,7 +158,7 @@ int maxLentgh = 0;
                         SizedBox(
                           height: 58.h,
                           child: CustomizedTextField(
-                            maxLength: maxLentgh,
+                            maxLength: maxLentgh??11,
                               textEditingController:smartCardNumber,
                               keyboardType:TextInputType.number,
                               onChanged: (value){
@@ -201,7 +202,7 @@ int maxLentgh = 0;
                   ),
                   Gap(8.h),
                   SizedBox(
-                    height: 200.h,
+                    height:MediaQuery.of(context).size.height/2.5,
                     child:  GridView.builder(
                         padding: EdgeInsets.zero,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

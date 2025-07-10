@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NSContactsUsageDescription</key>
+    <string>UtilityPoint requires access to your contacts</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
@@ -14,6 +16,7 @@
     <string>6.0</string>
     <key>CFBundleName</key>
     <string>utilitypoint</string>
+
     <key>NSFaceIDUsageDescription</key>
     <string>We use Face ID to authenticate you</string>
     <key>NSPhotoLibraryUsageDescription</key>
@@ -66,5 +69,6 @@
     <string>We need to save screenshots to your photo library.</string>
     <key>MFMailComposeViewController</key>
     <string> we need permission for you to be able to mail us directly</string>
+
 </dict>
 </plist>

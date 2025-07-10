@@ -175,7 +175,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -197,7 +197,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: MediaQuery.of(context).size.height,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -258,6 +258,7 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
         ),
         padding: EdgeInsets.symmetric(horizontal: 9.5.w, vertical: 10.h),
         child: Column(
+
           children: [
             Gap(16.2.h),
             ( docImage==null||docImage.isEmpty)?
@@ -418,23 +419,22 @@ class _UserIdentityVerificationState extends State<UserIdentityVerification>  wi
       onTap: () async {
 
       List<dynamic> result=  await showCupertinoModalBottomSheet(
-        topRadius:
-        Radius.circular(20.r),
+        topRadius: Radius.circular(20.r),
         context: context,
         backgroundColor:AppColor.primary20,
-        shape:RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
-        ),
-        builder: (context) => SizedBox(
-            height:350.h,
-            child: VerifyBVN())
+        builder: (context) => Padding(
+          padding:EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SizedBox(
+              height:400.h,
+              child: VerifyBVN()),
+        )
         );
       if(result[0]){
         bloc.add(VerifyBVNEvent(GetProductRequest(bvn:result[1],userId: loginResponse!.id)));
       }
       },
       child: Container(
-          height: 115.h,
+          height: 150.h,
           width: 335.w,
           margin: EdgeInsets.symmetric(vertical: 14.h),
           decoration: BoxDecoration(
@@ -521,6 +521,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
       body:Container(
         height: 350.h,
         width: Get.width,
+        padding: EdgeInsets.symmetric(horizontal: 30.w),
         decoration: BoxDecoration(
           color: AppColor.black0,
           borderRadius: BorderRadius.only(topRight: Radius.circular(18.r),topLeft:  Radius.circular(18.r)),
@@ -569,7 +570,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
               },
               child: SizedBox(
                 height: 34.h,
-                width: 335.w,
+                // width: 335.w,
                 child: ColoredBox(
                   color: Colors.transparent,
                   child: Row(
@@ -616,7 +617,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
               },
               child: SizedBox(
                 height: 24.h,
-                width: 335.w,
+                // width: MediaQuery.of(context).size.width.w,
                 child: ColoredBox(
                   color: Colors.transparent,
                   child: Row(
@@ -662,7 +663,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
               },
               child: SizedBox(
                 height: 24.h,
-                width: 335.w,
+                // width: 335.w,
                 child: ColoredBox(
                   color: Colors.transparent,
                   child: Row(
@@ -709,7 +710,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
               },
               child: SizedBox(
                 height: 24.h,
-                width: 335.w,
+                // width: 335.w,
                 child: ColoredBox(
                   color: Colors.transparent,
                   child: Row(
@@ -755,7 +756,7 @@ class DocumentTypeBottomSheet extends StatelessWidget {
               },
               child: SizedBox(
                 height: 24.h,
-                width: 335.w,
+                // width: 335.w,
                 child: ColoredBox(
                   color: Colors.transparent,
                   child: Row(
@@ -796,6 +797,7 @@ class _VerifyBVNState extends State<VerifyBVN> {
          FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body:Container(
           height: 400.h,
           width: Get.width,

@@ -145,7 +145,7 @@ late ProductBloc bloc;
             circularProgressColor: AppColor.primary100,
             appIconSize: 60.h,
             appIcon: Image.asset("assets/image/images_png/Loader_icon.png"),
-            child: Scaffold(body: appBodyDesign(getBody())));
+            child: Scaffold(body: appBodyDesign(getBody(),context: context)));
       },
     );
   }
@@ -167,7 +167,7 @@ late ProductBloc bloc;
           SlideTransition(
             position: _animationManager.slideAnimation,
             child: Container(
-              height: 668.72.h,
+              height: Get.height + 100.h,
               width: Get.width,
               padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 24.w),
               decoration: BoxDecoration(
@@ -215,7 +215,7 @@ late ProductBloc bloc;
                                 String networkType= getNetworkProvider(phoneNumberController.text);
                                 if(networkType.toLowerCase()!=networkName.toLowerCase()){
                                   setState(() {
-                                    networkValidation="The number you entered is not an $networkName number, but a $networkType";
+                                    networkValidation="The number you entered is not a/an $networkName number, if you are of the number you can proceed";
                                   });
                                   // AppUtils.showSnack("The number you entered is not an $networkName number", context);
                                 }
